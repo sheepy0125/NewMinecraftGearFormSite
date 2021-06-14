@@ -3,6 +3,7 @@
 /coverage
 /build
 /api/venv
+/api/__pycache__
 *.config.*
 *.lock
 
