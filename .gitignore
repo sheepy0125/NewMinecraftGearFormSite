@@ -3,6 +3,8 @@
 /coverage
 /build
 /api/venv
+*.config.*
+*.lock
 
 # Private information
 *.json
