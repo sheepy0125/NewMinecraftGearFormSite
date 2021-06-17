@@ -24,7 +24,6 @@ export default function Form() {
 
 	// Convert the JSON data to input tags
 	function convertToInputs(data) {
-		console.log("Converting to input.");
 		return data.map((item) => (
 			<label key={item.name} className="">
 				{item.name}
@@ -48,8 +47,6 @@ export default function Form() {
 	useEffect(() => {
 		fetchInputs();
 	}, []); /* eslint-disable-line */ // This is stupid. [] makes it so it only runs the first time.
-
-	console.log("Rendering.");
 
 	return (
 		<MainWidget>
