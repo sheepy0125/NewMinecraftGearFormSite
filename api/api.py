@@ -4,7 +4,6 @@ Created on 06/14/2021
 """
 
 """ Setup """
-from os import stat
 from flask import Flask
 from json import load
 
