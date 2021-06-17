@@ -1,6 +1,6 @@
 // 404: Page not found error page
 
-import ErrorWidget from "../../boilerplate/errorWidget.jsx";
+import ErrorWidget from "../../boilerplate/widgets/errorWidget.jsx";
 import Button from "../../boilerplate/button.jsx";
 import {Link} from "react-router-dom";
 
@@ -15,9 +15,11 @@ export default function NotFoundError() {
 				</Link>
 				.
 			</p>
-			<Button colorNormal="red-300" colorHover="red-400" className="w-full mx-auto">
-				<Link to="/home">Return home</Link>
-			</Button>
+			<Link to="/home">
+				<Button colorNormal="red-300" colorHover="red-400" className="w-full mx-auto">
+					Return home
+				</Button>
+			</Link>
 		</ErrorWidget>
 	);
 }
