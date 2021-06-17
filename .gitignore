@@ -6,9 +6,12 @@
 /api/__pycache__
 *.config.*
 *.lock
+*.log
 
 # Private information
 *.json
 
-# But allow docs
+# Allow docs
 !*.doc.json
+# Allow TailwindCSS config
+!tailwind.config.js
