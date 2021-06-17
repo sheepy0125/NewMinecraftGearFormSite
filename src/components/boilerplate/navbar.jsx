@@ -7,7 +7,7 @@ import BaseWidget from "./widgets/baseWidget.jsx";
 // Nav item
 export function NavItem(props) {
 	return (
-		<Link to={props.link} className="flex-auto">
+		<Link to={props.link} className="flex-1">
 			<Button className="flex-auto w-full text-white text-mono" colorNormal="gray-600" colorHover="gray-800">
 				{props.children}
 			</Button>
