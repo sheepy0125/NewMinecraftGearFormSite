@@ -1,6 +1,7 @@
 import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom";
 
 import Index from "./components/pages/index.jsx";
+import Form from "./components/pages/form.jsx";
 import PageNotFound from "./components/pages/errors/pageNotFound.jsx";
 import NotImplemented from "./components/pages/errors/notImplemented.jsx";
 
@@ -17,6 +18,11 @@ export default function App() {
 					{/* Home redirect */}
 					<Route exact path="/">
 						<Redirect to="/home" />
+					</Route>
+
+					{/* Form page */}
+					<Route exact path="/form">
+						<Form />
 					</Route>
 
 					{/* Not implemented */}
