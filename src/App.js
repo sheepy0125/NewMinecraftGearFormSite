@@ -1,7 +1,5 @@
 import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom";
 
-import MainWidget from "./components/boilerplate/widgets/mainWidget.jsx";
-import Navbar from "./components/boilerplate/navbar.jsx";
 import Index from "./components/pages/index.jsx";
 import PageNotFound from "./components/pages/errors/pageNotFound.jsx";
 import NotImplemented from "./components/pages/errors/notImplemented.jsx";
@@ -13,10 +11,7 @@ export default function App() {
 				<Switch>
 					{/* Home page */}
 					<Route exact path="/home">
-						<MainWidget>
-							<Navbar currentPage="/home" />
-							<Index />
-						</MainWidget>
+						<Index />
 					</Route>
 
 					{/* Home redirect */}

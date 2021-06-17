@@ -6,7 +6,6 @@ import BaseWidget from "./widgets/baseWidget.jsx";
 
 // Nav item
 const NavItem = (props) => {
-	// Check if the user is on the page
 	const isUserOnPage = props.currentPage === props.link;
 
 	const activeColor = "gray-800";
@@ -22,7 +21,6 @@ const NavItem = (props) => {
 
 // Navbar
 export default function Navbar(props) {
-	// Get the current page
 	const currentPage = props.currentPage;
 
 	return (
