@@ -1,12 +1,8 @@
 // Button
 
 export default function Button(props) {
-	return (
-		<button
-			className={`bg-${props.colorNormal || "blue-300"} hover:bg-${props.colorHover || "blue-700"} p-2 font-mono hover:underline ${props.className}`}
-			style={props.style}
-		>
-			{props.children}
-		</button>
-	);
+	const normalColor = props.active ? props.activeColor : props.normalColor || "blue-300";
+	const activeColor = props.activeColor || "blue-700";
+
+	return <button className={`bg-${normalColor} hover:bg-${activeColor} p-2 font-mono hover:underline ${props.className}`}>{props.children}</button>;
 }

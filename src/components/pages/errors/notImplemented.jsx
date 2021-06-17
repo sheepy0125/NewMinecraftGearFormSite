@@ -8,7 +8,7 @@ export default function NotImplemented() {
 	return (
 		<ErrorWidget message="This hasn't been implemented.">
 			<Link to="/home">
-				<Button colorNormal="red-300" colorHover="red-400" className="w-full mx-auto">
+				<Button normalColor="red-300" activeColor="red-400" className="w-full mx-auto">
 					Return home
 				</Button>
 			</Link>

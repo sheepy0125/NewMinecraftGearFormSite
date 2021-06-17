@@ -1,8 +1,0 @@
-{
-	"/ping": {
-		"explanation": "Tells if this API is up or not.",
-		"input": null,
-		"output": {"worked": true},
-		"method": ["GET", "POST"]
-	}
-}

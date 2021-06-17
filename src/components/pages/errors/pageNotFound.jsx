@@ -16,7 +16,7 @@ export default function NotFoundError() {
 				.
 			</p>
 			<Link to="/home">
-				<Button colorNormal="red-300" colorHover="red-400" className="w-full mx-auto">
+				<Button normalColor="red-300" activeColor="red-400" className="w-full mx-auto">
 					Return home
 				</Button>
 			</Link>

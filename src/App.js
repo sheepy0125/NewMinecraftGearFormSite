@@ -14,7 +14,7 @@ export default function App() {
 					{/* Home page */}
 					<Route exact path="/home">
 						<MainWidget>
-							<Navbar />
+							<Navbar currentPage="/home" />
 							<Index />
 						</MainWidget>
 					</Route>

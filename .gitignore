@@ -11,7 +11,5 @@
 # Private information
 *.json
 
-# Allow docs
-!*.doc.json
 # Allow TailwindCSS config
 !tailwind.config.js
