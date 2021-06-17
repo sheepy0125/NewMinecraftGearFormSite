@@ -24,6 +24,7 @@ export default function Navbar() {
 				<NavItem link="/NotImplemented">Home</NavItem>
 				<NavItem link="/NotImplemented">Form</NavItem>
 				<NavItem link="/NotImplemented">View orders</NavItem>
+				<NavItem link="/NotImplemented">Enchantment dictionary</NavItem>
 			</nav>
 		</BaseWidget>
 	);
