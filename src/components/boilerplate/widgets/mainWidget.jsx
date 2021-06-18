@@ -3,5 +3,5 @@
 import BaseWidget from "./baseWidget";
 
 export default function MainWidget(props) {
-	return <BaseWidget className="block bg-gray-200 bg-opacity-25 shadow-lg flex-cols">{props.children}</BaseWidget>;
+	return <BaseWidget className="bg-opacity-25 shadow-lg">{props.children}</BaseWidget>;
 }
