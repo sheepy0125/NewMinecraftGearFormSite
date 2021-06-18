@@ -7,9 +7,10 @@
 *.config.*
 *.lock
 *.log
+package-lock.json
 
 # Private information
-*.json
+config.json
 
 # Allow TailwindCSS config
 !tailwind.config.js

@@ -1,0 +1,19 @@
+[
+	{"name": "Sword", "cost": 2, "max": 5},
+	{"name": "Pickaxe", "cost": 3, "max": 5},
+	{"name": "Shovel", "cost": 1, "max": 5},
+	{"name": "Axe", "cost": 3, "max": 5},
+	{"name": "Hoe", "cost": 2, "max": 5},
+	{"name": "Helmet", "cost": 5, "max": 5},
+	{"name": "Chestplate", "cost": 8, "max": 5},
+	{"name": "Leggings", "cost": 7, "max": 5},
+	{"name": "Boots", "cost": 4, "max": 5},
+	{"name": "Crossbow", "cost": 0, "max": 3},
+	{"name": "Bow", "cost": 0, "max": 3},
+	{"name": "Shears", "cost": 0, "max": 3},
+	{"name": "Flint-&-Steel", "cost": 0, "max": 3},
+	{"name": "Shield", "cost": 0, "max": 3},
+	{"name": "Fishing-Rod", "cost": 0, "max": 3},
+	{"name": "Carrot-on-Stick", "cost": 0, "max": 3},
+	{"name": "Elytra", "cost": 15, "max": 5}
+]

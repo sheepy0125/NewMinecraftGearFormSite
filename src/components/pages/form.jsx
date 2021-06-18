@@ -13,8 +13,9 @@ export default function Form() {
 
 	// Fetch the inputs
 	function fetchInputs() {
-		get("/get_items") // Example output: [{"name": "Sword", "cost": 2, "max": 5}, {"name": "Pickaxe", "cost": 3, "max": 5}]
+		get("/get_select_dictionary") // Example output: [{"name": "Sword", "cost": 2, "max": 5}, {"name": "Pickaxe", "cost": 3, "max": 5}]
 			.then((resp) => {
+				console.log(resp);
 				setItemInputs(convertToInputs(resp.data.data));
 			})
 			.catch((resp) => {
@@ -25,9 +26,8 @@ export default function Form() {
 	// Convert the JSON data to input tags
 	function convertToInputs(data) {
 		return data.map((item) => (
-			<label key={item.name} className="">
-				{item.name}
-				<br />
+			<fieldset key={item.name} className="p-4 border-2 border-blue-400 w-max">
+				<legend className="block mx-auto border-2 ">{item.name}</legend>
 				<input
 					type="number"
 					name={item.name}
@@ -38,8 +38,7 @@ export default function Form() {
 					className="text-center outline-none ring-0 ring-blue-600 focus:ring-4"
 					required
 				/>
-				<br />
-			</label>
+			</fieldset>
 		));
 	}
 
@@ -53,11 +52,11 @@ export default function Form() {
 			<Title>Sheepy's God Gear Services - Form</Title>
 			<Navbar currentPage="/form" />
 			<BaseWidget className="text-xl text-center">
-				<div className="w-1/2 mx-auto font-bold text-center">
+				<div className="block mx-auto font-bold text-center">
 					<p>Form</p>
-					<div className="my-2 font-normal bg-gray-200">
+					<div className="px-4 mx-auto my-2 font-normal bg-gray-200 rounded-lg w-max">
 						<p>Select what you would like.</p>
-						{itemInputs}
+						<div className="grid-cols-2 gap-4 mx-auto w-max lg:grid-cols-3 md:grid">{itemInputs}</div>
 					</div>
 				</div>
 			</BaseWidget>
