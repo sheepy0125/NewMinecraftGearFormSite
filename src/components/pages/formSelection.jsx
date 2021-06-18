@@ -11,6 +11,8 @@ import Navbar from "../boilerplate/navbar.jsx";
 export default function FormSelection() {
 	const [itemInputs, setItemInputs] = useState(<div>Loading... Please wait!</div>);
 	const [orderNumberDictionary, setOrderNumberDictionary] = useState({});
+	const [itemPrices, setItemPrices] = useState({});
+	const [totalPrice, setTotalPrice] = useState(0);
 
 	// Fetch the inputs
 	function fetchInputs() {
@@ -23,7 +25,35 @@ export default function FormSelection() {
 			});
 	}
 
-	// On change
+	// Get new price (onChange)
+	function getNewPrice({itemName, itemCount, itemCost}) {
+		const cost = Number(itemCount) * Number(itemCost);
+		setItemPrices((prevItemPrices) => ({
+			...prevItemPrices,
+			[itemName]: cost
+		}));
+	}
+	// When itemPrices changes, update the total price.
+	useEffect(() => {
+		let total = 5; // Total is initially set to 5 for the flat rate.
+
+		for (const itemCost of Object.values(itemPrices)) {
+			total += itemCost;
+		}
+
+		setTotalPrice(total);
+	}, [itemPrices]); //eslint-disable-line
+
+	// Total cost component
+	function TotalCost() {
+		return (
+			<p>
+				{Math.floor(totalPrice / 64)} stacks {totalPrice % 64} diamonds.
+			</p>
+		);
+	}
+
+	// On input change
 	function numberChanged(event) {
 		// Check to make sure it is valid
 
@@ -43,13 +73,18 @@ export default function FormSelection() {
 			...prevDict,
 			[event.target.name]: dictionaryValue
 		}));
+
+		getNewPrice({itemName: event.target.name, itemCount: Number(event.target.value), itemCost: Number(event.target.getAttribute("cost"))});
 	}
 
 	// Convert the JSON data to input tags
 	function convertToInputs(data) {
 		return data.map((item) => (
 			<fieldset key={item.name} className="p-4 border-2 border-pink-400 rounded-md">
-				<legend className="px-2 mx-auto">{item.name}</legend>
+				<legend className="px-2 py-0 mx-auto">{item.name}</legend>
+				<p className="font-medium">
+					This costs {item.cost} diamond{item.cost !== 1 ? "s" : ""}.
+				</p>
 				<input
 					type="number"
 					name={item.name}
@@ -58,8 +93,9 @@ export default function FormSelection() {
 					minLength={1}
 					defaultValue="0"
 					onChange={numberChanged}
-					required
+					cost={item.cost}
 					className="w-full text-center rounded-sm outline-none ring-0 ring-blue-600 focus:ring-2"
+					required
 				/>
 			</fieldset>
 		));
@@ -78,11 +114,20 @@ export default function FormSelection() {
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Select what you would like to order here.</p>
 				<BaseWidget>
+					<TotalCost />
 					<div className="grid-cols-2 gap-4 mx-auto lg-4 xl:grid-cols-3 md:grid">{itemInputs}</div>
+					<TotalCost />
 				</BaseWidget>
 				<BaseWidget>
 					<p>Debug</p>
-					<pre className="mx-auto font-thin text-left max-w-max">{JSON.stringify(orderNumberDictionary, null, 4)}</pre>
+					<BaseWidget>
+						<p>Order number dictionary</p>
+						<pre className="mx-auto font-thin text-left max-w-max">{JSON.stringify(orderNumberDictionary, null, 4)}</pre>
+					</BaseWidget>
+					<BaseWidget>
+						<p>Item prices dictionary</p>
+						<pre className="mx-auto font-thin text-left max-w-max">{JSON.stringify(itemPrices, null, 4)}</pre>
+					</BaseWidget>
 				</BaseWidget>
 			</BaseWidget>
 		</MainWidget>
