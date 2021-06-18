@@ -21,8 +21,8 @@ export default function Index() {
 					<ListWidget>
 						<p className="text-xl text-center">How much will this cost?</p>
 						<li className="font-normal">The materials to make the gear OR the gear already made,</li>
-						<li className="font-normal">Five (5) diamonds per elytra, and</li>
-						<li className="font-normal">Five (5) diamonds as a flat rate (profit)</li>
+						<li className="font-normal">15 diamonds per elytra, and</li>
+						<li className="font-normal">5 diamonds as a flat rate (profit)</li>
 					</ListWidget>
 					<ListWidget>
 						<p className="text-center ">Some things to note</p>
@@ -30,14 +30,14 @@ export default function Index() {
 							If you are ordering gear that is NOT diamond, then you must drop it off (iron chestplate, turtle helmet, etc.)
 						</li>
 						<li className="font-normal">
-							You may only order up to five (5) of an item that costs diamonds to make (e.g. diamond hoe) and three (3) of an item that doesn't
+							You may only order up to 5 of an item that costs diamonds to make (e.g. diamond hoe) and 3 of an item that doesn't
 							<br />
 							cost diamonds to make (e.g. fishing rod)
 						</li>
 						<li className="font-normal">
-							The god gear will be made within one (1) week (7 days) of the initial order date. If this fails to happen, you are entitled to your
+							The god gear will be made within 1 week (7 days) of the initial order date. If this fails to happen, you are entitled to your
 							<br />
-							payment back and an additional five (5) diamonds.
+							payment back and an additional 5 diamonds.
 						</li>
 						<li className="font-normal">There will be no insurance on your god gear.</li>
 					</ListWidget>
