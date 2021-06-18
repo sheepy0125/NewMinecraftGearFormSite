@@ -10,17 +10,30 @@ import Navbar from "../boilerplate/navbar.jsx";
 
 export default function FormSelection() {
 	const [itemInputs, setItemInputs] = useState(<div>Loading... Please wait!</div>);
+	const [orderNumberDictionary, setOrderNumberDictionary] = useState({});
 
 	// Fetch the inputs
 	function fetchInputs() {
 		get("/get_select_dictionary") // Example output: [{"name": "Sword", "cost": 2, "max": 5}, {"name": "Pickaxe", "cost": 3, "max": 5}]
 			.then((resp) => {
-				console.log(resp);
 				setItemInputs(convertToInputs(resp.data.data));
 			})
 			.catch((resp) => {
 				setItemInputs(<div>An error as occurred!</div>);
 			});
+	}
+
+	// On change
+	function numberChanged(event) {
+		let [name, value] = [event.target.name, event.target.value];
+
+		// If it is set to 0, then remove it (no value)
+		if (value === "0") value = undefined;
+
+		setOrderNumberDictionary((prevDict) => ({
+			...prevDict,
+			[name]: value
+		}));
 	}
 
 	// Convert the JSON data to input tags
@@ -35,8 +48,9 @@ export default function FormSelection() {
 					max={item.max}
 					minLength={1}
 					defaultValue="0"
-					className="w-full text-center rounded-sm outline-none ring-0 ring-blue-600 focus:ring-2"
+					onChange={numberChanged}
 					required
+					className="w-full text-center rounded-sm outline-none ring-0 ring-blue-600 focus:ring-2"
 				/>
 			</fieldset>
 		));
@@ -54,8 +68,12 @@ export default function FormSelection() {
 			<BaseWidget className="text-xl text-center">
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Select what you would like to order here.</p>
-				<BaseWidget className="w-full px-4 py-4 mx-auto bg-gray-200 lg:px-8 md:w-max" activeOpacity="60" inactiveOpacity="60">
+				<BaseWidget>
 					<div className="grid-cols-2 gap-4 mx-auto lg-4 xl:grid-cols-3 md:grid">{itemInputs}</div>
+				</BaseWidget>
+				<BaseWidget>
+					<p>Debug</p>
+					<pre className="mx-auto font-thin text-left max-w-max">{JSON.stringify(orderNumberDictionary, null, 4)}</pre>
 				</BaseWidget>
 			</BaseWidget>
 		</MainWidget>
