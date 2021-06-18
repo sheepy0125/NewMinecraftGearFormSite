@@ -25,14 +25,23 @@ export default function FormSelection() {
 
 	// On change
 	function numberChanged(event) {
-		let [name, value] = [event.target.name, event.target.value];
+		// Check to make sure it is valid
 
-		// If it is set to 0, then remove it (no value)
-		if (value === "0") value = undefined;
+		// Is it greater than the maximum amount?
+		if (Number(event.target.value) > Number(event.target.max)) {
+			event.target.value = event.target.max;
+		}
+		// Is it less than or 0?
+		else if (event.target.value <= 0) {
+			event.target.value = 0;
+		}
+
+		const value = Number(event.target.value);
+		const dictionaryValue = value !== 0 ? value : undefined; // Set it to be undefined if the value is 0 (so it doesn't exist anymore)
 
 		setOrderNumberDictionary((prevDict) => ({
 			...prevDict,
-			[name]: value
+			[event.target.name]: dictionaryValue
 		}));
 	}
 
