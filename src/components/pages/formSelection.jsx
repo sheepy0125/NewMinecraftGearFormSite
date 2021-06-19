@@ -35,14 +35,14 @@ export default function FormSelection() {
 	}
 	// When itemPrices changes, update the total price.
 	useEffect(() => {
-		let total = 5; // Total is initially set to 5 for the flat rate.
+		let total = 10; // Total is initially set to 10 for the flat rate.
 
 		for (const itemCost of Object.values(itemPrices)) {
 			total += itemCost;
 		}
 
 		setTotalPrice(total);
-	}, [itemPrices]); //eslint-disable-line
+	}, [itemPrices]);
 
 	// Total cost component
 	function TotalCost() {

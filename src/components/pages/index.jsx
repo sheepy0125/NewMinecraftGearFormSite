@@ -22,7 +22,7 @@ export default function Index() {
 						<p className="text-xl text-center">How much will this cost?</p>
 						<li className="font-normal">The materials to make the gear OR the gear already made,</li>
 						<li className="font-normal">15 diamonds per elytra, and</li>
-						<li className="font-normal">5 diamonds as a flat rate (profit)</li>
+						<li className="font-normal">10 diamonds as a flat rate (profit)</li>
 					</ListWidget>
 					<ListWidget>
 						<p className="text-center ">Some things to note</p>
