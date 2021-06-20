@@ -5,11 +5,12 @@ import {get} from "axios";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
+import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 
 export default function FormSelection() {
-	const [itemInputs, setItemInputs] = useState(<div>Loading... Please wait!</div>);
+	const [itemInputs, setItemInputs] = useState(null);
 	const [orderNumberDictionary, setOrderNumberDictionary] = useState({});
 	const [itemPrices, setItemPrices] = useState({});
 	const [totalPrice, setTotalPrice] = useState(0);
@@ -113,11 +114,15 @@ export default function FormSelection() {
 			<BaseWidget className="text-xl text-center">
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Select what you would like to order here.</p>
-				<BaseWidget>
-					<TotalCost />
-					<div className="grid-cols-2 gap-4 mx-auto lg-4 xl:grid-cols-3 md:grid">{itemInputs}</div>
-					<TotalCost />
-				</BaseWidget>
+				{itemInputs !== null ? (
+					<BaseWidget>
+						<TotalCost />
+						<div className="grid-cols-2 gap-4 mx-auto lg-4 xl:grid-cols-3 md:grid">{itemInputs}</div>
+						<TotalCost />
+					</BaseWidget>
+				) : (
+					<LoadingWidget />
+				)}
 				<BaseWidget>
 					<p>Debug</p>
 					<BaseWidget>

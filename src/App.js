@@ -1,18 +1,21 @@
 import {BrowserRouter as Router, Route, Redirect, Switch} from "react-router-dom";
+import {lazy, Suspense} from "react";
 
-import Index from "./components/pages/index.jsx";
-import Form from "./components/pages/form.jsx";
-import PageNotFound from "./components/pages/errors/pageNotFound.jsx";
-import NotImplemented from "./components/pages/errors/notImplemented.jsx";
+import LoadingWidget from "./components/boilerplate/widgets/loadingWidget.jsx";
+
+const LazyIndex = lazy(() => import("./components/pages/index.jsx"));
+const LazyForm = lazy(() => import("./components/pages/form.jsx"));
+const LazyPageNotFound = lazy(() => import("./components/pages/errors/pageNotFound.jsx"));
+const LazyNotImplemented = lazy(() => import("./components/pages/errors/notImplemented.jsx"));
 
 export default function App() {
 	return (
 		<Router>
-			<div className="content">
+			<Suspense fallback={<LoadingWidget />}>
 				<Switch>
 					{/* Home page */}
 					<Route exact path="/home">
-						<Index />
+						<LazyIndex />
 					</Route>
 
 					{/* Home redirect */}
@@ -22,18 +25,18 @@ export default function App() {
 
 					{/* Form */}
 					<Route exact path="/form">
-						<Form />
+						<LazyForm />
 					</Route>
 
 					{/* Not implemented */}
 					<Route path="/NotImplemented">
-						<NotImplemented />
+						<LazyNotImplemented />
 					</Route>
 
 					{/* 404 */}
-					<PageNotFound />
+					<LazyPageNotFound />
 				</Switch>
-			</div>
+			</Suspense>
 		</Router>
 	);
 }
