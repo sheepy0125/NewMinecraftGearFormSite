@@ -123,7 +123,7 @@ export default function FormSelection() {
 				) : (
 					<LoadingWidget />
 				)}
-				<BaseWidget>
+				{/* <BaseWidget>
 					<p>Debug</p>
 					<BaseWidget>
 						<p>Order number dictionary</p>
@@ -133,7 +133,7 @@ export default function FormSelection() {
 						<p>Item prices dictionary</p>
 						<pre className="mx-auto font-thin text-left max-w-max">{JSON.stringify(itemPrices, null, 4)}</pre>
 					</BaseWidget>
-				</BaseWidget>
+				</BaseWidget> */}
 			</BaseWidget>
 		</MainWidget>
 	);
