@@ -34,7 +34,7 @@ def get_selection_dictionary() -> dict:
 def get_enchants_for_gear() -> dict:
 	with open("json_files/gear_enchant_dictionary.json") as all_gear_enchants_file:
 		all_gear_enchants_info: dict = load(all_gear_enchants_file)
-		selected_gear_items: list = request.json["selected_gear_items"]
+		selected_gear_items: list = request.json
 
 		# Right now, the selected_gear_items list is sorted alphabetically. I want to keep the order that I want the gear to be in (like Sword, Pickaxe, Shovel...).
 		# There probably is a better way but this is fine for now. (potential TODO: do it in a better way?)
@@ -48,16 +48,24 @@ def get_enchants_for_gear() -> dict:
 			if item in selected_gear_items:
 				maintaining_order_selected_gear_items.append(item)
 
-		return {"worked": True, "data": maintaining_order_selected_gear_items}
+		# Get enchantment dictionary
+		enchant_dict: dict = {}
+		for item in maintaining_order_selected_gear_items:
+			enchant_dict[item] = {
+				"checkboxes": all_gear_enchants_info[item]["checkboxes"],
+				"multipleSelection": all_gear_enchants_info[item]["multipleSelection"]
+			}
+
+		return {"worked": True, "data": {"sorted_list": maintaining_order_selected_gear_items, "enchant_dict": enchant_dict}}
 
 """ Error handlers """
 
-# All error handlers
-@api.errorhandler(Exception)
-def error_handler(error):
-	try:
-		# HTTP error code (error.code works)
-		return {"worked": False, "message": "An HTTP exception has occured.", "error_message": str(error), "error_code": error.code}
-	except Exception:
-		# Internal error
-		return {"worked": False, "message": "An internal exception has occurred.", "error_message": str(error)}
+# # All error handlers
+# @api.errorhandler(Exception)
+# def error_handler(error):
+# 	try:
+# 		# HTTP error code (error.code works)
+# 		return {"worked": False, "message": "An HTTP exception has occured.", "error_message": str(error), "error_code": error.code}
+# 	except Exception:
+# 		# Internal error
+# 		return {"worked": False, "message": "An internal exception has occurred.", "error_message": str(error)}

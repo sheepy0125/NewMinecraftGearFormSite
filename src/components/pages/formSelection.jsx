@@ -10,7 +10,7 @@ import Title from "../title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 
-export default function FormSelection() {
+export default function FormSelection(props) {
 	const [itemInputs, setItemInputs] = useState(null);
 	const [orderNumberDictionary, setOrderNumberDictionary] = useState({});
 	const [itemPrices, setItemPrices] = useState({});
@@ -104,7 +104,9 @@ export default function FormSelection() {
 	}
 
 	// Go to next page
-	function goToNextPage() {}
+	function goToNextPage() {
+		props.goToNextPage({orderNumberDictionary: orderNumberDictionary, totalPrice: totalPrice});
+	}
 
 	// Fetch inputs on first load
 	useEffect(() => {
