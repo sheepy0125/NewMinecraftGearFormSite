@@ -1,0 +1,43 @@
+{
+	"Sword": {
+		"checkboxes": ["Mending", "Unbreaking 3", "Sweeping Edge 3", "Looting 3", "Knockback 2", "Fire aspect 2"],
+		"multipleSelection": [["Sharpness 5", "Smite 5", "Bane of Arthropods 5"]]
+	},
+	"Pickaxe": {"checkboxes": ["Mending", "Unbreaking 3", "Efficiency 5"], "multipleSelection": [["Silk touch", "Fortune 3"]]},
+	"Shovel": {"checkboxes": ["Mending", "Unbreaking 3", "Efficiency 5"], "multipleSelection": [["Silk touch", "Fortune 3"]]},
+	"Axe": {
+		"checkboxes": ["Mending", "Unbreaking 3", "Efficiency 5"],
+		"multipleSelection": [
+			["Silk touch", "Fortune 3"],
+			["Sharpness 5", "Smite 5", "Bane of Arthropods 5"]
+		]
+	},
+	"Hoe": {"checkboxes": ["Mending", "Unbreaking 3", "Efficiency 5"], "multipleSelection": [["Silk touch", "Fortune 3"]]},
+	"Helmet": {
+		"checkboxes": ["Mending", "Unbreaking 3", "Thorns 3", "Respiration 3", "Aqua affinity"],
+		"multipleSelection": [["Protection 4", "Fire Protection 4", "Blast Protection 4", "Projectile Protection 4"]]
+	},
+	"Chestplate": {
+		"checkboxes": ["Mending", "Unbreaking 3", "Thorns 3"],
+		"multipleSelection": [["Protection 4", "Fire Protection 4", "Blast Protection 4", "Projectile Protection 4"]]
+	},
+	"Leggings": {
+		"checkboxes": ["Mending", "Unbreaking 3", "Thorns 3"],
+		"multipleSelection": [["Protection 4", "Fire Protection 4", "Blast Protection 4", "Projectile Protection 4"]]
+	},
+	"Boots": {
+		"checkboxes": ["Mending", "Unbreaking 3", "Thorns 3", "Soul speed 3", "Feather falling 4"],
+		"multipleSelection": [
+			["Protection 4", "Fire Protection 4", "Blast Protection 4", "Projectile Protection 4"],
+			["Frost walker 2", "Depth strider 3"]
+		]
+	},
+	"Crossbow": {"checkboxes": ["Mending", "Unbreaking 3", "Quick charge 3"], "multipleSelection": [["Piercing 4", "Multishot"]]},
+	"Bow": {"checkboxes": ["Unbreaking 3", "Power 5", "Punch 2", "Flame"], "multipleSelection": [["Mending", "Infinity"]]},
+	"Shears": {"checkboxes": ["Mending", "Unbreaking 3", "Efficiency 5"], "multipleSelection": [[]]},
+	"Flint & Steel": {"checkboxes": ["Mending", "Unbreaking 3"], "multipleSelection": [[]]},
+	"Shield": {"checkboxes": ["Mending", "Unbreaking 3"], "multipleSelection": [[]]},
+	"Fishing Rod": {"checkboxes": ["Mending", "Unbreaking 3", "Luck of the sea 3", "Lure 3"], "multipleSelection": [[]]},
+	"Carrot on Stick": {"checkboxes": ["Mending", "Unbreaking 3"], "multipleSelection": [[]]},
+	"Elytra": {"checkboxes": ["Mending", "Unbreaking 3"], "multipleSelection": [[]]}
+}

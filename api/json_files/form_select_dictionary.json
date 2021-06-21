@@ -11,9 +11,9 @@
 	{"name": "Crossbow", "cost": 0, "max": 3},
 	{"name": "Bow", "cost": 0, "max": 3},
 	{"name": "Shears", "cost": 0, "max": 3},
-	{"name": "Flint-&-Steel", "cost": 0, "max": 3},
+	{"name": "Flint & Steel", "cost": 0, "max": 3},
 	{"name": "Shield", "cost": 0, "max": 3},
-	{"name": "Fishing-Rod", "cost": 0, "max": 3},
-	{"name": "Carrot-on-Stick", "cost": 0, "max": 3},
+	{"name": "Fishing Rod", "cost": 0, "max": 3},
+	{"name": "Carrot on Stick", "cost": 0, "max": 3},
 	{"name": "Elytra", "cost": 15, "max": 5}
 ]

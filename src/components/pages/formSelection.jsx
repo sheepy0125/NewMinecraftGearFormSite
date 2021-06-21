@@ -8,6 +8,7 @@ import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
+import Button from "../boilerplate/button.jsx";
 
 export default function FormSelection() {
 	const [itemInputs, setItemInputs] = useState(null);
@@ -49,7 +50,7 @@ export default function FormSelection() {
 	function TotalCost() {
 		return (
 			<p>
-				{Math.floor(totalPrice / 64)} stacks {totalPrice % 64} diamonds.
+				Estimated cost: {Math.floor(totalPrice / 64)} stacks {totalPrice % 64} diamonds.
 			</p>
 		);
 	}
@@ -102,6 +103,9 @@ export default function FormSelection() {
 		));
 	}
 
+	// Go to next page
+	function goToNextPage() {}
+
 	// Fetch inputs on first load
 	useEffect(() => {
 		fetchInputs();
@@ -119,6 +123,10 @@ export default function FormSelection() {
 						<TotalCost />
 						<div className="grid-cols-2 gap-4 mx-auto lg-4 xl:grid-cols-3 md:grid">{itemInputs}</div>
 						<TotalCost />
+						<br />
+						<span onClick={goToNextPage}>
+							<Button>Next page</Button>
+						</span>
 					</BaseWidget>
 				) : (
 					<LoadingWidget />
