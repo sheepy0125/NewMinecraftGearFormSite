@@ -15,6 +15,15 @@ function EnchantItem(props) {
 	return <p className="mx-2 sm:mx-auto">{props.children}</p>;
 }
 
+// Label
+function Label(props) {
+	return (
+		<label className="flex w-full px-1 my-1 bg-pink-200 bg-opacity-25" key={props.key}>
+			{props.children}
+		</label>
+	);
+}
+
 // Form enchants
 export default function FormEnchants(props) {
 	const [sortedList, setSortedList] = useState(null);
@@ -39,31 +48,25 @@ export default function FormEnchants(props) {
 					{/* Item name */}
 					<label>
 						<p>{`Name of ${item.itemName}`}</p>
-						<br />
-						<input type="text" name={`${item.itemName} Name`} className="w-full" />
-						<br />
+						<input type="text" name={`${item.itemName} Name`} className="w-full" maxLength={55} />
 					</label>
 
-					<div className="mx-auto">
+					<div className="mx-auto my-2">
 						{/* Checkboxes */}
 						{item.checkboxes && (
 							<div>
 								<CheckboxGroup>
 									{item.checkboxes.map((enchant) => (
-										<label className="flex" key={`${item.itemName} ${enchant}`}>
+										<Label key={`${item.itemName} ${enchant}`}>
 											<Checkbox value={enchant} name={`${item.itemName}`} />
 											<EnchantItem>{enchant}</EnchantItem>
-										</label>
+										</Label>
 									))}
 									<hr className="border-black" />
-									<label className="flex">
+									<Label>
 										<AllCheckerCheckbox />
 										<EnchantItem>All of the above</EnchantItem>
-									</label>
-									<label className="flex">
-										<NoneCheckerCheckbox />
-										<EnchantItem>None of the above</EnchantItem>
-									</label>
+									</Label>
 								</CheckboxGroup>
 							</div>
 						)}
@@ -71,30 +74,29 @@ export default function FormEnchants(props) {
 						{/* Multiple selection */}
 						{item.multipleSelection && (
 							<>
-								<br />
 								{item.multipleSelection.map((multipleSelectionList, listIndex) => (
-									<div key={`${item.itemName} multiple selection list ${listIndex}`}>
+									<div className="my-4" key={`${item.itemName} multiple selection list ${listIndex}`}>
 										{multipleSelectionList.map((enchant) => (
-											<label key={`${item.itemName} multiple selection ${enchant}`}>
-												<div className="flex">
-													<input type="radio" name={`${item.itemName} MultipleSelection ${listIndex + 1}`} value={enchant} />
-													<EnchantItem>{enchant}</EnchantItem>
-												</div>
-											</label>
+											<Label key={`${item.itemName} multiple selection ${enchant}`}>
+												<input type="radio" name={`${item.itemName} MultipleSelection ${listIndex + 1}`} value={enchant} />
+												<EnchantItem>{enchant}</EnchantItem>
+											</Label>
 										))}
 										<hr className="border-black" />
-										<label>
-											<div className="flex">
-												<input type="radio" name={`${item.itemName} MultipleSelection ${listIndex + 1}`} defaultChecked value={null} />
-												<EnchantItem>None</EnchantItem>
-											</div>
-										</label>
-										<span className="py-4 my-4"></span>
-										<br />
+										<Label>
+											<input type="radio" name={`${item.itemName} MultipleSelection ${listIndex + 1}`} defaultChecked value={null} />
+											<EnchantItem>None</EnchantItem>
+										</Label>
 									</div>
 								))}
 							</>
 						)}
+
+						{/* Additional information */}
+						<label>
+							<p>Additional information</p>
+							<input type="text" name={`${item.itemName} Additional`} className="w-full" maxLength={512} />
+						</label>
 					</div>
 				</div>
 			))
