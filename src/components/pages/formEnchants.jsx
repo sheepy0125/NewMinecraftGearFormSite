@@ -2,7 +2,7 @@
 
 import {useState, useEffect} from "react";
 import {post} from "axios";
-import {AllCheckerCheckbox, Checkbox, CheckboxGroup, NoneCheckerCheckbox} from "@createnl/grouped-checkboxes";
+import {AllCheckerCheckbox, Checkbox, CheckboxGroup} from "@createnl/grouped-checkboxes";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
@@ -18,7 +18,7 @@ function EnchantItem(props) {
 // Label
 function Label(props) {
 	return (
-		<label className="flex w-full px-1 my-1 bg-pink-200 bg-opacity-25" key={props.key}>
+		<label className="flex w-full px-1 my-1 bg-pink-200 bg-opacity-25 cursor-pointer" key={props.id}>
 			{props.children}
 		</label>
 	);
@@ -54,28 +54,30 @@ export default function FormEnchants(props) {
 					<div className="mx-auto my-2">
 						{/* Checkboxes */}
 						{item.checkboxes && (
-							<div>
-								<CheckboxGroup>
-									{item.checkboxes.map((enchant) => (
-										<Label key={`${item.itemName} ${enchant}`}>
-											<Checkbox value={enchant} name={`${item.itemName}`} />
-											<EnchantItem>{enchant}</EnchantItem>
-										</Label>
-									))}
-									<hr className="border-black" />
-									<Label>
-										<AllCheckerCheckbox />
-										<EnchantItem>All of the above</EnchantItem>
+							<CheckboxGroup>
+								{/* Iterate through each enchant */}
+								{item.checkboxes.map((enchant) => (
+									<Label key={`${item.itemName} ${enchant}`}>
+										<Checkbox value={enchant} name={`${item.itemName}`} />
+										<EnchantItem>{enchant}</EnchantItem>
 									</Label>
-								</CheckboxGroup>
-							</div>
+								))}
+								<hr className="border-black" />
+								{/* All of the above */}
+								<Label>
+									<AllCheckerCheckbox />
+									<EnchantItem>All of the above</EnchantItem>
+								</Label>
+							</CheckboxGroup>
 						)}
 
 						{/* Multiple selection */}
 						{item.multipleSelection && (
-							<>
+							<div>
+								{/* Iterate through each list */}
 								{item.multipleSelection.map((multipleSelectionList, listIndex) => (
 									<div className="my-4" key={`${item.itemName} multiple selection list ${listIndex}`}>
+										{/* Iterate through each enchant */}
 										{multipleSelectionList.map((enchant) => (
 											<Label key={`${item.itemName} multiple selection ${enchant}`}>
 												<input type="radio" name={`${item.itemName} MultipleSelection ${listIndex + 1}`} value={enchant} />
@@ -83,13 +85,14 @@ export default function FormEnchants(props) {
 											</Label>
 										))}
 										<hr className="border-black" />
+										{/* None */}
 										<Label>
-											<input type="radio" name={`${item.itemName} MultipleSelection ${listIndex + 1}`} defaultChecked value={null} />
+											<input type="radio" name={`${item.itemName} MultipleSelection ${listIndex + 1}`} defaultChecked />
 											<EnchantItem>None</EnchantItem>
 										</Label>
 									</div>
 								))}
-							</>
+							</div>
 						)}
 
 						{/* Additional information */}
