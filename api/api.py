@@ -60,12 +60,12 @@ def get_enchants_for_gear() -> dict:
 
 """ Error handlers """
 
-# # All error handlers
-# @api.errorhandler(Exception)
-# def error_handler(error):
-# 	try:
-# 		# HTTP error code (error.code works)
-# 		return {"worked": False, "message": "An HTTP exception has occured.", "error_message": str(error), "error_code": error.code}
-# 	except Exception:
-# 		# Internal error
-# 		return {"worked": False, "message": "An internal exception has occurred.", "error_message": str(error)}
+# All error handlers
+@api.errorhandler(Exception)
+def error_handler(error):
+	try:
+		# HTTP error code (error.code works)
+		return {"worked": False, "message": "An HTTP exception has occured.", "error_message": str(error), "error_code": error.code}
+	except Exception:
+		# Internal error
+		return {"worked": False, "message": "An internal exception has occurred.", "error_message": str(error)}
