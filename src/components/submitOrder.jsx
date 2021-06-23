@@ -16,9 +16,10 @@ function submit({content, history}) {
 		const orderID = resp.data.data.order_id;
 		const orderPIN = resp.data.data.order_pin;
 		const orderUsername = content.general.username;
+		const estimatedCost = content.general.estimatedCost;
 
 		// Redirect to submit page
-		history.push(`/submitResult?orderID=${orderID}&orderPIN=${orderPIN}&orderUsername=${orderUsername}`);
+		history.push(`/submitResult?orderID=${orderID}&orderPIN=${orderPIN}&orderUsername=${orderUsername}&estimatedCost=${estimatedCost}`);
 	});
 }
 

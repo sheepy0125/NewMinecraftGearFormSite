@@ -268,7 +268,7 @@ export default function FormEnchants(props) {
 		if (sortedList && enchantDict) {
 			// They both have data, fetch the inputs
 			const defaultInputList = [];
-			const defaultInputContent = {general: {username: null, additional: null}};
+			const defaultInputContent = {general: {username: null, additional: null, estimatedCost: props.estimatedCost}};
 
 			// Iterate through each item ordered
 			for (const item of sortedList) {

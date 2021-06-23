@@ -22,6 +22,7 @@ export default function GeneralInformation(props) {
 		return {
 			...content,
 			general: {
+				...content.general,
 				username: username,
 				additional: additional
 			}

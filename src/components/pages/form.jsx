@@ -13,7 +13,7 @@ export default function Form() {
 		return <FormSelection nextPage={goToEnchantSelectionPage} />;
 	}
 	function enchantSelectionPage(content) {
-		return <FormEnchants orderNumberDictionary={content.orderNumberDictionary} nextPage={goToGeneralInformationPage} />;
+		return <FormEnchants orderNumberDictionary={content.orderNumberDictionary} estimatedCost={content.totalPrice} nextPage={goToGeneralInformationPage} />;
 	}
 	function generalInformationPage(content) {
 		return <GeneralInformation content={content} />;

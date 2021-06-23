@@ -31,7 +31,7 @@ def get_selection_dictionary() -> dict:
 	return send_json_file_as_data("form_select_dictionary")
 
 # Get all enchantments for selected gear
-@api.route("/get_enchants_for_gear", methods=["GET", "POST"])
+@api.route("/get_enchants_for_gear", methods=["POST"])
 def get_enchants_for_gear() -> dict:
 	with open("json_files/gear_enchant_dictionary.json") as all_gear_enchants_file:
 		all_gear_enchants_info: dict = load(all_gear_enchants_file)
