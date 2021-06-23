@@ -6,7 +6,7 @@ import {get} from "axios";
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
-import Title from "../title.jsx";
+import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 

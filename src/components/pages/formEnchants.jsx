@@ -7,7 +7,7 @@ import {AllCheckerCheckbox, Checkbox, CheckboxGroup} from "@createnl/grouped-che
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
-import Title from "../title.jsx";
+import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 
 // Enchant item

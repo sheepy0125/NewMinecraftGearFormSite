@@ -1,6 +1,6 @@
 // Title component
 
-import BaseWidget from "./boilerplate/widgets/baseWidget.jsx";
+import BaseWidget from "./widgets/baseWidget.jsx";
 
 export default function Title(props) {
 	return (
