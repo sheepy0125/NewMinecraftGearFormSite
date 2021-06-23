@@ -172,14 +172,16 @@ export default function FormEnchants(props) {
 					<p className="mx-auto font-bold">{item.itemName}</p>
 
 					{/* Item name */}
-					<label>
-						<p>Name of {item.itemName}</p>
-						<input type="text" name={`${item.itemName} Name`} className="w-full" maxLength={55} for={item.itemName} onChange={itemNameChanged} />
-					</label>
+					<div className="name">
+						<label>
+							<p>Name of {item.itemName}</p>
+							<input type="text" name={`${item.itemName} Name`} className="w-full" maxLength={55} for={item.itemName} onChange={itemNameChanged} />
+						</label>
+					</div>
 
 					<div className="mx-auto my-2">
 						{/* Checkboxes */}
-						{item.checkboxes && (
+						<div className="checkboxes">
 							<CheckboxGroup>
 								{/* Iterate through each enchant */}
 								{item.checkboxes.map((enchant) => (
@@ -195,49 +197,60 @@ export default function FormEnchants(props) {
 									<EnchantItem>All of the above</EnchantItem>
 								</Label>
 							</CheckboxGroup>
-						)}
+						</div>
 
 						{/* Multiple selection */}
-						{item.multipleSelection && (
-							<div>
-								{/* Iterate through each list */}
-								{item.multipleSelection.map((multipleSelectionList, listIndex) => (
-									<div className="my-4" key={`${item.itemName} multiple selection list ${listIndex}`}>
-										{/* Iterate through each enchant */}
-										{multipleSelectionList.map((enchant) => (
-											<Label key={`${item.itemName} multiple selection ${enchant}`}>
+						<div className="multiple-selection">
+							{/* Iterate through each list */}
+							{item.multipleSelection.map((multipleSelectionList, listIndex) => (
+								<>
+									{multipleSelectionList.length > 0 && (
+										<div className="my-4" key={`${item.itemName} multiple selection list ${listIndex}`}>
+											{/* Iterate through each enchant */}
+											{multipleSelectionList.map((enchant) => (
+												<Label key={`${item.itemName} multiple selection ${enchant}`}>
+													<EnchantRadioButton
+														enchant={enchant}
+														itemName={item.itemName}
+														multipleSelectionList={multipleSelectionList}
+														onChange={enchantChangedRadio}
+														listIndex={listIndex}
+													/>
+													<EnchantItem>{enchant}</EnchantItem>
+												</Label>
+											))}
+											<hr className="border-black" />
+											{/* None */}
+											<Label>
 												<EnchantRadioButton
-													enchant={enchant}
+													enchant={null}
 													itemName={item.itemName}
 													multipleSelectionList={multipleSelectionList}
 													onChange={enchantChangedRadio}
 													listIndex={listIndex}
 												/>
-												<EnchantItem>{enchant}</EnchantItem>
+												<EnchantItem>None</EnchantItem>
 											</Label>
-										))}
-										<hr className="border-black" />
-										{/* None */}
-										<Label>
-											<EnchantRadioButton
-												enchant={null}
-												itemName={item.itemName}
-												multipleSelectionList={multipleSelectionList}
-												onChange={enchantChangedRadio}
-												listIndex={listIndex}
-											/>
-											<EnchantItem>None</EnchantItem>
-										</Label>
-									</div>
-								))}
-							</div>
-						)}
+										</div>
+									)}
+								</>
+							))}
+						</div>
 					</div>
 					{/* Additional information */}
-					<label>
-						<p>Additional information</p>
-						<input type="text" name={`${item.itemName} Additional`} className="w-full" maxLength={128} for={item.itemName} onChange={itemAdditionalChanged} />
-					</label>
+					<div className="additional">
+						<label>
+							<p>Additional information</p>
+							<input
+								type="text"
+								name={`${item.itemName} Additional`}
+								className="w-full"
+								maxLength={128}
+								for={item.itemName}
+								onChange={itemAdditionalChanged}
+							/>
+						</label>
+					</div>
 				</div>
 			))
 		);
