@@ -9,6 +9,7 @@ import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
+import SubmitOrder from "../submitOrder.jsx";
 
 // Enchant item
 function EnchantItem(props) {
@@ -228,6 +229,7 @@ export default function FormEnchants(props) {
 													multipleSelectionList={multipleSelectionList}
 													onChange={enchantChangedRadio}
 													listIndex={listIndex}
+													defaultChecked={true}
 												/>
 												<EnchantItem>None</EnchantItem>
 											</Label>
@@ -300,7 +302,10 @@ export default function FormEnchants(props) {
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Select your enchantments for your selected gear.</p>
 				{itemInputs !== null ? (
-					<BaseWidget className="grid-cols-2 gap-2 mx-auto bg-pink-400 lg:grid-cols-3 xl:grid-cols-4 md:grid">{itemInputs}</BaseWidget>
+					<>
+						<BaseWidget className="grid-cols-2 gap-2 mx-auto bg-pink-400 lg:grid-cols-3 xl:grid-cols-4 md:grid">{itemInputs}</BaseWidget>
+						<SubmitOrder content={inputContent} />
+					</>
 				) : (
 					<LoadingWidget />
 				)}

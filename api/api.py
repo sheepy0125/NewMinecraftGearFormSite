@@ -5,6 +5,7 @@ Created on 06/14/2021
 
 """ Setup """
 from flask import Flask, request
+from random import randint
 from json import load
 
 api: Flask = Flask(__name__, template_folder=None, static_folder="static")
@@ -57,6 +58,13 @@ def get_enchants_for_gear() -> dict:
 			}
 
 		return {"worked": True, "data": {"sorted_list": maintaining_order_selected_gear_items, "enchant_dict": enchant_dict}}
+
+# Submit
+@api.route("/submit", methods=["POST"])
+def submit_route():
+	order_id = 1
+	order_pin = str(randint(0, 9999)).zfill(4)
+	return {"worked": True, "data": {"order_id": order_id, "order_pin": order_pin}}
 
 """ Error handlers """
 
