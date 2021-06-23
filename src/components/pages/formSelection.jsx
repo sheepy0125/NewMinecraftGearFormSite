@@ -134,17 +134,6 @@ export default function FormSelection(props) {
 				) : (
 					<LoadingWidget />
 				)}
-				{/* <BaseWidget>
-					<p>Debug</p>
-					<BaseWidget>
-						<p>Order number dictionary</p>
-						<pre className="mx-auto font-thin text-left max-w-max">{JSON.stringify(orderNumberDictionary, null, 4)}</pre>
-					</BaseWidget>
-					<BaseWidget>
-						<p>Item prices dictionary</p>
-						<pre className="mx-auto font-thin text-left max-w-max">{JSON.stringify(itemPrices, null, 4)}</pre>
-					</BaseWidget>
-				</BaseWidget> */}
 			</BaseWidget>
 		</MainWidget>
 	);
