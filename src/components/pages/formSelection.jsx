@@ -94,6 +94,7 @@ export default function FormSelection(props) {
 					max={item.max}
 					minLength={1}
 					defaultValue="0"
+					onWheel={(event) => event.target.blur()}
 					onChange={numberChanged}
 					cost={item.cost}
 					className="w-full text-center rounded-sm outline-none ring-0 ring-blue-600 focus:ring-2"
