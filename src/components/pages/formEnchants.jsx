@@ -76,8 +76,6 @@ export default function FormEnchants(props) {
 		const enchantment = event.target.getAttribute("enchant");
 		const checked = event.target.checked;
 
-		console.log({event: event, itemFor: itemFor, enchantment: enchantment, checked: checked});
-
 		setInputContent((prevInputContent) => {
 			const newEnchantmentsForItem = prevInputContent[itemFor].enchantments;
 
@@ -165,14 +163,6 @@ export default function FormEnchants(props) {
 		const itemFor = event.target.getAttribute("for");
 		textInputChanged({event: event, keyFor: itemFor, textKey: "additional"});
 	}
-
-	useEffect(() => {
-		console.log("%c New input content is here! Here it is...", "color: green; font-weight: 600; font-size: 1.5rem;");
-		console.log(
-			`%c${JSON.stringify(inputContent, null, 4)}`,
-			"color: black; background-color: skyblue; font-weight: 100; max-width: max-content; font-size: 0.875rem;"
-		);
-	}, [inputContent]);
 
 	// Render item inputs
 	function renderItemInputs({inputList}) {
