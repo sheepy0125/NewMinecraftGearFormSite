@@ -106,7 +106,7 @@ export default function FormSelection(props) {
 
 	// Go to next page
 	function goToNextPage() {
-		props.goToNextPage({orderNumberDictionary: orderNumberDictionary, totalPrice: totalPrice});
+		props.nextPage({orderNumberDictionary: orderNumberDictionary, totalPrice: totalPrice});
 	}
 
 	// Fetch inputs on first load

@@ -3,20 +3,28 @@ import {useState} from "react";
 
 import FormSelection from "./formSelection.jsx";
 import FormEnchants from "./formEnchants.jsx";
+import GeneralInformation from "./generalInformation.jsx";
 
 export default function Form() {
-	const [gearOrderData, setGearOrderData] = useState({});
-	const [isSelecting, setIsSelecting] = useState(true);
+	const [currentPage, setCurrentPage] = useState(gearSelectionPage());
 
-	// Go to next page
-	function goToNextPage({orderNumberDictionary, totalPrice}) {
-		setIsSelecting(false);
-		setGearOrderData({orderNumberDictionary: orderNumberDictionary, totalPrice: totalPrice});
+	// Form pages
+	function gearSelectionPage() {
+		return <FormSelection nextPage={goToEnchantSelectionPage} />;
+	}
+	function enchantSelectionPage(content) {
+		return <FormEnchants orderNumberDictionary={content.orderNumberDictionary} nextPage={goToGeneralInformationPage} />;
+	}
+	function generalInformationPage(content) {
+		return <GeneralInformation content={content} />;
 	}
 
-	return isSelecting ? (
-		<FormSelection goToNextPage={goToNextPage} setIsSelecting={setIsSelecting} />
-	) : (
-		<FormEnchants orderNumberDictionary={gearOrderData.orderNumberDictionary} totalPrice={gearOrderData.totalPrice} />
-	);
+	function goToEnchantSelectionPage(content) {
+		setCurrentPage(enchantSelectionPage(content));
+	}
+	function goToGeneralInformationPage(content) {
+		setCurrentPage(generalInformationPage(content));
+	}
+
+	return currentPage;
 }

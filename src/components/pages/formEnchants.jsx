@@ -9,7 +9,7 @@ import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
-import SubmitOrder from "../submitOrder.jsx";
+import Button from "../boilerplate/button.jsx";
 
 // Enchant item
 function EnchantItem(props) {
@@ -304,7 +304,9 @@ export default function FormEnchants(props) {
 				{itemInputs !== null ? (
 					<>
 						<BaseWidget className="grid-cols-2 gap-2 mx-auto bg-pink-400 lg:grid-cols-3 xl:grid-cols-4 md:grid">{itemInputs}</BaseWidget>
-						<SubmitOrder content={inputContent} />
+						<div onClick={() => props.nextPage(inputContent)}>
+							<Button>Next page</Button>
+						</div>
 					</>
 				) : (
 					<LoadingWidget />

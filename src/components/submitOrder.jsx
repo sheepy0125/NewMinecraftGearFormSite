@@ -7,6 +7,9 @@ import Button from "./boilerplate/button.jsx";
 
 // Submit
 function submit({content, history}) {
+	console.log("%cSubmitting order...", "color: white; background-color: purple");
+	console.log(JSON.stringify(content, null, 4));
+
 	post("/submit", content).then((resp) => {
 		console.log(resp.data);
 
