@@ -40,7 +40,7 @@ function EnchantRadioButton(props) {
 			onChange={onChange}
 			enchant={enchant}
 			selection-list={multipleSelectionList}
-			for={itemName}
+			item-for={itemName}
 			defaultChecked={defaultChecked}
 		/>
 	);
@@ -52,7 +52,7 @@ function EnchantCheckbox(props) {
 	const itemName = props.itemName;
 	const onChange = props.onChange;
 
-	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} for={itemName} />;
+	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} item-for={itemName} />;
 }
 
 // Form enchants
@@ -72,7 +72,7 @@ export default function FormEnchants(props) {
 
 	// Enchant changed
 	function enchantChangedCheckbox(event) {
-		const itemFor = event.target.getAttribute("for");
+		const itemFor = event.target.getAttribute("item-for");
 		const enchantment = event.target.getAttribute("enchant");
 		const checked = event.target.checked;
 
@@ -91,7 +91,7 @@ export default function FormEnchants(props) {
 		});
 	}
 	function enchantChangedRadio(event) {
-		const itemFor = event.target.getAttribute("for");
+		const itemFor = event.target.getAttribute("item-for");
 		const enchantment = event.target.getAttribute("enchant");
 		const selectionList = String(event.target.getAttribute("selection-list")).split(",");
 
@@ -118,7 +118,7 @@ export default function FormEnchants(props) {
 
 	// All enchant checkbox
 	function allEnchantCheckboxChanged(event) {
-		const itemFor = event.target.getAttribute("for");
+		const itemFor = event.target.getAttribute("item-for");
 		const checkboxList = String(event.target.getAttribute("checkbox-list")).split(",");
 		const checked = event.target.checked;
 
@@ -154,13 +154,13 @@ export default function FormEnchants(props) {
 
 	// Item name changed
 	function itemNameChanged(event) {
-		const itemFor = event.target.getAttribute("for");
+		const itemFor = event.target.getAttribute("item-for");
 		textInputChanged({event: event, keyFor: itemFor, textKey: "name"});
 	}
 
 	// Item additional changed
 	function itemAdditionalChanged(event) {
-		const itemFor = event.target.getAttribute("for");
+		const itemFor = event.target.getAttribute("item-for");
 		textInputChanged({event: event, keyFor: itemFor, textKey: "additional"});
 	}
 
@@ -175,7 +175,7 @@ export default function FormEnchants(props) {
 					<div className="name">
 						<label>
 							<p>Name of {item.itemName}</p>
-							<input type="text" name={`${item.itemName} Name`} className="w-full" maxLength={55} for={item.itemName} onChange={itemNameChanged} />
+							<input type="text" name={`${item.itemName} Name`} className="w-full" maxLength={55} item-for={item.itemName} onChange={itemNameChanged} />
 						</label>
 					</div>
 
@@ -193,7 +193,7 @@ export default function FormEnchants(props) {
 								<hr className="border-black" />
 								{/* All of the above */}
 								<Label>
-									<AllCheckerCheckbox for={item.itemName} checkbox-list={item.checkboxes} onChange={allEnchantCheckboxChanged} />
+									<AllCheckerCheckbox item-for={item.itemName} checkbox-list={item.checkboxes} onChange={allEnchantCheckboxChanged} />
 									<EnchantItem>All of the above</EnchantItem>
 								</Label>
 							</CheckboxGroup>
@@ -203,12 +203,12 @@ export default function FormEnchants(props) {
 						<div className="multiple-selection">
 							{/* Iterate through each list */}
 							{item.multipleSelection.map((multipleSelectionList, listIndex) => (
-								<>
+								<div key={`Multiple selection list ${listIndex} for ${item.itemName} wrapper wrapper`}>
 									{multipleSelectionList.length > 0 && (
-										<div className="my-4" key={`${item.itemName} multiple selection list ${listIndex}`}>
+										<div className="my-4" key={`Multiple selection list ${listIndex} for ${item.itemName} wrapper`}>
 											{/* Iterate through each enchant */}
 											{multipleSelectionList.map((enchant) => (
-												<Label key={`${item.itemName} multiple selection ${enchant}`}>
+												<Label key={`Multiple selection enchantment ${enchant} for ${item.itemName}`}>
 													<EnchantRadioButton
 														enchant={enchant}
 														itemName={item.itemName}
@@ -233,7 +233,7 @@ export default function FormEnchants(props) {
 											</Label>
 										</div>
 									)}
-								</>
+								</div>
 							))}
 						</div>
 					</div>
@@ -246,7 +246,7 @@ export default function FormEnchants(props) {
 								name={`${item.itemName} Additional`}
 								className="w-full"
 								maxLength={128}
-								for={item.itemName}
+								item-for={item.itemName}
 								onChange={itemAdditionalChanged}
 							/>
 						</label>
