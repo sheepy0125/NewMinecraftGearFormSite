@@ -6,6 +6,7 @@ import {AllCheckerCheckbox, Checkbox, CheckboxGroup} from "@createnl/grouped-che
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
+import FormWidget from "../boilerplate/widgets/formWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
@@ -169,7 +170,7 @@ export default function FormEnchants(props) {
 	function renderItemInputs({inputList}) {
 		setItemInputs(
 			inputList.map((item) => (
-				<div className="block w-full px-8 py-4 my-2 text-center bg-pink-300 rounded-lg md:my-0" key={`${item.itemName}`}>
+				<div className="block w-full px-8 py-4 text-center bg-pink-300 rounded-lg" key={`${item.itemName}`}>
 					<p className="mx-auto font-bold">{item.itemName}</p>
 
 					{/* Item name */}
@@ -303,7 +304,7 @@ export default function FormEnchants(props) {
 				<p className="font-thin">Select your enchantments for your selected gear.</p>
 				{itemInputs !== null ? (
 					<>
-						<BaseWidget className="grid-cols-2 gap-2 mx-auto bg-pink-400 lg:grid-cols-3 xl:grid-cols-4 md:grid">{itemInputs}</BaseWidget>
+						<FormWidget>{itemInputs}</FormWidget>
 						<div onClick={() => props.nextPage(inputContent)}>
 							<Button>Next page</Button>
 						</div>

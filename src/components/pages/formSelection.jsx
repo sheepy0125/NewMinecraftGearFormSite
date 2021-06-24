@@ -5,6 +5,7 @@ import {get} from "axios";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
+import FormWidget from "../boilerplate/widgets/formWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
@@ -82,8 +83,8 @@ export default function FormSelection(props) {
 	// Convert the JSON data to input tags
 	function convertToInputs(data) {
 		return data.map((item) => (
-			<fieldset key={item.name} className="p-4 border-2 border-pink-400 rounded-md">
-				<legend className="px-2 py-0 mx-auto">{item.name}</legend>
+			<div className="block w-full px-8 py-4 text-center bg-pink-300 rounded-lg" key={item.name}>
+				<p>{item.name}</p>
 				<p className="font-medium">
 					This costs {item.cost} diamond{item.cost !== 1 ? "s" : ""}.
 				</p>
@@ -100,7 +101,7 @@ export default function FormSelection(props) {
 					className="w-full text-center rounded-sm outline-none ring-0 ring-blue-600 focus:ring-2"
 					required
 				/>
-			</fieldset>
+			</div>
 		));
 	}
 
@@ -122,9 +123,9 @@ export default function FormSelection(props) {
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Select what you would like to order here.</p>
 				{itemInputs !== null ? (
-					<BaseWidget>
+					<BaseWidget className="bg-pink-400">
 						<TotalCost />
-						<div className="grid-cols-2 gap-4 mx-auto lg-4 xl:grid-cols-3 md:grid">{itemInputs}</div>
+						<FormWidget>{itemInputs}</FormWidget>
 						<TotalCost />
 						<br />
 						<span onClick={goToNextPage}>

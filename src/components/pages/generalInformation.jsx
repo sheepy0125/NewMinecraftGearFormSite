@@ -65,7 +65,7 @@ export default function GeneralInformation(props) {
 			<BaseWidget className="text-xl text-center">
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Input general information here.</p>
-				<BaseWidget>
+				<BaseWidget className="bg-pink-400">
 					<label className="block p-4">
 						<p>Username</p>
 						<input type="text" value={username} onChange={usernameChanged} maxLength={usernameMaxLength} minLength={usernameMinLength} />
