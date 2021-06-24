@@ -6,6 +6,7 @@ import LoadingWidget from "./components/boilerplate/widgets/loadingWidget.jsx";
 const LazyIndex = lazy(() => import("./components/pages/index.jsx"));
 const LazyForm = lazy(() => import("./components/pages/form.jsx"));
 const LazySubmitResult = lazy(() => import("./components/pages/submitResult.jsx"));
+const LazyApiError = lazy(() => import("./components/pages/errors/apiError.jsx"));
 const LazyPageNotFound = lazy(() => import("./components/pages/errors/pageNotFound.jsx"));
 const LazyNotImplemented = lazy(() => import("./components/pages/errors/notImplemented.jsx"));
 
@@ -32,6 +33,11 @@ export default function App() {
 					{/* Submit result */}
 					<Route path="/submit-result">
 						<LazySubmitResult />
+					</Route>
+
+					{/* API error */}
+					<Route path="/api-error">
+						<LazyApiError />
 					</Route>
 
 					{/* Not implemented */}

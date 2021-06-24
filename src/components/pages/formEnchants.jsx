@@ -3,6 +3,7 @@
 import {useState, useEffect} from "react";
 import {post} from "axios";
 import {AllCheckerCheckbox, Checkbox, CheckboxGroup} from "@createnl/grouped-checkboxes";
+import {useHistory} from "react-router-dom";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
@@ -59,6 +60,8 @@ function EnchantCheckbox(props) {
 
 // Form enchants
 export default function FormEnchants(props) {
+	const history = useHistory();
+
 	const [sortedList, setSortedList] = useState(null);
 	const [enchantDict, setEnchantDict] = useState(null);
 	const [itemInputs, setItemInputs] = useState(null);
@@ -66,10 +69,14 @@ export default function FormEnchants(props) {
 
 	// Fetch the data
 	function fetchData() {
-		post("/get_enchants_for_gear", Object.keys(props.orderNumberDictionary)).then((resp) => {
-			setSortedList(resp.data.data.sorted_list);
-			setEnchantDict(resp.data.data.enchant_dict);
-		});
+		post("/get_enchants_for_gear", Object.keys(props.orderNumberDictionary))
+			.then((resp) => {
+				setSortedList(resp.data.data.sorted_list);
+				setEnchantDict(resp.data.data.enchant_dict);
+			})
+			.catch((resp) => {
+				history.push("/api-error");
+			});
 	}
 
 	// Enchant changed

@@ -1,6 +1,7 @@
 // Form page
 
 import {useState, useEffect} from "react";
+import {useHistory} from "react-router-dom";
 import {get} from "axios";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
@@ -12,6 +13,8 @@ import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 
 export default function FormSelection(props) {
+	const history = useHistory();
+
 	const [itemInputs, setItemInputs] = useState(null);
 	const [orderNumberDictionary, setOrderNumberDictionary] = useState({});
 	const [itemPrices, setItemPrices] = useState({});
@@ -24,7 +27,7 @@ export default function FormSelection(props) {
 				setItemInputs(convertToInputs(resp.data.data));
 			})
 			.catch((resp) => {
-				setItemInputs(<div>An error as occurred!</div>);
+				history.push("/api-error");
 			});
 	}
 
