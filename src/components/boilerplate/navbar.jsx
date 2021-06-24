@@ -34,10 +34,10 @@ export default function Navbar(props) {
 				<NavItem currentPage={currentPage} link="/form">
 					Form
 				</NavItem>
-				<NavItem currentPage={currentPage} link="/NotImplemented">
+				<NavItem currentPage={currentPage} link="/not-implemented">
 					View orders
 				</NavItem>
-				<NavItem currentPage={currentPage} link="/NotImplemented">
+				<NavItem currentPage={currentPage} link="/not-implemented">
 					Enchantment dictionary
 				</NavItem>
 			</nav>

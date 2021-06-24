@@ -19,7 +19,7 @@ function submit({content, history}) {
 		const estimatedCost = content.general.estimatedCost;
 
 		// Redirect to submit page
-		history.push(`/submitResult?orderID=${orderID}&orderPIN=${orderPIN}&orderUsername=${orderUsername}&estimatedCost=${estimatedCost}`);
+		history.push(`/submit-result?orderID=${orderID}&orderPIN=${orderPIN}&orderUsername=${orderUsername}&estimatedCost=${estimatedCost}`);
 	});
 }
 

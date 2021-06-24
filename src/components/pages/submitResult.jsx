@@ -18,7 +18,7 @@ export default function SubmitResult() {
 				<p className="font-normal">Please drop off your payment at Sheepy's base.</p>
 				<p className="font-normal">
 					The estimated cost of your order is {paramsDictionary.estimatedCost} diamonds. Head over to{" "}
-					<Link to="/NotImplemented" className="text-blue-900 cursor-pointer hover:underline">
+					<Link to="/not-implemented" className="text-blue-900 cursor-pointer hover:underline">
 						the calculator
 					</Link>{" "}
 					for the actual price.
@@ -26,7 +26,7 @@ export default function SubmitResult() {
 				<p className="font-normal">If you want to edit or remove your order, your PIN is {paramsDictionary.orderPIN}.</p>
 				<p className="font-normal">
 					You can view it{" "}
-					<Link to="/NotImplemented" className="text-blue-900 cursor-pointer hover:underline">
+					<Link to="/not-implemented" className="text-blue-900 cursor-pointer hover:underline">
 						here
 					</Link>
 					.

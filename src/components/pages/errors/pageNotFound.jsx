@@ -11,7 +11,7 @@ export default function NotFoundError() {
 				<p className="font-normal">Make sure you typed in the address correctly if you entered it manually.</p>
 				<p className="font-normal">
 					If you believe this to be an error, you may{" "}
-					<Link to="/NotImplemented" className="text-blue-900 cursor-pointer hover:underline">
+					<Link to="/not-implemented" className="text-blue-900 cursor-pointer hover:underline">
 						contact Sheepy
 					</Link>
 					.

@@ -30,12 +30,12 @@ export default function App() {
 					</Route>
 
 					{/* Submit result */}
-					<Route path="/submitResult">
+					<Route path="/submit-result">
 						<LazySubmitResult />
 					</Route>
 
 					{/* Not implemented */}
-					<Route path="/NotImplemented">
+					<Route path="/not-implemented">
 						<LazyNotImplemented />
 					</Route>
 
