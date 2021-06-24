@@ -3,7 +3,7 @@
 import {useLocation, Link} from "react-router-dom";
 import {parse} from "query-string";
 
-import ErrorWidget from "../boilerplate/widgets/errorWidget.jsx";
+import ErrorWidget from "../boilerplate/widgets/boxWidget.jsx";
 import Button from "../boilerplate/button.jsx";
 
 export default function SubmitResult() {

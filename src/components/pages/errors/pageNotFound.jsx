@@ -1,12 +1,12 @@
 // 404: Page not found error page
 
-import ErrorWidget from "../../boilerplate/widgets/errorWidget.jsx";
+import BoxWidget from "../../boilerplate/widgets/boxWidget.jsx";
 import Button from "../../boilerplate/button.jsx";
 import {Link} from "react-router-dom";
 
 export default function NotFoundError() {
 	return (
-		<ErrorWidget message="This page doesn't exist!">
+		<BoxWidget message="This page doesn't exist!">
 			<div className="text-xl">
 				<p className="font-normal">Make sure you typed in the address correctly if you entered it manually.</p>
 				<p className="font-normal">
@@ -22,6 +22,6 @@ export default function NotFoundError() {
 					Return home
 				</Button>
 			</Link>
-		</ErrorWidget>
+		</BoxWidget>
 	);
 }

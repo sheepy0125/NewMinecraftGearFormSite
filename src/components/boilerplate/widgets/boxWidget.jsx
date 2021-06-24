@@ -1,8 +1,8 @@
-// Error widget
+// Box widget
 
 import BaseWidget from "./baseWidget.jsx";
 
-export default function ErrorWidget(props) {
+export default function BoxWidget(props) {
 	return (
 		<BaseWidget className="block mx-auto max-w-max">
 			<p className="font-mono text-3xl">{props.message}</p>
