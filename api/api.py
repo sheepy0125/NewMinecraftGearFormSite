@@ -130,10 +130,10 @@ def get_enchants_for_gear() -> dict:
 def submit_route() -> dict:
 	ordered_json = request.json
 
-	order_username = ordered_json["general"]["username"]
-	ordered_content_dict = ordered_json; del ordered_content_dict["general"]
+	order_username: str = ordered_json["general"]["username"]
+	order_prioritize: bool = ordered_json["general"]["prioritize"]	
+	ordered_content_dict: dict = ordered_json; del ordered_content_dict["general"]
 	order_pin: str = get_random_pin()
-	order_prioritize:bool = True # This isn't implemented yet. I will add this in the next commit.
 	order_queue_order: int = get_order_queue_order(prioritize=order_prioritize)
 
 	tz = timezone("US/Eastern"); creation_date = datetime.now(); creation_date = creation_date.replace(tzinfo = tz); creation_date = creation_date.astimezone(tz) # Get time in ET

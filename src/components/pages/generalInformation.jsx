@@ -16,6 +16,7 @@ export default function GeneralInformation(props) {
 	const [username, setUsername] = useState("");
 	const [additional, setAdditional] = useState("");
 	const [usernameTooShort, setUsernameTooShort] = useState(true);
+	const [prioritize, setPrioritize] = useState(true);
 
 	// Get content
 	function getContent(content) {
@@ -24,7 +25,8 @@ export default function GeneralInformation(props) {
 			general: {
 				...content.general,
 				username: username,
-				additional: additional
+				additional: additional,
+				prioritize: prioritize
 			}
 		};
 	}
@@ -48,6 +50,12 @@ export default function GeneralInformation(props) {
 		setAdditional(newAdditional);
 	}
 
+	// Prioritize checkbox changed
+	function prioritizeCheckboxChanged(event) {
+		const newChecked = event.target.checked;
+		setPrioritize(newChecked);
+	}
+
 	return (
 		<MainWidget>
 			<Title>Sheepy's God Gear Services - Form</Title>
@@ -63,6 +71,9 @@ export default function GeneralInformation(props) {
 					<label className="block p-4">
 						<p>Additional information</p>
 						<input type="text" value={additional} onChange={additionalChanged} maxLength={additionalMaxLength} />
+					</label>
+					<label className="block p-4">
+						<input type="checkbox" defaultChecked onChange={prioritizeCheckboxChanged} /> Prioritize order (+10 diamonds)
 					</label>
 					<br />
 					{!usernameTooShort ? <SubmitOrder content={getContent(props.content)} /> : <p>Your username isn't valid.</p>}
