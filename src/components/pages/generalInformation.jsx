@@ -15,7 +15,7 @@ const additionalMaxLength = 128;
 export default function GeneralInformation(props) {
 	const [username, setUsername] = useState("");
 	const [additional, setAdditional] = useState("");
-	const [usernameValid, setUsernameValid] = useState(false);
+	const [usernameTooShort, setUsernameTooShort] = useState(true);
 
 	// Get content
 	function getContent(content) {
@@ -34,14 +34,10 @@ export default function GeneralInformation(props) {
 		const newUsername = event.target.value;
 
 		// Check username
-		const usernameTooLong = newUsername.length > usernameMaxLength;
-		const usernameTooShort = newUsername.length < usernameMinLength;
-		const usernameContainsSpace = /\s+$/.test(newUsername); // Totally not copied off of StackOverflow
-		if (usernameTooShort) setUsernameValid(false);
-		if (usernameTooLong || usernameTooShort || usernameContainsSpace) {
-			// If username contains space or is too long then don't update the username
-			if (usernameTooLong || usernameContainsSpace) return;
-		} else setUsernameValid(true);
+		const usernameTooShortCheck = newUsername.length < usernameMinLength;
+		const usernameInvalidCharacterCheck = /[^a-zA-Z_]/.test(newUsername); // Totally not copied off of StackOverflow
+		usernameTooShortCheck ? setUsernameTooShort(true) : setUsernameTooShort(false);
+		if (usernameInvalidCharacterCheck) return;
 
 		setUsername(newUsername);
 	}
@@ -49,12 +45,6 @@ export default function GeneralInformation(props) {
 	// Additional changed
 	function additionalChanged(event) {
 		const newAdditional = event.target.value;
-
-		// Check additional
-		const additionalTooLong = newAdditional.length > additionalMaxLength;
-		if (additionalTooLong) return;
-		else setUsernameValid(true);
-
 		setAdditional(newAdditional);
 	}
 
@@ -68,14 +58,14 @@ export default function GeneralInformation(props) {
 				<BaseWidget className="bg-pink-400">
 					<label className="block p-4">
 						<p>Username</p>
-						<input type="text" value={username} onChange={usernameChanged} maxLength={usernameMaxLength} minLength={usernameMinLength} />
+						<input type="text" value={username} onChange={usernameChanged} minLength={usernameMinLength} maxLength={usernameMaxLength} />
 					</label>
 					<label className="block p-4">
 						<p>Additional information</p>
 						<input type="text" value={additional} onChange={additionalChanged} maxLength={additionalMaxLength} />
 					</label>
 					<br />
-					{usernameValid ? <SubmitOrder content={getContent(props.content)} /> : <p>Your username isn't valid.</p>}
+					{!usernameTooShort ? <SubmitOrder content={getContent(props.content)} /> : <p>Your username isn't valid.</p>}
 				</BaseWidget>
 			</BaseWidget>
 		</MainWidget>
