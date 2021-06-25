@@ -157,7 +157,7 @@ def submit_route() -> dict:
 @api.route("/view-all-orders", methods=["GET"])
 def view_all_orders_route() -> dict:
 	allowed_columns: tuple = (Orders.order_id, Orders.username, Orders.creation_date, Orders.last_modified_date, Orders.prioritize, Orders.queue_order, Orders.status) # Don't show unneeded columns
-	all_orders = Orders.query.order_by(Orders.creation_date).with_entities(*allowed_columns).all()
+	all_orders = Orders.query.order_by(Orders.queue_order).with_entities(*allowed_columns).all()
 	all_orders_list: list = [(dict(row)) for row in all_orders] # Convert rows to list of dicts
 	
 	return {"worked": True, "data": all_orders_list}
