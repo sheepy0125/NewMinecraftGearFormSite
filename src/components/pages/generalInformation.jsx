@@ -37,9 +37,9 @@ export default function GeneralInformation(props) {
 
 		// Check username
 		const usernameTooShortCheck = newUsername.length < usernameMinLength;
-		const usernameInvalidCharacterCheck = /[^a-zA-Z_]/.test(newUsername); // Totally not copied off of StackOverflow
-		usernameTooShortCheck ? setUsernameTooShort(true) : setUsernameTooShort(false);
+		const usernameInvalidCharacterCheck = /[^a-zA-Z1-9_]/.test(newUsername); // Totally not copied off of StackOverflow
 		if (usernameInvalidCharacterCheck) return;
+		usernameTooShortCheck ? setUsernameTooShort(true) : setUsernameTooShort(false);
 
 		setUsername(newUsername);
 	}
