@@ -4,6 +4,7 @@ import {useState} from "react";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
+import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import SubmitOrder from "../submitOrder.jsx";
@@ -17,6 +18,7 @@ export default function GeneralInformation(props) {
 	const [additional, setAdditional] = useState("");
 	const [usernameTooShort, setUsernameTooShort] = useState(true);
 	const [prioritize, setPrioritize] = useState(true);
+	const [submitting, setSubmitting] = useState(false);
 
 	// Get content
 	function getContent(content) {
@@ -62,22 +64,34 @@ export default function GeneralInformation(props) {
 			<Navbar currentPage="/form" />
 			<BaseWidget className="text-xl text-center">
 				<p className="font-semibold">Form</p>
-				<p className="font-thin">Input general information here.</p>
-				<BaseWidget className="bg-pink-400">
-					<label className="block p-4">
-						<p>Username</p>
-						<input type="text" value={username} onChange={usernameChanged} minLength={usernameMinLength} maxLength={usernameMaxLength} />
-					</label>
-					<label className="block p-4">
-						<p>Additional information</p>
-						<input type="text" value={additional} onChange={additionalChanged} maxLength={additionalMaxLength} />
-					</label>
-					<label className="block p-4">
-						<input type="checkbox" defaultChecked onChange={prioritizeCheckboxChanged} /> Prioritize order (+10 diamonds)
-					</label>
-					<br />
-					{!usernameTooShort ? <SubmitOrder content={getContent(props.content)} /> : <p>Your username isn't valid.</p>}
-				</BaseWidget>
+				{!submitting ? (
+					<>
+						<p className="font-thin">Input general information here.</p>
+						<BaseWidget className="bg-pink-400">
+							<label className="block p-4">
+								<p>Username</p>
+								<input type="text" value={username} onChange={usernameChanged} minLength={usernameMinLength} maxLength={usernameMaxLength} />
+							</label>
+							<label className="block p-4">
+								<p>Additional information</p>
+								<input type="text" value={additional} onChange={additionalChanged} maxLength={additionalMaxLength} />
+							</label>
+							<label className="block p-4">
+								<input type="checkbox" defaultChecked onChange={prioritizeCheckboxChanged} /> Prioritize order (+10 diamonds)
+							</label>
+							<br />
+							{!usernameTooShort ? (
+								<button onClick={() => setSubmitting(true)}>
+									<SubmitOrder content={getContent(props.content)} />
+								</button>
+							) : (
+								<p>Your username isn't valid.</p>
+							)}
+						</BaseWidget>
+					</>
+				) : (
+					<LoadingWidget />
+				)}
 			</BaseWidget>
 		</MainWidget>
 	);

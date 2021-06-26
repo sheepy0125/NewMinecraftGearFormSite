@@ -6,6 +6,7 @@ import {get} from "axios";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
+import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 
@@ -16,7 +17,7 @@ function TableColumn(props) {
 export default function ViewAllOrders() {
 	const history = useHistory();
 
-	const [orders, setOrders] = useState([]);
+	const [orders, setOrders] = useState(null);
 
 	// Fetch orders
 	function fetchOrders() {
@@ -85,7 +86,7 @@ export default function ViewAllOrders() {
 			<Navbar currentPage="/view-all-orders" />
 			<BaseWidget className="text-xl text-center">
 				<p>Viewing all orders</p>
-				<BaseWidget>{orders}</BaseWidget>
+				{orders ? <BaseWidget>{orders}</BaseWidget> : <LoadingWidget />}
 			</BaseWidget>
 		</MainWidget>
 	);
