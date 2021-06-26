@@ -16,11 +16,14 @@ function submit({content, history}) {
 
 			const orderID = resp.data.data.order_id;
 			const orderPIN = resp.data.data.order_pin;
+			const orderQueueNumber = resp.data.data.order_queue_number;
 			const orderUsername = content.general.username;
 			const estimatedCost = content.general.estimatedCost;
 
 			// Redirect to submit page
-			history.push(`/submit-result?orderID=${orderID}&orderPIN=${orderPIN}&orderUsername=${orderUsername}&estimatedCost=${estimatedCost}`);
+			history.push(
+				`/submit-result?orderID=${orderID}&orderPIN=${orderPIN}&orderQueueNumber=${orderQueueNumber}&orderUsername=${orderUsername}&estimatedCost=${estimatedCost}`
+			);
 		})
 		.catch((resp) => {
 			history.push("/api-error");

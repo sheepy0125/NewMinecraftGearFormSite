@@ -15,6 +15,7 @@ export default function SubmitResult() {
 	return (
 		<BoxWidget message={`Your order (id ${paramsDictionary.orderID}) has been submitted.`}>
 			<div className="text-xl">
+				<p className="text-2xl">Your order's queue number is {paramsDictionary.orderQueueNumber}</p>
 				<p className="font-normal">Please drop off your payment at Sheepy's base.</p>
 				<p className="font-normal">
 					The estimated cost of your order is {paramsDictionary.estimatedCost} diamonds. Head over to{" "}

@@ -151,7 +151,7 @@ def submit_route() -> dict:
 	database.session.add(order_submission)
 	database.session.commit()
 
-	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_pin}}
+	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_pin, "order_queue_number": order_queue_order}}
 
 # View all orders
 @api.route("/view-all-orders", methods=["GET"])
