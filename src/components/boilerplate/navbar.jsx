@@ -26,7 +26,7 @@ export default function Navbar(props) {
 
 	return (
 		<BaseWidget>
-			<p className="font-mono text-lg text-center">Navigation</p>
+			<p className="text-lg text-center">Navigation</p>
 			<nav className="lg:flex">
 				<NavItem currentPage={currentPage} link="/home">
 					Home
