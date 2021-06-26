@@ -3,7 +3,7 @@
 import {useLocation, Link} from "react-router-dom";
 import {parse} from "query-string";
 
-import ErrorWidget from "../boilerplate/widgets/boxWidget.jsx";
+import BoxWidget from "../boilerplate/widgets/boxWidget.jsx";
 import Button from "../boilerplate/button.jsx";
 
 export default function SubmitResult() {
@@ -13,7 +13,7 @@ export default function SubmitResult() {
 	console.log(paramsDictionary);
 
 	return (
-		<ErrorWidget message={`Your order (id ${paramsDictionary.orderID}) has been submitted.`}>
+		<BoxWidget message={`Your order (id ${paramsDictionary.orderID}) has been submitted.`}>
 			<div className="text-xl">
 				<p className="font-normal">Please drop off your payment at Sheepy's base.</p>
 				<p className="font-normal">
@@ -37,6 +37,6 @@ export default function SubmitResult() {
 					Return home
 				</Button>
 			</Link>
-		</ErrorWidget>
+		</BoxWidget>
 	);
 }
