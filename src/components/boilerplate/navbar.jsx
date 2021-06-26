@@ -34,7 +34,7 @@ export default function Navbar(props) {
 				<NavItem currentPage={currentPage} link="/form">
 					Form
 				</NavItem>
-				<NavItem currentPage={currentPage} link="/not-implemented">
+				<NavItem currentPage={currentPage} link="/view-all-orders">
 					View orders
 				</NavItem>
 				<NavItem currentPage={currentPage} link="/not-implemented">
