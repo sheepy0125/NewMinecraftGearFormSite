@@ -9,6 +9,7 @@ import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
+import Hyperlink from "../boilerplate/hyperlink.jsx";
 
 // Table column
 function TableColumn(props) {
@@ -17,11 +18,22 @@ function TableColumn(props) {
 
 // Mobile order row
 function OrderRow(props) {
-	return <div className="sm:flex">{props.children}</div>;
+	return <div className="break-words sm:flex">{props.children}</div>;
 }
 // Mobile order column
 function OrderColumn(props) {
 	return <div className={`flex-1 bg-white border border-black ${props.title ? "bg-gray-200" : "bg-white font-thin sm:text-left"}`}>{props.children}</div>;
+}
+
+// Options
+function Options(props) {
+	return (
+		<>
+				<Hyperlink href={`/not-implemented?id=${props.id}`}>View order</Hyperlink>
+				<Hyperlink href={`/not-implemented?id=${props.id}`}>Edit order</Hyperlink>
+				<Hyperlink href={`/not-implemented?id=${props.id}`}>Delete order</Hyperlink>
+		</>
+	)
 }
 
 // View all orders
@@ -36,60 +48,41 @@ export default function ViewAllOrders() {
 			.then((resp) => {
 				setOrders(convertToHTML(resp.data.data));
 			})
-			.catch((resp) => {
-				history.push("/api-error");
-			});
+
 	}
 
 	// Convert to HTML
 	function convertToHTML(ordersData) {
+		const columns = [
+			{name: "Queue number", valueName: "queue_order"},
+			{name: "ID", valueName: "order_id"},
+			{name: "Username", valueName: "username"},
+			{name: "Creation date", valueName: "creation_date"},
+			{name: "Last modified date", valueName: "last_modified_date"},
+			{name: "Prioritize", valueName: "prioritize"},
+			{name: "Status", valueName: "status"}
+		];
+
 		return (
 			<>
 				{/* Mobile */}
 				<div className="block xl:hidden">
 					{ordersData.map((order) => (
-						<div key={order.order_id} className="text-sm min-w-max lg:text-base">
+						<div key={order.order_id} className="text-sm lg:text-base">
 							<div className="border border-black">
-								<OrderRow>
-									<OrderColumn title>Queue number</OrderColumn>
-									<OrderColumn>{order.queue_order}</OrderColumn>
-								</OrderRow>
-								<OrderRow>
-									<OrderColumn title>Order ID</OrderColumn>
-									<OrderColumn>{order.order_id}</OrderColumn>
-								</OrderRow>
-								<OrderRow>
-									<OrderColumn title>Username</OrderColumn>
-									<OrderColumn>{order.username}</OrderColumn>
-								</OrderRow>
-								<OrderRow>
-									<OrderColumn title>Date ordered</OrderColumn>
-									<OrderColumn>{order.creation_date}</OrderColumn>
-								</OrderRow>
-								<OrderRow>
-									<OrderColumn title>Date last modified</OrderColumn>
-									<OrderColumn>{order.last_modified_date}</OrderColumn>
-								</OrderRow>
-								<OrderRow>
-									<OrderColumn title>Prioritize</OrderColumn>
-									<OrderColumn>{order.prioritize ? "Yes" : "No"}</OrderColumn>
-								</OrderRow>
-								<OrderRow>
-									<OrderColumn title>Status</OrderColumn>
-									<OrderColumn>{order.status}</OrderColumn>
-								</OrderRow>
+								{columns.map((row) => (
+									<OrderRow key={row.name}>
+										<OrderColumn title>{row.name}</OrderColumn>
+										<OrderColumn>
+											{/* If it is a boolean, say yes or no */}
+											{typeof order[row.valueName] !== "boolean" ? order[row.valueName] : order[row.valueName] ? "Yes" : "No"}
+										</OrderColumn>
+									</OrderRow>
+								))}
 								<OrderRow>
 									<OrderColumn title>Options</OrderColumn>
 									<OrderColumn>
-										<Link to="/not-implemented" className="text-blue-900 hover:underline">
-											View order
-										</Link>{" "}
-										<Link to="/not-implemented" className="text-blue-900 hover:underline">
-											Edit order
-										</Link>{" "}
-										<Link to="/not-implemented" className="text-blue-900 hover:underline">
-											Delete order
-										</Link>
+									<Options id={order.order_id} />
 									</OrderColumn>
 								</OrderRow>
 							</div>
@@ -101,13 +94,9 @@ export default function ViewAllOrders() {
 				<table className="hidden w-full mx-auto border border-black xl:table">
 					<thead>
 						<tr className="flex">
-							<TableColumn>Queue number</TableColumn>
-							<TableColumn>Order ID</TableColumn>
-							<TableColumn>Username</TableColumn>
-							<TableColumn>Date ordered</TableColumn>
-							<TableColumn>Date last modified</TableColumn>
-							<TableColumn>Prioritize</TableColumn>
-							<TableColumn>Status</TableColumn>
+							{columns.map((row) => (
+								<TableColumn key={row.name}>{row.name}</TableColumn>
+							))}
 							<TableColumn>Options</TableColumn>
 						</tr>
 					</thead>
@@ -115,23 +104,14 @@ export default function ViewAllOrders() {
 					<tbody>
 						{ordersData.map((order) => (
 							<tr className="flex font-thin" key={order.order_id}>
-								<TableColumn>{order.queue_order}</TableColumn>
-								<TableColumn>{order.order_id}</TableColumn>
-								<TableColumn>{order.username}</TableColumn>
-								<TableColumn>{order.creation_date}</TableColumn>
-								<TableColumn>{order.last_modified_date}</TableColumn>
-								<TableColumn>{order.prioritize ? "Yes" : "No"}</TableColumn>
-								<TableColumn>{order.status}</TableColumn>
+								{columns.map((row) => (
+									<TableColumn key={row.valueName}>
+										{/* If it is a boolean, say yes or no */}
+										{typeof order[row.valueName] !== "boolean" ? order[row.valueName] : order[row.valueName] ? "Yes" : "No"}
+									</TableColumn>
+								))}
 								<TableColumn>
-									<Link to="/not-implemented" className="block text-blue-900 hover:underline">
-										View order
-									</Link>
-									<Link to="/not-implemented" className="block text-blue-900 hover:underline">
-										Edit order
-									</Link>
-									<Link to="/not-implemented" className="block text-blue-900 hover:underline">
-										Delete order
-									</Link>
+									<Options id={order.order_id} />
 								</TableColumn>
 							</tr>
 						))}
@@ -150,9 +130,9 @@ export default function ViewAllOrders() {
 		<MainWidget>
 			<Title>Sheepy's God Gear Services - View all orders</Title>
 			<Navbar currentPage="/view-all-orders" />
-			<BaseWidget className="text-xl text-center">
+			<BaseWidget className="text-center text-lg">
 				<p>Viewing all orders</p>
-				{orders ? <BaseWidget>{orders}</BaseWidget> : <LoadingWidget />}
+				{orders ? <>{orders}</> : <LoadingWidget />}
 			</BaseWidget>
 		</MainWidget>
 	);
