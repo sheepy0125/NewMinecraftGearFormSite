@@ -25,10 +25,10 @@ class Orders(database.Model):
 	order_id = database.Column(database.Integer, primary_key=True)
 	username = database.Column(database.String(16), nullable=False)
 	content = database.Column(database.PickleType, nullable=False)
-	creation_date = database.Column(database.DateTime, nullable=False)
-	last_modified_date = database.Column(database.DateTime, nullable=False)
-	prioritize = database.Column(database.Boolean, nullable=False)
-	queue_order = database.Column(database.Integer, nullable=False)
+	date_created = database.Column(database.DateTime, nullable=False)
+	date_modified = database.Column(database.DateTime, nullable=False)
+	is_prioritized = database.Column(database.Boolean, nullable=False)
+	queue_number = database.Column(database.Integer, nullable=False)
 	status = database.Column(database.String(32), nullable=False)
 	pin = database.Column(database.String(4), nullable=False)
 
@@ -44,46 +44,35 @@ def send_json_file_as_data(filename: str) -> dict:
 def get_random_pin() -> str:
 	return str(randint(0, 9999)).zfill(4)
 
-# Get queue order
-def get_order_queue_order(prioritize: bool) -> int:
-	# Get all orders
-	all_orders_list: list = view_all_orders_route()["data"]
+# Update queue numbers for other orders
+def update_queue_numbers_for_other_orders(starting_queue_number: int, change_by: int=1) -> None:
+	# Get all the orders that need to be changed
+	try: all_orders_need_change = Orders.query.filter(Orders.queue_number >= starting_queue_number).all()
 
-	# If no orders, just return 1
-	if len(all_orders_list) == 0:
-		return 1
+	# No orders need to be changed, time to quit! (AttributeError: 'NoneType' object has no attribute 'queue_number')
+	except AttributeError: return
 
-	prioritized_orders_list: list = []
-	unprioritized_orders_list: list = []
+	for order_need_change in all_orders_need_change:
+		order_need_change.queue_number += change_by
 
-	# Iterate through each order
-	for order in all_orders_list:
-		# Add to respective list
-		if order["prioritize"]: prioritized_orders_list.append(order)
-		else: unprioritized_orders_list.append(order)
+	# Commit changes (if any)
+	if len(all_orders_need_change) > 0:
+		database.session.commit()
 
-	# If prioritizing
+# Get new queue number
+def get_new_queue_number(prioritize: bool) -> int:
+	# If there are no orders, then we can just return 1
+	if Orders.query.count() == 0: return 1
+
 	if prioritize:
-		# Set the queue order to be the number of prioritized orders + 1
-		queue_order: int = len(prioritized_orders_list) + 1
+		# The queue number will be the first order that isn't prioritizing
+		try: return Orders.query.filter_by(is_prioritized=False).first().queue_number
 
-		# Now we will have to go through all unprioritized orders and modify their queue order
-		for order_json in unprioritized_orders_list:
-			order: Orders = Orders.query.filter_by(order_id=order_json["order_id"]).first()
-			order.queue_order += 1
-			print(f"Updated order queue for id of {order_json['order_id']}")
+		# An attribute error will occur when there are no orders that aren't needed to be prioritized
+		except AttributeError: pass
 
-		# Only commit if there were other orders
-		if len(unprioritized_orders_list) > 0:
-			print("Commiting changes")
-			database.session.commit()
-
-	# Not prioritizing
-	else:
-		# Set the queue order to be just the number of orders + 1
-		queue_order: int = len(all_orders_list) + 1
-
-	return queue_order
+	# The queue number will be the last position
+	return Orders.query.count() + 1
 
 """ Routes """
 # Ping
@@ -134,30 +123,33 @@ def submit_route() -> dict:
 	order_prioritize: bool = ordered_json["general"]["prioritize"]	
 	ordered_content_dict: dict = ordered_json; del ordered_content_dict["general"]
 	order_pin: str = get_random_pin()
-	order_queue_order: int = get_order_queue_order(prioritize=order_prioritize)
+	order_queue_number: int = get_new_queue_number(prioritize=order_prioritize)
 
-	tz = timezone("US/Eastern"); creation_date = datetime.now(); creation_date = creation_date.replace(tzinfo = tz); creation_date = creation_date.astimezone(tz) # Get time in ET
+	# Update other queue numbers
+	update_queue_numbers_for_other_orders(starting_queue_number=order_queue_number, change_by=1)
+
+	tz = timezone("US/Eastern"); date_created = datetime.now(); date_created = date_created.replace(tzinfo = tz); date_created = date_created.astimezone(tz) # Get time in ET
 
 	order_submission = Orders(
 		username=order_username,
 		content=ordered_content_dict,
-		pin=order_pin, creation_date=creation_date,
-		last_modified_date=creation_date,
-		queue_order=order_queue_order,
-		prioritize=order_prioritize,
+		pin=order_pin, date_created=date_created,
+		date_modified=date_created,
+		queue_number=order_queue_number,
+		is_prioritized=order_prioritize,
 		status="Recieved"
 	)
 
 	database.session.add(order_submission)
 	database.session.commit()
 
-	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_pin, "order_queue_number": order_queue_order}}
+	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_pin, "order_queue_number": order_queue_number}}
 
 # View all orders
 @api.route("/view-all-orders", methods=["GET"])
 def view_all_orders_route() -> dict:
-	allowed_columns: tuple = (Orders.order_id, Orders.username, Orders.creation_date, Orders.last_modified_date, Orders.prioritize, Orders.queue_order, Orders.status) # Don't show unneeded columns
-	all_orders = Orders.query.order_by(Orders.queue_order).with_entities(*allowed_columns).all()
+	allowed_columns: tuple = (Orders.order_id, Orders.username, Orders.date_created, Orders.date_modified, Orders.is_prioritized, Orders.queue_number, Orders.status) # Don't show unneeded columns
+	all_orders = Orders.query.order_by(Orders.queue_number).with_entities(*allowed_columns).all()
 	all_orders_list: list = [(dict(row)) for row in all_orders] # Convert rows to list of dicts
 	
 	return {"worked": True, "data": all_orders_list}

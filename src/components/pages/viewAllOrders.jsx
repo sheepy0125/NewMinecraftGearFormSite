@@ -1,8 +1,8 @@
 // View all orders page
 
-import { useState, useEffect } from "react";
-import { useHistory, Link } from "react-router-dom";
-import { get } from "axios";
+import {useState, useEffect} from "react";
+import {useHistory, Link} from "react-router-dom";
+import {get} from "axios";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
@@ -56,13 +56,13 @@ export default function ViewAllOrders() {
 	// Convert to HTML
 	function convertToHTML(ordersData) {
 		const columns = [
-			{ name: "Queue number", valueName: "queue_order" },
-			{ name: "ID", valueName: "order_id" },
-			{ name: "Username", valueName: "username" },
-			{ name: "Creation date", valueName: "creation_date" },
-			{ name: "Last modified date", valueName: "last_modified_date" },
-			{ name: "Prioritize", valueName: "prioritize" },
-			{ name: "Status", valueName: "status" },
+			{name: "Queue number", valueName: "queue_number"},
+			{name: "ID", valueName: "order_id"},
+			{name: "Username", valueName: "username"},
+			{name: "Creation date", valueName: "date_created"},
+			{name: "Last modified date", valueName: "date_modified"},
+			{name: "Prioritize", valueName: "is_prioritized"},
+			{name: "Status", valueName: "status"},
 		];
 
 		return (
