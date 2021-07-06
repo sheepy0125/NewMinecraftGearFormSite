@@ -8,8 +8,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
 from json import load
-from datetime import datetime
-from pytz import timezone
+from time import strftime
 
 with open("json_files/config.json") as config_file:
 	config_dict: dict = load(config_file)
@@ -25,8 +24,8 @@ class Orders(database.Model):
 	order_id = database.Column(database.Integer, primary_key=True)
 	username = database.Column(database.String(16), nullable=False)
 	content = database.Column(database.PickleType, nullable=False)
-	date_created = database.Column(database.DateTime, nullable=False)
-	date_modified = database.Column(database.DateTime, nullable=False)
+	date_created = database.Column(database.String(50), nullable=False)
+	date_modified = database.Column(database.String(50), nullable=False)
 	is_prioritized = database.Column(database.Boolean, nullable=False)
 	queue_number = database.Column(database.Integer, nullable=False)
 	status = database.Column(database.String(32), nullable=False)
@@ -39,6 +38,11 @@ def send_json_file_as_data(filename: str) -> dict:
 	with open(f"json_files/{filename.rsplit('.json')[0]}.json") as json_file:
 		json_info: dict = load(json_file)
 		return {"worked": True, "data": json_info}
+
+# Get current time
+def get_current_time() -> str:
+	# Example output: "Monday, July 05 2021 at 09:00:48 PM Eastern"
+	return strftime("%A, %B %d %Y at %I:%M:%S %p Eastern")
 
 # Get random pin
 def get_random_pin() -> str:
@@ -124,17 +128,17 @@ def submit_route() -> dict:
 	ordered_content_dict: dict = ordered_json; del ordered_content_dict["general"]
 	order_pin: str = get_random_pin()
 	order_queue_number: int = get_new_queue_number(prioritize=order_prioritize)
+	date_created: str = get_current_time()
 
 	# Update other queue numbers
 	update_queue_numbers_for_other_orders(starting_queue_number=order_queue_number, change_by=1)
 
-	tz = timezone("US/Eastern"); date_created = datetime.now(); date_created = date_created.replace(tzinfo = tz); date_created = date_created.astimezone(tz) # Get time in ET
-
 	order_submission = Orders(
 		username=order_username,
 		content=ordered_content_dict,
-		pin=order_pin, date_created=date_created,
-		date_modified=date_created,
+		pin=order_pin,
+		date_created=date_created,
+		date_modified="N/A",
 		queue_number=order_queue_number,
 		is_prioritized=order_prioritize,
 		status="Recieved"
