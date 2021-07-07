@@ -25,12 +25,8 @@ export default function FormEnchants(props) {
 	const [sortedList, setSortedList] = useState(null);
 	const [enchantDict, setEnchantDict] = useState(null);
 	const [itemInputs, setItemInputs] = useState(null);
-	const [inputContent, setInputContent] = useState({});
+	const inputContent = useRef({});
 	const renderCount = useRef(0);
-
-	useEffect(() => {
-		renderCount.current += 1;
-	});
 
 	// Fetch the data
 	function fetchData() {
@@ -50,44 +46,43 @@ export default function FormEnchants(props) {
 		const enchantment = event.target.getAttribute("enchant");
 		const checked = event.target.checked;
 
-		setInputContent((prevInputContent) => {
-			const newCheckboxes = prevInputContent[itemFor].enchantments.checkboxes;
-			newCheckboxes[enchantment] = checked;
-			return {
-				...prevInputContent,
-				[itemFor]: {...prevInputContent[itemFor], enchantments: {...prevInputContent[itemFor].enchantments, checkboxes: newCheckboxes}},
-			};
-		});
+		const newCheckboxes = inputContent.current[itemFor].enchantments.checkboxes;
+		newCheckboxes[enchantment] = checked;
+		inputContent.current = {
+			...inputContent.current,
+			[itemFor]: {...inputContent.current[itemFor], enchantments: {...inputContent.current[itemFor].enchantments, checkboxes: newCheckboxes}},
+		};
 	}
 	function enchantChangedRadio(event) {
 		const itemFor = event.target.getAttribute("item-for");
 		const enchantment = event.target.getAttribute("enchant");
 		const selectionList = String(event.target.getAttribute("selection-list")).split(",");
 
-		setInputContent((prevInputContent) => {
-			const newMultipleSelection = prevInputContent[itemFor].enchantments.multipleSelection;
+		const newMultipleSelection = inputContent.current[itemFor].enchantments.multipleSelection;
 
-			// Get the list index based off of an item in selectionList
-			for (const multipleSelectionDict of newMultipleSelection) {
-				// Check if one of the keys for the multiple selection dict isn't the first key of the selectionList
-				if (!Object.keys(multipleSelectionDict).includes(selectionList[0])) continue;
+		// Get the list index based off of an item in selectionList
+		for (const multipleSelectionDict of newMultipleSelection) {
+			// Check if one of the keys for the multiple selection dict isn't the first key of the selectionList
+			if (!Object.keys(multipleSelectionDict).includes(selectionList[0])) continue;
 
-				// This is the correct list.
-				// Set everything in it to be false
-				for (const enchantment of Object.keys(multipleSelectionDict)) multipleSelectionDict[enchantment] = false;
+			// This is the correct list.
+			// Set everything in it to be false
+			for (const enchantment of Object.keys(multipleSelectionDict)) multipleSelectionDict[enchantment] = false;
 
-				// If the enchantment is null, that means it's a none checkbox and we can end here.
-				if (enchantment === null) break;
+			// If the enchantment is null, that means it's a none checkbox and we can end here.
+			if (enchantment === null) break;
 
-				// Set enchantment selected to true
-				multipleSelectionDict[enchantment] = true;
-			}
+			// Set enchantment selected to true
+			multipleSelectionDict[enchantment] = true;
+		}
 
-			return {
-				...prevInputContent,
-				[itemFor]: {...prevInputContent[itemFor], enchantments: {...prevInputContent[itemFor].enchantments, multipleSelection: newMultipleSelection}},
-			};
-		});
+		inputContent.current = {
+			...inputContent.current,
+			[itemFor]: {
+				...inputContent.current[itemFor],
+				enchantments: {...inputContent.current[itemFor].enchantments, multipleSelection: newMultipleSelection},
+			},
+		};
 	}
 
 	// All enchant checkbox
@@ -95,24 +90,24 @@ export default function FormEnchants(props) {
 		const itemFor = event.target.getAttribute("item-for");
 		const checked = event.target.checked;
 
-		setInputContent((prevInputContent) => {
-			const newCheckboxes = prevInputContent[itemFor].enchantments.checkboxes;
-			// Update everything at once
-			for (const enchantment of Object.keys(newCheckboxes)) newCheckboxes[enchantment] = checked;
-			return {
-				...prevInputContent,
-				[itemFor]: {...prevInputContent[itemFor], enchantments: {...prevInputContent[itemFor].enchantments, checkboxes: newCheckboxes}},
-			};
-		});
+		const newCheckboxes = inputContent.current[itemFor].enchantments.checkboxes;
+		// Update everything at once
+		for (const enchantment of Object.keys(newCheckboxes)) newCheckboxes[enchantment] = checked;
+
+		inputContent.current = {
+			...inputContent.current,
+			[itemFor]: {...inputContent.current[itemFor], enchantments: {...inputContent.current[itemFor].enchantments, checkboxes: newCheckboxes}},
+		};
 	}
 
 	// Text input changed
 	function textInputChanged({event, keyFor, textKey}) {
 		const textValue = event.target.value;
 
-		setInputContent((prevInputContent) => {
-			return {...prevInputContent, [keyFor]: {...prevInputContent[keyFor], [textKey]: textValue}};
-		});
+		inputContent.current = {
+			...inputContent.current,
+			[keyFor]: {...inputContent.current[keyFor], [textKey]: textValue},
+		};
 	}
 
 	// Item name changed
@@ -275,7 +270,7 @@ export default function FormEnchants(props) {
 				}
 			}
 
-			setInputContent(defaultInputContent);
+			inputContent.current = defaultInputContent;
 			renderItemInputs({inputList: defaultInputList});
 		}
 	}, [sortedList, enchantDict]); /* eslint-disable-line */
@@ -290,7 +285,7 @@ export default function FormEnchants(props) {
 				{itemInputs !== null ? (
 					<>
 						<FormWidget>{itemInputs}</FormWidget>
-						<div onClick={() => props.nextPage(inputContent)}>
+						<div onClick={() => props.nextPage(inputContent.current)}>
 							<Button>Next page</Button>
 						</div>
 					</>
