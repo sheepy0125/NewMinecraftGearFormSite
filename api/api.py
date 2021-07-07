@@ -31,6 +31,15 @@ class Orders(database.Model):
 	status = database.Column(database.String(32), nullable=False)
 	pin = database.Column(database.String(4), nullable=False)
 
+PUBLIC_COLUMNS: tuple = (
+	Orders.order_id,
+	Orders.username,
+	Orders.date_created,
+	Orders.date_modified,
+	Orders.is_prioritized,
+	Orders.queue_number,
+	Orders.status
+)
 
 """ Functions """
 # Send JSON file as data
@@ -124,7 +133,7 @@ def submit_route() -> dict:
 	ordered_json = request.json
 
 	order_username: str = ordered_json["general"]["username"]
-	order_prioritize: bool = ordered_json["general"]["prioritize"]	
+	order_prioritize: bool = ordered_json["general"]["prioritize"]
 	ordered_content_dict: dict = ordered_json; del ordered_content_dict["general"]
 	order_pin: str = get_random_pin()
 	order_queue_number: int = get_new_queue_number(prioritize=order_prioritize)
@@ -152,11 +161,17 @@ def submit_route() -> dict:
 # View all orders
 @api.route("/view-all-orders", methods=["GET"])
 def view_all_orders_route() -> dict:
-	allowed_columns: tuple = (Orders.order_id, Orders.username, Orders.date_created, Orders.date_modified, Orders.is_prioritized, Orders.queue_number, Orders.status) # Don't show unneeded columns
-	all_orders = Orders.query.order_by(Orders.queue_number).with_entities(*allowed_columns).all()
+	all_orders = Orders.query.order_by(Orders.queue_number).with_entities(*PUBLIC_COLUMNS).all()
 	all_orders_list: list = [(dict(row)) for row in all_orders] # Convert rows to list of dicts
-	
+
 	return {"worked": True, "data": all_orders_list}
+
+# Get order content
+@api.route("/get-order-content", methods=["GET"])
+def get_order_content_route() -> dict:
+	order_id: int = int(request.args["id"])
+	order_content = dict(Orders.query.filter_by(order_id=order_id).with_entities(Orders.content).first())
+	return {"worked": True, "data": order_content}
 
 """ Error handlers """
 
