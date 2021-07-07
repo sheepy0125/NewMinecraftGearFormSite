@@ -29,7 +29,7 @@ function OrderColumn(props) {
 function Options(props) {
 	return (
 		<>
-			<Hyperlink href={`/not-implemented?id=${props.id}`}>View order</Hyperlink>
+			<Hyperlink href={`/view-order?id=${props.id}`}>View order</Hyperlink>
 			<Hyperlink href={`/not-implemented?id=${props.id}`}>Edit order</Hyperlink>
 			<Hyperlink href={`/not-implemented?id=${props.id}`}>Delete order</Hyperlink>
 		</>
