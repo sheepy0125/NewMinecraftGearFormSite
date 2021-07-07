@@ -26,7 +26,6 @@ export default function FormEnchants(props) {
 	const [enchantDict, setEnchantDict] = useState(null);
 	const [itemInputs, setItemInputs] = useState(null);
 	const inputContent = useRef({});
-	const renderCount = useRef(0);
 
 	// Fetch the data
 	function fetchData() {
@@ -293,7 +292,6 @@ export default function FormEnchants(props) {
 					<LoadingWidget />
 				)}
 			</BaseWidget>
-			<p>Your computer has screamed {renderCount.current} times so far.</p>
 		</MainWidget>
 	);
 }
