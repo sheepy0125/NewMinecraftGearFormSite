@@ -14,9 +14,9 @@ with open("json_files/config.json") as config_file:
 	config_dict: dict = load(config_file)
 
 api: Flask = Flask(__name__, template_folder=None, static_folder="static")
-# api.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///database/order.db" # Production
-api.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///database/test.db" # Testing
-api.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+# api.config["SQLALCHEMY_DATABASE_URI"]: str = f"sqlite:///database/order.db" # Production
+api.config["SQLALCHEMY_DATABASE_URI"]: str = f"sqlite:///database/test.db" # Testing
+api.config["SQLALCHEMY_TRACK_MODIFICATIONS"]: bool = False
 database: SQLAlchemy = SQLAlchemy(api)
 
 """ Database """
@@ -31,7 +31,7 @@ class Orders(database.Model):
 	status = database.Column(database.String(32), nullable=False)
 	pin = database.Column(database.String(4), nullable=False)
 
-PUBLIC_COLUMNS: tuple = (
+VIEW_ALL_ORDERS_COLUMNS: tuple = (
 	Orders.order_id,
 	Orders.username,
 	Orders.date_created,
@@ -39,6 +39,10 @@ PUBLIC_COLUMNS: tuple = (
 	Orders.is_prioritized,
 	Orders.queue_number,
 	Orders.status
+	# Missing columns: [content, pin]
+	# We don't want to send content for every order when 
+	# the user is probably going to not click on every one.
+	# And we don't want to send the PIN for I hope obvious reasons.
 )
 
 """ Functions """
@@ -51,6 +55,7 @@ def send_json_file_as_data(filename: str) -> dict:
 # Get current time
 def get_current_time() -> str:
 	# Example output: "Monday, July 05 2021 at 09:00:48 PM Eastern"
+	# %A = Day of week, %B = Month, %d = Day of month, %Y = Year, %I = Hour (24 hour time), %M = Minute, %S = Second, %p = AM or PM
 	return strftime("%A, %B %d %Y at %I:%M:%S %p Eastern")
 
 # Get random pin
@@ -130,7 +135,7 @@ def get_enchants_for_gear() -> dict:
 # Submit
 @api.route("/submit", methods=["POST"])
 def submit_route() -> dict:
-	ordered_json = request.json
+	ordered_json: dict = request.json
 
 	order_username: str = ordered_json["general"]["username"]
 	order_prioritize: bool = ordered_json["general"]["prioritize"]
@@ -142,7 +147,8 @@ def submit_route() -> dict:
 	# Update other queue numbers
 	update_queue_numbers_for_other_orders(starting_queue_number=order_queue_number, change_by=1)
 
-	order_submission = Orders(
+	# Create order
+	order_submission: Orders = Orders(
 		username=order_username,
 		content=ordered_content_dict,
 		pin=order_pin,
@@ -150,9 +156,9 @@ def submit_route() -> dict:
 		date_modified="N/A",
 		queue_number=order_queue_number,
 		is_prioritized=order_prioritize,
-		status="Recieved"
+		status="Recieved" # TODO: change from str to int value from 1-4 & have it in the config file in a list?
 	)
-
+	# Save to database!
 	database.session.add(order_submission)
 	database.session.commit()
 
@@ -161,7 +167,7 @@ def submit_route() -> dict:
 # View all orders
 @api.route("/view-all-orders", methods=["GET"])
 def view_all_orders_route() -> dict:
-	all_orders = Orders.query.order_by(Orders.queue_number).with_entities(*PUBLIC_COLUMNS).all()
+	all_orders: Orders = Orders.query.order_by(Orders.queue_number).with_entities(*VIEW_ALL_ORDERS_COLUMNS).all()
 	all_orders_list: list = [(dict(row)) for row in all_orders] # Convert rows to list of dicts
 
 	return {"worked": True, "data": all_orders_list}
@@ -170,14 +176,14 @@ def view_all_orders_route() -> dict:
 @api.route("/get-order-content", methods=["GET"])
 def get_order_content_route() -> dict:
 	order_id: int = int(request.args["id"])
-	order_content = dict(Orders.query.filter_by(order_id=order_id).with_entities(Orders.content).first())
+	order_content: dict = dict(Orders.query.filter_by(order_id=order_id).with_entities(Orders.content).first())
 	return {"worked": True, "data": order_content}
 
 """ Error handlers """
 
 # All error handlers
 @api.errorhandler(Exception)
-def error_handler(error) -> dict:
+def error_handler(error: Exception) -> dict:
 	try:
 		# HTTP error code (error.code works)
 		return {"worked": False, "message": "An HTTP exception has occured.", "error_message": str(error), "error_code": error.code}
