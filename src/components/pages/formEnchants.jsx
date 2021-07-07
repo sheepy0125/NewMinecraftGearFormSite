@@ -1,4 +1,8 @@
 // Form enchants page
+/* TODO: REFACTOR!!
+ * I just got back to this code and
+ * very yikes indeed
+ */
 
 import {useState, useEffect, useRef} from "react";
 import {post} from "axios";
@@ -47,17 +51,12 @@ export default function FormEnchants(props) {
 		const checked = event.target.checked;
 
 		setInputContent((prevInputContent) => {
-			const newEnchantmentsForItem = prevInputContent[itemFor].enchantments;
-
-			// If checked, push to enchantment list
-			if (checked) newEnchantmentsForItem.push(enchantment);
-			// Not checked, pop if in list
-			else {
-				const indexOfEnchnantment = newEnchantmentsForItem.indexOf(enchantment);
-				indexOfEnchnantment >= 0 && newEnchantmentsForItem.splice(indexOfEnchnantment, 1);
-			}
-
-			return {...prevInputContent, [itemFor]: {...prevInputContent[itemFor], enchantments: newEnchantmentsForItem}};
+			const newCheckboxes = prevInputContent[itemFor].enchantments.checkboxes;
+			newCheckboxes[enchantment] = checked;
+			return {
+				...prevInputContent,
+				[itemFor]: {...prevInputContent[itemFor], enchantments: {...prevInputContent[itemFor].enchantments, checkboxes: newCheckboxes}},
+			};
 		});
 	}
 	function enchantChangedRadio(event) {
@@ -66,59 +65,53 @@ export default function FormEnchants(props) {
 		const selectionList = String(event.target.getAttribute("selection-list")).split(",");
 
 		setInputContent((prevInputContent) => {
-			const newEnchantmentsForItem = prevInputContent[itemFor].enchantments;
+			const newMultipleSelection = prevInputContent[itemFor].enchantments.multipleSelection;
 
-			// Go through each enchantment in the multiple selection list and remove the enchantments for the items that match the list
-			for (const selectionEnchant of selectionList) {
-				const indexOfEnchnantment = newEnchantmentsForItem.indexOf(selectionEnchant);
+			// Get the list index based off of an item in selectionList
+			for (const multipleSelectionDict of newMultipleSelection) {
+				// Check if one of the keys for the multiple selection dict isn't the first key of the selectionList
+				if (!Object.keys(multipleSelectionDict).includes(selectionList[0])) continue;
 
-				// If found, then remove
-				if (indexOfEnchnantment >= 0) {
-					newEnchantmentsForItem.splice(indexOfEnchnantment, 1);
-					break;
-				}
+				// This is the correct list.
+				// Set everything in it to be false
+				for (const enchantment of Object.keys(multipleSelectionDict)) multipleSelectionDict[enchantment] = false;
+
+				// If the enchantment is null, that means it's a none checkbox and we can end here.
+				if (enchantment === null) break;
+
+				// Set enchantment selected to true
+				multipleSelectionDict[enchantment] = true;
 			}
 
-			// Add new enchantment if not null
-			enchantment && newEnchantmentsForItem.push(enchantment);
-
-			return {...prevInputContent, [itemFor]: {...prevInputContent[itemFor], enchantments: newEnchantmentsForItem}};
+			return {
+				...prevInputContent,
+				[itemFor]: {...prevInputContent[itemFor], enchantments: {...prevInputContent[itemFor].enchantments, multipleSelection: newMultipleSelection}},
+			};
 		});
 	}
 
 	// All enchant checkbox
 	function allEnchantCheckboxChanged(event) {
 		const itemFor = event.target.getAttribute("item-for");
-		const checkboxList = String(event.target.getAttribute("checkbox-list")).split(",");
 		const checked = event.target.checked;
 
 		setInputContent((prevInputContent) => {
-			const newEnchantmentsForItem = prevInputContent[itemFor].enchantments;
-
-			// Iterate through each checkbox in checkbox list
-			for (const checkboxEnchant of checkboxList) {
-				// Try to get the checkbox in the enchant list
-				const indexOfEnchnantment = newEnchantmentsForItem.indexOf(checkboxEnchant);
-
-				// Remove that (if it exists)
-				if (indexOfEnchnantment >= 0) {
-					newEnchantmentsForItem.splice(indexOfEnchnantment, 1);
-				}
-
-				// If checked, then append it
-				if (checked) newEnchantmentsForItem.push(checkboxEnchant);
-			}
-
-			return {...prevInputContent, [itemFor]: {...prevInputContent[itemFor], enchantments: newEnchantmentsForItem}};
+			const newCheckboxes = prevInputContent[itemFor].enchantments.checkboxes;
+			// Update everything at once
+			for (const enchantment of Object.keys(newCheckboxes)) newCheckboxes[enchantment] = checked;
+			return {
+				...prevInputContent,
+				[itemFor]: {...prevInputContent[itemFor], enchantments: {...prevInputContent[itemFor].enchantments, checkboxes: newCheckboxes}},
+			};
 		});
 	}
 
 	// Text input changed
 	function textInputChanged({event, keyFor, textKey}) {
-		const nameText = event.target.value;
+		const textValue = event.target.value;
 
 		setInputContent((prevInputContent) => {
-			return {...prevInputContent, [keyFor]: {...prevInputContent[keyFor], [textKey]: nameText}};
+			return {...prevInputContent, [keyFor]: {...prevInputContent[keyFor], [textKey]: textValue}};
 		});
 	}
 
@@ -175,8 +168,7 @@ export default function FormEnchants(props) {
 								</Label>
 							</CheckboxGroup>
 						</div>
-
-						{/* Multiple selection */}
+						2{/* Multiple selection */}
 						<div className="multiple-selection">
 							{/* Iterate through each list */}
 							{item.multipleSelection.map((multipleSelectionList, listIndex) => (
@@ -260,8 +252,26 @@ export default function FormEnchants(props) {
 					// Add to input list
 					defaultInputList.push({itemName: itemName, checkboxes: checkboxes, multipleSelection: multipleSelection});
 
-					// Add to input content
-					defaultInputContent[itemName] = {enchantments: [], name: "", additional: ""};
+					// Set default input content
+					defaultInputContent[itemName] = {enchantments: {checkboxes: {}, multipleSelection: []}, name: "", additional: ""};
+
+					// Get default checkboxes
+					const defaultCheckboxes = defaultInputContent[itemName].enchantments.checkboxes;
+					for (const checkbox of checkboxes) {
+						defaultCheckboxes[checkbox] = false;
+					}
+					defaultInputContent[itemName].enchantments.checkboxes = defaultCheckboxes;
+
+					// Get default multiple selection
+					const defaultMultipleSelection = defaultInputContent[itemName].enchantments.multipleSelection;
+					for (const multipleSelectionList of multipleSelection) {
+						const multipleSelectionDict = {};
+						for (const multipleSelectionEnchantment of multipleSelectionList) {
+							multipleSelectionDict[multipleSelectionEnchantment] = false;
+						}
+						defaultMultipleSelection.push(multipleSelectionDict);
+					}
+					defaultInputContent[itemName].enchantments.multipleSelection = defaultMultipleSelection;
 				}
 			}
 
@@ -288,7 +298,7 @@ export default function FormEnchants(props) {
 					<LoadingWidget />
 				)}
 			</BaseWidget>
-			<p>{renderCount.current}</p>
+			<p>Your computer has screamed {renderCount.current} times so far.</p>
 		</MainWidget>
 	);
 }

@@ -16,7 +16,8 @@ with open("json_files/config.json") as config_file:
 api: Flask = Flask(__name__, template_folder=None, static_folder="static")
 # api.config["SQLALCHEMY_DATABASE_URI"]: str = f"sqlite:///database/order.db" # Production
 api.config["SQLALCHEMY_DATABASE_URI"]: str = f"sqlite:///database/test.db" # Testing
-api.config["SQLALCHEMY_TRACK_MODIFICATIONS"]: bool = False
+api.config["SQLALCHEMY_TRACK_MODIFICATIONS"]: bool = False # Honestly, no idea what this does, but it removes the warning
+api.config["JSON_SORT_KEYS"]: bool = False
 database: SQLAlchemy = SQLAlchemy(api)
 
 """ Database """
