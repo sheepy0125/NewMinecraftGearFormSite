@@ -1,7 +1,7 @@
 // View all orders page
 
 import {useState, useEffect} from "react";
-import {useHistory, Link} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {get} from "axios";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
@@ -34,6 +34,12 @@ function Options(props) {
 			<Hyperlink href={`/not-implemented?id=${props.id}`}>Delete order</Hyperlink>
 		</>
 	);
+}
+
+// Show order column
+function showOrderColumn(columnName) {
+	// If it is a boolean type, show y/n
+	return typeof columnName !== "boolean" ? columnName : columnName ? "Yes" : "No";
 }
 
 // View all orders
@@ -69,16 +75,13 @@ export default function ViewAllOrders() {
 			<>
 				{/* Mobile */}
 				<div className="block xl:hidden">
-					{ordersData.map((order) => (
+					{ordersData.map((order, orderID) => (
 						<div key={order.order_id} className="text-sm lg:text-base">
 							<div className="border border-black">
 								{columns.map((row) => (
 									<OrderRow key={row.name}>
 										<OrderColumn title>{row.name}</OrderColumn>
-										<OrderColumn>
-											{/* If it is a boolean, say yes or no */}
-											{typeof order[row.valueName] !== "boolean" ? order[row.valueName] : order[row.valueName] ? "Yes" : "No"}
-										</OrderColumn>
+										<OrderColumn>{showOrderColumn(order[row.valueName])}</OrderColumn>
 									</OrderRow>
 								))}
 								<OrderRow>
@@ -88,7 +91,10 @@ export default function ViewAllOrders() {
 									</OrderColumn>
 								</OrderRow>
 							</div>
-							<br />
+
+							{/* Line break to show difference between orders */}
+							{/* Don't show on last order though */}
+							{orderID < ordersData.length - 1 && <br />}
 						</div>
 					))}
 				</div>
@@ -107,10 +113,7 @@ export default function ViewAllOrders() {
 						{ordersData.map((order) => (
 							<tr className="flex font-thin" key={order.order_id}>
 								{columns.map((row) => (
-									<TableColumn key={row.valueName}>
-										{/* If it is a boolean, say yes or no */}
-										{typeof order[row.valueName] !== "boolean" ? order[row.valueName] : order[row.valueName] ? "Yes" : "No"}
-									</TableColumn>
+									<TableColumn key={row.valueName}>{showOrderColumn(order[row.valueName])}</TableColumn>
 								))}
 								<TableColumn>
 									<Options id={order.order_id} />
