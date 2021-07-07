@@ -168,7 +168,7 @@ export default function FormEnchants(props) {
 								</Label>
 							</CheckboxGroup>
 						</div>
-						2{/* Multiple selection */}
+						{/* Multiple selection */}
 						<div className="multiple-selection">
 							{/* Iterate through each list */}
 							{item.multipleSelection.map((multipleSelectionList, listIndex) => (
