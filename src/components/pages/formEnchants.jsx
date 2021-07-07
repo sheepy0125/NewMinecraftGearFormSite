@@ -1,8 +1,8 @@
 // Form enchants page
 
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import {post} from "axios";
-import {AllCheckerCheckbox, Checkbox, CheckboxGroup} from "@createnl/grouped-checkboxes";
+import {AllCheckerCheckbox, CheckboxGroup} from "@createnl/grouped-checkboxes";
 import {useHistory} from "react-router-dom";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
@@ -12,51 +12,7 @@ import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
-
-// Enchant item
-function EnchantItem(props) {
-	return <p className="mx-2 sm:mx-auto">{props.children}</p>;
-}
-
-// Label
-function Label(props) {
-	return (
-		<label className="flex w-full px-1 my-1 bg-pink-200 bg-opacity-25 cursor-pointer" key={props.id || ""}>
-			{props.children}
-		</label>
-	);
-}
-
-// Enchant radio button
-function EnchantRadioButton(props) {
-	const enchant = props.enchant;
-	const itemName = props.itemName;
-	const multipleSelectionList = props.multipleSelectionList;
-	const onChange = props.onChange;
-	const listIndex = props.listIndex;
-	const defaultChecked = props.defaultChecked || false;
-
-	return (
-		<input
-			type="radio"
-			name={`${itemName} Multiple selection ${listIndex}`}
-			onChange={onChange}
-			enchant={enchant}
-			selection-list={multipleSelectionList}
-			item-for={itemName}
-			defaultChecked={defaultChecked}
-		/>
-	);
-}
-
-// Enchant checkbox
-function EnchantCheckbox(props) {
-	const enchant = props.enchant;
-	const itemName = props.itemName;
-	const onChange = props.onChange;
-
-	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} item-for={itemName} />;
-}
+import {EnchantItem, Label, EnchantRadioButton, EnchantCheckbox} from "../formElements.jsx";
 
 // Form enchants
 export default function FormEnchants(props) {
@@ -66,6 +22,11 @@ export default function FormEnchants(props) {
 	const [enchantDict, setEnchantDict] = useState(null);
 	const [itemInputs, setItemInputs] = useState(null);
 	const [inputContent, setInputContent] = useState({});
+	const renderCount = useRef(0);
+
+	useEffect(() => {
+		renderCount.current += 1;
+	});
 
 	// Fetch the data
 	function fetchData() {
@@ -184,7 +145,14 @@ export default function FormEnchants(props) {
 					<div className="name">
 						<label>
 							<p>Name of {item.itemName}</p>
-							<input type="text" name={`${item.itemName} Name`} className="w-full" maxLength={55} item-for={item.itemName} onChange={itemNameChanged} />
+							<input
+								type="text"
+								name={`${item.itemName} Name`}
+								className="w-full"
+								maxLength={55}
+								item-for={item.itemName}
+								onChange={itemNameChanged}
+							/>
 						</label>
 					</div>
 
@@ -320,6 +288,7 @@ export default function FormEnchants(props) {
 					<LoadingWidget />
 				)}
 			</BaseWidget>
+			<p>{renderCount.current}</p>
 		</MainWidget>
 	);
 }

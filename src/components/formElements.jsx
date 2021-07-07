@@ -1,0 +1,54 @@
+// Form elements
+/* This file contains:
+ * Enchant item: The text for the enchantment
+ * Label: A label element
+ * Enchant radio button: A radio button with an enchantment
+ * Enchant checkbox: A checkbox with an enchantment
+ */
+
+import {Checkbox} from "@createnl/grouped-checkboxes";
+
+// Enchant item
+export function EnchantItem(props) {
+	return <p className="mx-2 sm:mx-auto">{props.children}</p>;
+}
+
+// Label
+export function Label(props) {
+	return (
+		<label className="flex w-full px-1 my-1 bg-pink-200 bg-opacity-25 cursor-pointer" key={props.id || ""}>
+			{props.children}
+		</label>
+	);
+}
+
+// Enchant radio button
+export function EnchantRadioButton(props) {
+	const enchant = props.enchant;
+	const itemName = props.itemName;
+	const multipleSelectionList = props.multipleSelectionList;
+	const onChange = props.onChange;
+	const listIndex = props.listIndex;
+	const defaultChecked = props.defaultChecked || false;
+
+	return (
+		<input
+			type="radio"
+			name={`${itemName} Multiple selection ${listIndex}`}
+			onChange={onChange}
+			enchant={enchant}
+			selection-list={multipleSelectionList}
+			item-for={itemName}
+			defaultChecked={defaultChecked}
+		/>
+	);
+}
+
+// Enchant checkbox
+export function EnchantCheckbox(props) {
+	const enchant = props.enchant;
+	const itemName = props.itemName;
+	const onChange = props.onChange;
+
+	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} item-for={itemName} />;
+}
