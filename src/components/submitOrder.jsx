@@ -7,12 +7,14 @@ import Button from "./boilerplate/button.jsx";
 
 // Submit
 function submit({content, history}) {
-	console.log("%cSubmitting order...", "color: white; background-color: purple");
+	console.log("%cSubmitting order!", "color: white; background-color: purple");
+	console.log("The JSON data that's being submitted is:");
 	console.log(JSON.stringify(content, null, 4));
 
 	post("/submit", content)
 		.then((resp) => {
-			console.log(resp.data);
+			console.log("The order was submitted! Here is the returned data");
+			console.log(JSON.stringify(resp.data, null, 4));
 
 			const orderID = resp.data.data.order_id;
 			const orderPIN = resp.data.data.order_pin;

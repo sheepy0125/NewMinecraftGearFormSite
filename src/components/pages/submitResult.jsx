@@ -10,8 +10,6 @@ export default function SubmitResult() {
 	const paramsString = useLocation().search;
 	const paramsDictionary = parse(paramsString);
 
-	console.log(paramsDictionary);
-
 	return (
 		<BoxWidget message={`Your order (id ${paramsDictionary.orderID}) has been submitted.`}>
 			<div className="text-xl">

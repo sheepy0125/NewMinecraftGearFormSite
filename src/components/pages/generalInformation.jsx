@@ -28,8 +28,8 @@ export default function GeneralInformation(props) {
 				...content.general,
 				username: username,
 				additional: additional,
-				prioritize: prioritize
-			}
+				prioritize: prioritize,
+			},
 		};
 	}
 
@@ -81,9 +81,9 @@ export default function GeneralInformation(props) {
 							</label>
 							<br />
 							{!usernameTooShort ? (
-								<button onClick={() => setSubmitting(true)}>
+								<div onClick={() => setSubmitting(true)}>
 									<SubmitOrder content={getContent(props.content)} />
-								</button>
+								</div>
 							) : (
 								<p>Your username isn't valid.</p>
 							)}
