@@ -18,8 +18,10 @@ export default function ViewOrder() {
 	const paramsString = useLocation().search;
 	const paramsDictionary = parse(paramsString);
 
+	// Not using refs here since it'll only be set once
 	const [orderContent, setOrderContent] = useState({});
-	const [itemInputs, setItemInputs] = useState(null); // Not using a ref here since it won't be changed by user
+	const [itemInputs, setItemInputs] = useState(null);
+	const [orderDetails, setOrderDetails] = useState(null);
 
 	// Fetch content
 	function fetchContent() {
@@ -28,15 +30,59 @@ export default function ViewOrder() {
 		});
 	}
 
+	// Render order details
+	function renderOrderDetails({details}) {
+		return (
+			<div className="block w-full px-8 py-4 text-center bg-pink-300 rounded-lg font-light">
+				<p>
+					ID: <span className="font-bold">{details.orderID}</span>
+				</p>
+				<p>
+					Queue number: <span className="font-bold">{details.queueNumber}</span>
+				</p>
+				<p>
+					Username: <span className="font-bold">{details.username}</span>
+				</p>
+				<p>
+					Date created: <span className="font-bold">{details.creationDate}</span>
+				</p>
+				<p>
+					Date modified: <span className="font-bold">{details.modifiedDate}</span>
+				</p>
+				<p>
+					Prioritize: <span className="font-bold">{details.isPrioritized ? "yes" : "no"}</span>
+				</p>
+				<p>
+					Additional information: <span className="font-bold">{details.additionalInformation}</span>
+				</p>
+			</div>
+		);
+	}
+
 	// When order content changes
 	useEffect(() => {
 		if (!orderContent.data) return;
+		console.log(`Recieved data for ${orderContent.data.order_id}!`);
+		console.log(JSON.stringify(orderContent.data, null, 4));
+
+		// Order details
+		const details = {
+			orderID: orderContent.data.order_id,
+			queueNumber: orderContent.data.queue_number,
+			username: orderContent.data.username,
+			creationDate: orderContent.data.date_created,
+			modifiedDate: orderContent.data.date_modified,
+			isPrioritized: orderContent.data.is_prioritized,
+			additionalInformation: "null for now... database doesn't have",
+		};
+		setOrderDetails(renderOrderDetails({details: details}));
+
+		// Order form
 
 		// Convert order content dictionary to a list
 		const orderItemList = [];
 
 		for (const item of Object.keys(orderContent.data.content)) {
-			if (item === "general") continue;
 			orderItemList.push({
 				defaultItemName: item,
 				itemName: orderContent.data.content[item].name,
@@ -61,7 +107,16 @@ export default function ViewOrder() {
 		<MainWidget>
 			<Title>Sheepy's God Gear Services - Viewing order {paramsDictionary.id}</Title>
 			<Navbar currentPage="/view-all-orders" forceFreshPage={true} />
-			<BaseWidget className="text-center text-lg">{itemInputs ? <FormWidget>{itemInputs}</FormWidget> : <LoadingWidget />}</BaseWidget>
+			<BaseWidget className="text-center text-lg">
+				{itemInputs ? (
+					<div>
+						{orderDetails}
+						<FormWidget>{itemInputs}</FormWidget>
+					</div>
+				) : (
+					<LoadingWidget />
+				)}
+			</BaseWidget>
 		</MainWidget>
 	);
 }

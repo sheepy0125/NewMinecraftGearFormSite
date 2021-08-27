@@ -4,9 +4,6 @@
 import {EnchantItem, Label, DummyEnchantRadioButton, DummyEnchantCheckbox} from "../components/formElements.jsx"; // Why?
 
 export default function renderFormInputs({inputList, setItemInputs}) {
-	console.log("heyya, i'm gonna try my best to render these!!!\nbut first, lemme give you some nice juicy info of what i have.");
-	console.log({inputList: inputList});
-
 	// See /src/itemInputsModel.txt
 	setItemInputs(
 		inputList.map((item) => (

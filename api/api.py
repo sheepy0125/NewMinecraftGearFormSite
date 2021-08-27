@@ -41,9 +41,11 @@ VIEW_ALL_ORDERS_COLUMNS: tuple = (
 	Orders.queue_number,
 	Orders.status
 	# Missing columns: [content, pin]
-	# We don't want to send content for every order when 
-	# the user is probably going to not click on every one.
-	# And we don't want to send the PIN for I hope obvious reasons.
+)
+
+GET_ORDER_CONTENT_COLUMNS: tuple = (
+	*VIEW_ALL_ORDERS_COLUMNS,
+	Orders.content
 )
 
 """ Functions """
@@ -177,7 +179,7 @@ def view_all_orders_route() -> dict:
 @api.route("/get-order-content", methods=["GET"])
 def get_order_content_route() -> dict:
 	order_id: int = int(request.args["id"])
-	order_content: dict = dict(Orders.query.filter_by(order_id=order_id).with_entities(Orders.content).first())
+	order_content: dict = dict(Orders.query.filter_by(order_id=order_id).with_entities(*GET_ORDER_CONTENT_COLUMNS).first())
 	return {"worked": True, "data": order_content}
 
 """ Error handlers """
