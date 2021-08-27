@@ -7,7 +7,8 @@ import BaseWidget from "./widgets/baseWidget.jsx";
 // Nav item
 const NavItem = (props) => {
 	const isUserOnPage = props.currentPage === props.link;
-	const link = !isUserOnPage ? props.link : "#"; // Don't re-render if already on (just go to #)
+	const forceFreshPage = props.forceFreshPage; // Useful for cases where use can go in a sub-menu of a page
+	const link = forceFreshPage || !isUserOnPage ? props.link : "#"; // Don't re-render if already on (just go to #) if not forced
 	const activeColor = "gray-800";
 	const normalColor = "gray-600";
 
@@ -28,16 +29,16 @@ export default function Navbar(props) {
 		<BaseWidget>
 			<p className="text-lg text-center">Navigation</p>
 			<nav className="lg:flex">
-				<NavItem currentPage={currentPage} link="/home">
+				<NavItem currentPage={currentPage} forceFreshPage={props.forceFreshPage} link="/home">
 					Home
 				</NavItem>
-				<NavItem currentPage={currentPage} link="/form">
+				<NavItem currentPage={currentPage} forceFreshPage={props.forceFreshPage} link="/form">
 					Form
 				</NavItem>
-				<NavItem currentPage={currentPage} link="/view-all-orders">
+				<NavItem currentPage={currentPage} forceFreshPage={props.forceFreshPage} link="/view-all-orders">
 					View orders
 				</NavItem>
-				<NavItem currentPage={currentPage} link="/not-implemented">
+				<NavItem currentPage={currentPage} forceFreshPage={props.forceFreshPage} link="/not-implemented">
 					Enchantment dictionary
 				</NavItem>
 			</nav>

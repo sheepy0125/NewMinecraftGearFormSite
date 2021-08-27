@@ -1,0 +1,28 @@
+Item inputs model
+- things in {{double braces}} represent variables
+- things with * mean only when viewing
+- things with & mean only when editing
+
+[===========================================Information(*)========================================]
+[ Username: {{username}}                                                                          ]
+[ Additonal information: {{additionalInformation}}                                                ]
+[ Date created: {{creationDate}}                                                                  ]
+[=================================================================================================]
+
+[========{{itemName}}=========]   [========{{itemName}}=========]   [========{{itemName}}=========]
+[     Name of {{itemName}}    ]   [     Name of {{itemName}}    ]   [     Name of {{itemName}}    ]
+[       {{itemNameInput}}     ]   [       {{itemNameInput}}     ]   [       {{itemNameInput}}     ]
+[                             ]   [                             ]   [                             ]
+[       {{checkboxes}}        ]   [       {{checkboxes}}        ]   [        {{checkboxes}}       ]
+[       -------------         ]   [       -------------         ]   [        -------------        ]
+[     {{allAboveCheckbox}}    ]   [     {{allAboveCheckbox}}    ]   [      {{allAboveCheckbox}}   ]
+[                             ]   [                             ]   [                             ]
+[    {{multipleSelection}}    ]   [    {{multipleSelection}}    ]   [     {{multipleSelection}}   ]
+[       -------------         ]   [       -------------         ]   [        -------------        ]
+[     {{noneRadioButton}}     ]   [     {{noneRadioButton}}     ]   [      {{noneRadioButton}}    ]
+[                             ]   [                             ]   [                             ]
+[   Additional information    ]   [   Additional information    ]   [   Additional information    ]
+[   {{additionalInfoInput}}   ]   [   {{additionalInfoInput}}   ]   [   {{additionalInfoInput}}   ]
+[=============================]   [=============================]   [=============================]
+(...continued on for how ever many items)
+                                          [Next Page](&)

@@ -52,3 +52,17 @@ export function EnchantCheckbox(props) {
 
 	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} item-for={itemName} />;
 }
+
+// Dummy enchant checkbox, doesn't do anything, either checked or unchecked forever
+export function DummyEnchantCheckbox(props) {
+	const selected = props.selected;
+
+	return <input type="checkbox" checked={selected} readOnly />;
+}
+
+// Dummy enchant radio button, doesn't do anything, either selected or unselected forever
+export function DummyEnchantRadioButton(props) {
+	const selected = props.selected;
+
+	return <input type="radio" checked={selected} readOnly />;
+}
