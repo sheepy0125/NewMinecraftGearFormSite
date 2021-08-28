@@ -28,7 +28,7 @@ export default function Navbar(props) {
 	return (
 		<BaseWidget>
 			<p className="text-lg text-center">Navigation</p>
-			<nav className="lg:flex">
+			<nav className="xl:flex">
 				<NavItem currentPage={currentPage} forceFreshPage={props.forceFreshPage} link="/home">
 					Home
 				</NavItem>
