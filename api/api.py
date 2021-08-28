@@ -25,6 +25,7 @@ class Orders(database.Model):
 	order_id = database.Column(database.Integer, primary_key=True)
 	username = database.Column(database.String(16), nullable=False)
 	content = database.Column(database.PickleType, nullable=False)
+	additional_information = database.Column(database.String(128), nullable=False)
 	date_created = database.Column(database.String(50), nullable=False)
 	date_modified = database.Column(database.String(50), nullable=False)
 	is_prioritized = database.Column(database.Boolean, nullable=False)
@@ -35,6 +36,7 @@ class Orders(database.Model):
 VIEW_ALL_ORDERS_COLUMNS: tuple = (
 	Orders.order_id,
 	Orders.username,
+	Orders.additional_information,
 	Orders.date_created,
 	Orders.date_modified,
 	Orders.is_prioritized,
@@ -44,8 +46,9 @@ VIEW_ALL_ORDERS_COLUMNS: tuple = (
 )
 
 GET_ORDER_CONTENT_COLUMNS: tuple = (
-	*VIEW_ALL_ORDERS_COLUMNS,
+	*VIEW_ALL_ORDERS_COLUMNS, # TODO: d
 	Orders.content
+	# Missing columns: [pin]
 )
 
 """ Functions """
@@ -142,6 +145,7 @@ def submit_route() -> dict:
 
 	order_username: str = ordered_json["general"]["username"]
 	order_prioritize: bool = ordered_json["general"]["prioritize"]
+	order_additional_information: str = ordered_json["general"]["additional"]
 	ordered_content_dict: dict = ordered_json; del ordered_content_dict["general"]
 	order_pin: str = get_random_pin()
 	order_queue_number: int = get_new_queue_number(prioritize=order_prioritize)
@@ -154,6 +158,7 @@ def submit_route() -> dict:
 	order_submission: Orders = Orders(
 		username=order_username,
 		content=ordered_content_dict,
+		additional_information=order_additional_information,
 		pin=order_pin,
 		date_created=date_created,
 		date_modified="N/A",

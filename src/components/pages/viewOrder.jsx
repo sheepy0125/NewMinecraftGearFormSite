@@ -34,27 +34,17 @@ export default function ViewOrder() {
 	function renderOrderDetails({details}) {
 		return (
 			<div className="block w-full px-8 py-4 text-center bg-pink-300 rounded-lg font-light">
-				<p>
-					ID: <span className="font-bold">{details.orderID}</span>
-				</p>
-				<p>
-					Queue number: <span className="font-bold">{details.queueNumber}</span>
-				</p>
-				<p>
-					Username: <span className="font-bold">{details.username}</span>
-				</p>
-				<p>
-					Date created: <span className="font-bold">{details.creationDate}</span>
-				</p>
-				<p>
-					Date modified: <span className="font-bold">{details.modifiedDate}</span>
-				</p>
-				<p>
-					Prioritize: <span className="font-bold">{details.isPrioritized ? "yes" : "no"}</span>
-				</p>
-				<p>
-					Additional information: <span className="font-bold">{details.additionalInformation}</span>
-				</p>
+				<p>ID: {details.orderID}</p>
+				<p>Queue number: {details.queueNumber}</p>
+				<p>Username: {details.username}</p>
+				<p>Prioritize: {details.isPrioritized ? "yes" : "no"}</p>
+				<p>Date created: {details.creationDate}</p>
+				<p>Date modified: {details.modifiedDate}</p>
+				<label>
+					Additional information:
+					<br />
+					<input type="text" value={details.additionalInformation} readOnly />
+				</label>
 			</div>
 		);
 	}
@@ -62,8 +52,6 @@ export default function ViewOrder() {
 	// When order content changes
 	useEffect(() => {
 		if (!orderContent.data) return;
-		console.log(`Recieved data for ${orderContent.data.order_id}!`);
-		console.log(JSON.stringify(orderContent.data, null, 4));
 
 		// Order details
 		const details = {
@@ -73,7 +61,7 @@ export default function ViewOrder() {
 			creationDate: orderContent.data.date_created,
 			modifiedDate: orderContent.data.date_modified,
 			isPrioritized: orderContent.data.is_prioritized,
-			additionalInformation: "null for now... database doesn't have",
+			additionalInformation: orderContent.data.additional_information,
 		};
 		setOrderDetails(renderOrderDetails({details: details}));
 
