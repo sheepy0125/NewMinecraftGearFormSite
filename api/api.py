@@ -12,6 +12,7 @@ from time import strftime
 
 with open("json_files/config.json") as config_file:
 	config_dict: dict = load(config_file)
+	MASTER_PASSWORD = config_dict["masterPassword"]
 
 api: Flask = Flask(__name__, template_folder=None, static_folder="static")
 # api.config["SQLALCHEMY_DATABASE_URI"]: str = f"sqlite:///database/order.db" # Production
@@ -71,13 +72,28 @@ def get_random_pin() -> str:
 # Update queue numbers for other orders
 def update_queue_numbers_for_other_orders(starting_queue_number: int, change_by: int=1) -> None:
 	# Get all the orders that need to be changed
-	try: all_orders_need_change = Orders.query.filter(Orders.queue_number >= starting_queue_number).all()
+	try: all_orders_need_change: Orders = Orders.query.filter(Orders.queue_number >= starting_queue_number).all()
 
 	# No orders need to be changed, time to quit! (AttributeError: 'NoneType' object has no attribute 'queue_number')
 	except AttributeError: return
 
 	for order_need_change in all_orders_need_change:
 		order_need_change.queue_number += change_by
+
+	# Commit changes (if any)
+	if len(all_orders_need_change) > 0:
+		database.session.commit()
+
+# Update IDs for other orders
+def update_ids_for_other_orders(starting_id: int, change_by: int=1) -> None:
+	# Get all the orders that need to be changed
+	try: all_orders_need_change: Orders = Orders.query.filter(Orders.order_id >= starting_id).all()
+
+	# No orders need to be changed, time to quit! (AttributeError: 'NoneType' object has no attribute 'order_id')
+	except AttributeError: return
+
+	for order_need_change in all_orders_need_change:
+		order_need_change.order_id += change_by
 
 	# Commit changes (if any)
 	if len(all_orders_need_change) > 0:
@@ -184,8 +200,57 @@ def view_all_orders_route() -> dict:
 @api.route("/get-order-content", methods=["GET"])
 def get_order_content_route() -> dict:
 	order_id: int = int(request.args["id"])
+
+	# If the user wishes to get minimal information
+	# Use case: getting information for deleting order
+	minimal: bool = not not request.args["minimal"]
+	if minimal: GET_ORDER_CONTENT_COLUMNS: tuple = (Orders.order_id, Orders.queue_number, Orders.username)
+
 	order_content: dict = dict(Orders.query.filter_by(order_id=order_id).with_entities(*GET_ORDER_CONTENT_COLUMNS).first())
 	return {"worked": True, "data": order_content}
+
+# Delete order
+@api.route("/delete-order", methods=["GET"])
+def delete_order_route() -> dict:
+	# Get order ID and password / pin
+	order_id: int = int(request.args["id"])
+
+	# User supplied pin, compare
+	if (user_supplied_master_password := request.args.get("master-password")) is None:
+		user_supplied_pin: str = request.args["pin"]
+		# Compare pins
+		order_pin: str = Orders.query.filter_by(order_id=order_id).with_entities(Orders.pin).first()
+		if user_supplied_pin != order_pin:
+			return {"worked": False, "message": "The pin isn't correct!", "code": 403}
+	
+	# User supplied master password, compare
+	else:
+		# Easter egg
+		if user_supplied_master_password == "LaCraftyIsSmelly":
+			return {"worked": False, "message": "The password you've entered is the truth.", "code": 403}
+
+		# Compare the super secure master passwords /s
+		if user_supplied_master_password != MASTER_PASSWORD:
+			return {"worked": False, "message": "The master password isn't correct!", "code": 403}
+
+	# Finish
+	order: Order = Orders.query.filter_by(order_id=order_id).first()
+	order_queue_number: int = order.queue_number
+
+	# We need to update the other order's queue numbers and IDs
+	# In order to prevent collisions with matching IDs and queue numbers, we should just set them to an arbitrary unique number
+	order.order_id = order.queue_number = randint(1000, 1500)
+	database.session.commit()
+
+	# Now update the orders
+	update_queue_numbers_for_other_orders(starting_queue_number=order_queue_number, change_by=-1)
+	update_ids_for_other_orders(starting_id=order_id, change_by=-1)
+
+	# After that's all done, we can finally delete the order.
+	database.session.delete(order)
+	database.session.commit()
+	
+	return {"worked": True, "message": "The order has successfully been deleted.", "code": 200}
 
 """ Error handlers """
 
