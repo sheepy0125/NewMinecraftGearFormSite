@@ -203,10 +203,11 @@ def get_order_content_route() -> dict:
 
 	# If the user wishes to get minimal information
 	# Use case: getting information for deleting order
-	minimal: bool = not not request.args["minimal"]
-	if minimal: GET_ORDER_CONTENT_COLUMNS: tuple = (Orders.order_id, Orders.queue_number, Orders.username)
+	minimal: bool = not not request.args.get("minimal")
+	if minimal: get_order_content_columns: tuple = (Orders.order_id, Orders.queue_number, Orders.username)
+	else: get_order_content_columns: tuple = GET_ORDER_CONTENT_COLUMNS
 
-	order_content: dict = dict(Orders.query.filter_by(order_id=order_id).with_entities(*GET_ORDER_CONTENT_COLUMNS).first())
+	order_content: dict = dict(Orders.query.filter_by(order_id=order_id).with_entities(*get_order_content_columns).first())
 	return {"worked": True, "data": order_content, "code": 200}
 
 # Delete order
