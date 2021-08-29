@@ -57,7 +57,7 @@ GET_ORDER_CONTENT_COLUMNS: tuple = (
 def send_json_file_as_data(filename: str) -> dict:
 	with open(f"json_files/{filename.rsplit('.json')[0]}.json") as json_file:
 		json_info: dict = load(json_file)
-		return {"worked": True, "data": json_info}
+		return {"worked": True, "data": json_info, "code": 200}
 
 # Get current time
 def get_current_time() -> str:
@@ -118,7 +118,7 @@ def get_new_queue_number(prioritize: bool) -> int:
 # Ping
 @api.route("/ping", methods=["GET"])
 def ping_route() -> dict:
-	return {"worked": True}
+	return {"worked": True, "code": 200}
 
 # Get select dictionary
 @api.route("/get_select_dictionary", methods=["GET"])
@@ -152,7 +152,7 @@ def get_enchants_for_gear() -> dict:
 				"multipleSelection": all_gear_enchants_info[item]["multipleSelection"]
 			}
 
-		return {"worked": True, "data": {"sorted_list": maintaining_order_selected_gear_items, "enchant_dict": enchant_dict}}
+		return {"worked": True, "data": {"sorted_list": maintaining_order_selected_gear_items, "enchant_dict": enchant_dict}, "code": 200}
 
 # Submit
 @api.route("/submit", methods=["POST"])
@@ -186,7 +186,7 @@ def submit_route() -> dict:
 	database.session.add(order_submission)
 	database.session.commit()
 
-	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_pin, "order_queue_number": order_queue_number}}
+	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_pin, "order_queue_number": order_queue_number}, "code": 200}
 
 # View all orders
 @api.route("/view-all-orders", methods=["GET"])
@@ -194,7 +194,7 @@ def view_all_orders_route() -> dict:
 	all_orders: Orders = Orders.query.order_by(Orders.queue_number).with_entities(*VIEW_ALL_ORDERS_COLUMNS).all()
 	all_orders_list: list = [(dict(row)) for row in all_orders] # Convert rows to list of dicts
 
-	return {"worked": True, "data": all_orders_list}
+	return {"worked": True, "data": all_orders_list, "code": 200}
 
 # Get order content
 @api.route("/get-order-content", methods=["GET"])
@@ -207,7 +207,7 @@ def get_order_content_route() -> dict:
 	if minimal: GET_ORDER_CONTENT_COLUMNS: tuple = (Orders.order_id, Orders.queue_number, Orders.username)
 
 	order_content: dict = dict(Orders.query.filter_by(order_id=order_id).with_entities(*GET_ORDER_CONTENT_COLUMNS).first())
-	return {"worked": True, "data": order_content}
+	return {"worked": True, "data": order_content, "code": 200}
 
 # Delete order
 @api.route("/delete-order", methods=["GET"])
@@ -259,7 +259,7 @@ def delete_order_route() -> dict:
 def error_handler(error: Exception) -> dict:
 	try:
 		# HTTP error code (error.code works)
-		return {"worked": False, "message": "An HTTP exception has occured.", "error_message": str(error), "error_code": error.code}
+		return {"worked": False, "message": "An HTTP exception has occured.", "error_message": str(error), "code": error.code}
 	except Exception:
 		# Internal error
 		return {"worked": False, "message": "An internal exception has occurred.", "error_message": str(error)}
