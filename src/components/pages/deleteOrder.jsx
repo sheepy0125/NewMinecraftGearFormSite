@@ -123,6 +123,10 @@ export default function DeleteOrder(props) {
 						<div onClick={deleteOrder}>
 							<Button className="w-full">Delete</Button>
 						</div>
+						<br />
+						<div onClick={() => history.push("/view-all-orders")}>
+							<Button className="w-full">Back to view orders page</Button>
+						</div>
 					</div>
 				</BoxWidget>
 			) : (
@@ -141,12 +145,9 @@ export default function DeleteOrder(props) {
 							<div onClick={resetPage}>
 								<Button className="w-full">Try again</Button>
 							</div>
-							<div
-								onClick={() => {
-									history.push("/view-all-orders");
-								}}
-							>
-								<Button className="w-full"></Button>
+							<br />
+							<div onClick={() => history.push("/view-all-orders")}>
+								<Button className="w-full">Back to view orders page</Button>
 							</div>
 						</div>
 					)}
