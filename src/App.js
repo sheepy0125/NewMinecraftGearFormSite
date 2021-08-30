@@ -9,6 +9,7 @@ const LazySubmitResult = lazy(() => import("./components/pages/submitResult.jsx"
 const LazyApiError = lazy(() => import("./components/pages/errors/apiError.jsx"));
 const LazyViewAllOrdersPage = lazy(() => import("./components/pages/viewAllOrders.jsx"));
 const LazyViewOrderPage = lazy(() => import("./components/pages/viewOrder.jsx"));
+const LazyDeleteOrderPage = lazy(() => import("./components/pages/deleteOrder.jsx"));
 const LazyPageNotFound = lazy(() => import("./components/pages/errors/pageNotFound.jsx"));
 const LazyNotImplemented = lazy(() => import("./components/pages/errors/notImplemented.jsx"));
 
@@ -50,6 +51,11 @@ export default function App() {
 					{/* View order */}
 					<Route path="/view-order">
 						<LazyViewOrderPage />
+					</Route>
+
+					{/* Delete order */}
+					<Route path="/delete-order">
+						<LazyDeleteOrderPage />
 					</Route>
 
 					{/* Not implemented */}

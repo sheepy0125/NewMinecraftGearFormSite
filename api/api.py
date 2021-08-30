@@ -220,7 +220,7 @@ def delete_order_route() -> dict:
 	if (user_supplied_master_password := request.args.get("master-password")) is None:
 		user_supplied_pin: str = request.args["pin"]
 		# Compare pins
-		order_pin: str = Orders.query.filter_by(order_id=order_id).with_entities(Orders.pin).first()
+		order_pin: str = Orders.query.filter_by(order_id=order_id).first().pin
 		if user_supplied_pin != order_pin:
 			return {"worked": False, "message": "The pin isn't correct!", "code": 403}
 	

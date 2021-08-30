@@ -2,7 +2,7 @@
 // Used to view a specific order
 
 import {useState, useEffect} from "react";
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import {parse} from "query-string";
 import {get} from "axios";
 
@@ -15,6 +15,7 @@ import Navbar from "../boilerplate/navbar.jsx";
 import renderFormInputs from "../formInputsViewing.jsx";
 
 export default function ViewOrder() {
+	const history = useHistory();
 	const paramsString = useLocation().search;
 	const paramsDictionary = parse(paramsString);
 
@@ -25,9 +26,15 @@ export default function ViewOrder() {
 
 	// Fetch content
 	function fetchContent() {
-		get(`get-order-content?id=${paramsDictionary.id}`).then((resp) => {
-			setOrderContent(resp.data);
-		});
+		get(`get-order-content?id=${paramsDictionary.id}`)
+			.then((resp) => {
+				if (!resp.data.worked) throw Error("Failed to get order content"); // Throw error if failed to get order content
+				setOrderContent(resp.data.data);
+			})
+			.catch((resp) => {
+				console.error(resp.message);
+				history.push("/api-error");
+			});
 	}
 
 	// Render order details
@@ -51,17 +58,17 @@ export default function ViewOrder() {
 
 	// When order content changes
 	useEffect(() => {
-		if (!orderContent.data) return;
+		if (!orderContent.content) return;
 
 		// Order details
 		const details = {
-			orderID: orderContent.data.order_id,
-			queueNumber: orderContent.data.queue_number,
-			username: orderContent.data.username,
-			creationDate: orderContent.data.date_created,
-			modifiedDate: orderContent.data.date_modified,
-			isPrioritized: orderContent.data.is_prioritized,
-			additionalInformation: orderContent.data.additional_information,
+			orderID: orderContent.order_id,
+			queueNumber: orderContent.queue_number,
+			username: orderContent.username,
+			creationDate: orderContent.date_created,
+			modifiedDate: orderContent.date_modified,
+			isPrioritized: orderContent.is_prioritized,
+			additionalInformation: orderContent.additional_information,
 		};
 		setOrderDetails(renderOrderDetails({details: details}));
 
@@ -70,13 +77,13 @@ export default function ViewOrder() {
 		// Convert order content dictionary to a list
 		const orderItemList = [];
 
-		for (const item of Object.keys(orderContent.data.content)) {
+		for (const item of Object.keys(orderContent.content)) {
 			orderItemList.push({
 				defaultItemName: item,
-				itemName: orderContent.data.content[item].name,
-				checkboxes: orderContent.data.content[item].enchantments.checkboxes,
-				multipleSelection: orderContent.data.content[item].enchantments.multipleSelection,
-				additionalInformation: orderContent.data.content[item].additional,
+				itemName: orderContent.content[item].name,
+				checkboxes: orderContent.content[item].enchantments.checkboxes,
+				multipleSelection: orderContent.content[item].enchantments.multipleSelection,
+				additionalInformation: orderContent.content[item].additional,
 			});
 		}
 

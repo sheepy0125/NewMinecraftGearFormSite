@@ -31,7 +31,7 @@ function Options(props) {
 		<>
 			<Hyperlink href={`/view-order?id=${props.id}`}>View order</Hyperlink>
 			<Hyperlink href={`/not-implemented?id=${props.id}`}>Edit order</Hyperlink>
-			<Hyperlink href={`/not-implemented?id=${props.id}`}>Delete order</Hyperlink>
+			<Hyperlink href={`/delete-order?id=${props.id}`}>Delete order</Hyperlink>
 		</>
 	);
 }
