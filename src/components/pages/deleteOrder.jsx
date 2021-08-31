@@ -134,7 +134,12 @@ export default function DeleteOrder(props) {
 				<BoxWidget>
 					{/* The deletion worked */}
 					{deletionResponse.worked ? (
-						<p className="text-2xl">Order {paramsDictionary.id} has been deleted!</p>
+						<>
+							<p className="text-2xl">Order {paramsDictionary.id} has been deleted!</p>
+							<div onClick={() => history.push("/view-all-orders")}>
+								<Button className="w-full">Back to view orders page</Button>
+							</div>
+						</>
 					) : (
 						// Deletion failed
 						<div className="font-light">
