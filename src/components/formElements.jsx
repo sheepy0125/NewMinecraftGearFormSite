@@ -6,7 +6,7 @@
  * Enchant checkbox: A checkbox with an enchantment
  */
 
-import {Checkbox} from "@createnl/grouped-checkboxes";
+import {Checkbox} from "@createnl/grouped-checkboxes"; // I love you
 
 // Enchant item
 export function EnchantItem(props) {

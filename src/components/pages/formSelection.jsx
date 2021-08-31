@@ -27,6 +27,7 @@ export default function FormSelection(props) {
 				setItemInputs(convertToInputs(resp.data.data));
 			})
 			.catch((resp) => {
+				console.error(resp.message || resp);
 				history.push("/api-error");
 			});
 	}
@@ -36,7 +37,7 @@ export default function FormSelection(props) {
 		const cost = Number(itemCount) * Number(itemCost);
 		setItemPrices((prevItemPrices) => ({
 			...prevItemPrices,
-			[itemName]: cost
+			[itemName]: cost,
 		}));
 	}
 	// When itemPrices changes, update the total price.
@@ -77,7 +78,7 @@ export default function FormSelection(props) {
 
 		setOrderNumberDictionary((prevDict) => ({
 			...prevDict,
-			[event.target.name]: dictionaryValue
+			[event.target.name]: dictionaryValue,
 		}));
 
 		getNewPrice({itemName: event.target.name, itemCount: Number(event.target.value), itemCost: Number(event.target.getAttribute("cost"))});
@@ -125,7 +126,7 @@ export default function FormSelection(props) {
 			<BaseWidget className="text-xl text-center">
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Select what you would like to order here.</p>
-				{itemInputs !== null ? (
+				{itemInputs ? (
 					<BaseWidget className="bg-pink-400">
 						<TotalCost />
 						<FormWidget>{itemInputs}</FormWidget>

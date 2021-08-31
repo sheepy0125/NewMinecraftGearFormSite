@@ -30,6 +30,7 @@ export default function FormEnchants(props) {
 				setEnchantDict(resp.data.data.enchant_dict);
 			})
 			.catch((resp) => {
+				console.error(resp.message || resp);
 				history.push("/api-error");
 			});
 	}
@@ -44,7 +45,7 @@ export default function FormEnchants(props) {
 		if (sortedList && enchantDict) {
 			// They both have data, fetch the inputs
 			const defaultInputList = [];
-			const defaultInputContent = {general: {username: null, additional: null, estimatedCost: props.estimatedCost}};
+			const defaultInputContent = {general: {estimatedCost: props.estimatedCost}};
 
 			// Iterate through each item ordered
 			for (const item of sortedList) {
@@ -83,7 +84,9 @@ export default function FormEnchants(props) {
 				}
 			}
 
+			// Do the HTML stuffs
 			inputContent.current = defaultInputContent;
+			// We need to pass the inputContent ref here so it can be set as well as read.
 			renderItemInputs({inputList: defaultInputList, inputContent: inputContent, setItemInputs: setItemInputs});
 		}
 	}, [sortedList, enchantDict]); /* eslint-disable-line */
@@ -95,7 +98,7 @@ export default function FormEnchants(props) {
 			<BaseWidget className="text-xl text-center">
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Select your enchantments for your selected gear.</p>
-				{itemInputs !== null ? (
+				{itemInputs ? (
 					<>
 						<FormWidget>{itemInputs}</FormWidget>
 						<div onClick={() => props.nextPage(inputContent.current)}>

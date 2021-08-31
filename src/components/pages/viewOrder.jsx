@@ -70,6 +70,8 @@ export default function ViewOrder() {
 			isPrioritized: orderContent.is_prioritized,
 			additionalInformation: orderContent.additional_information,
 		};
+
+		// Do the HTML stuffs for the order details stuffs
 		setOrderDetails(renderOrderDetails({details: details}));
 
 		// Order form
@@ -87,6 +89,7 @@ export default function ViewOrder() {
 			});
 		}
 
+		// Do more of the HTML stuffs, this time for the form
 		renderFormInputs({
 			setItemInputs: setItemInputs,
 			inputList: orderItemList,

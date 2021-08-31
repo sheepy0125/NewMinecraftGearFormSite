@@ -14,22 +14,24 @@ export default function SubmitResult() {
 		<BoxWidget message={`Your order (id ${paramsDictionary.orderID}) has been submitted.`}>
 			<div className="text-xl">
 				<p className="text-2xl">Your order's queue number is {paramsDictionary.orderQueueNumber}</p>
-				<p className="font-normal">Please drop off your payment at Sheepy's base.</p>
-				<p className="font-normal">
-					The estimated cost of your order is {paramsDictionary.estimatedCost} diamonds. Head over to{" "}
-					<Link to="/not-implemented" className="text-blue-900 cursor-pointer hover:underline">
-						the calculator
-					</Link>{" "}
-					for the actual price.
-				</p>
-				<p className="font-normal">If you want to edit or remove your order, your PIN is {paramsDictionary.orderPIN}.</p>
-				<p className="font-normal">
-					You can view it{" "}
-					<Link to="/not-implemented" className="text-blue-900 cursor-pointer hover:underline">
-						here
-					</Link>
-					.
-				</p>
+				<div className="font-normal">
+					<p>Please drop off your payment at Sheepy's base.</p>
+					<p>
+						The estimated cost of your order is {paramsDictionary.estimatedCost} diamonds. Head over to{" "}
+						<Link to="/not-implemented" className="text-blue-900 cursor-pointer hover:underline">
+							the calculator
+						</Link>{" "}
+						for the actual price.
+					</p>
+					<p>If you want to edit or remove your order, your PIN is {paramsDictionary.orderPIN}.</p>
+					<p>
+						You can view it{" "}
+						<Link to={`/view-order?id=${paramsDictionary.orderID}`} className="text-blue-900 cursor-pointer hover:underline">
+							here
+						</Link>
+						.
+					</p>
+				</div>
 			</div>
 			<Link to="/home">
 				<Button normalColor="red-300" activeColor="red-400" className="w-full mx-auto">

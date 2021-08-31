@@ -17,8 +17,8 @@ export default function GeneralInformation(props) {
 	const [username, setUsername] = useState("");
 	const [additional, setAdditional] = useState("");
 	const [usernameTooShort, setUsernameTooShort] = useState(true);
-	const [prioritize, setPrioritize] = useState(true);
-	const [submitting, setSubmitting] = useState(false);
+	const [isPrioritized, setIsPrioritized] = useState(true);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Get content
 	function getContent(content) {
@@ -28,7 +28,7 @@ export default function GeneralInformation(props) {
 				...content.general,
 				username: username,
 				additional: additional,
-				prioritize: prioritize,
+				prioritize: isPrioritized,
 			},
 		};
 	}
@@ -43,6 +43,7 @@ export default function GeneralInformation(props) {
 		if (usernameInvalidCharacterCheck) return;
 		usernameTooShortCheck ? setUsernameTooShort(true) : setUsernameTooShort(false);
 
+		// Username's fine
 		setUsername(newUsername);
 	}
 
@@ -55,7 +56,7 @@ export default function GeneralInformation(props) {
 	// Prioritize checkbox changed
 	function prioritizeCheckboxChanged(event) {
 		const newChecked = event.target.checked;
-		setPrioritize(newChecked);
+		setIsPrioritized(newChecked);
 	}
 
 	return (
@@ -64,7 +65,7 @@ export default function GeneralInformation(props) {
 			<Navbar currentPage="/form" />
 			<BaseWidget className="text-xl text-center">
 				<p className="font-semibold">Form</p>
-				{!submitting ? (
+				{!isSubmitting ? (
 					<>
 						<p className="font-thin">Input general information here.</p>
 						<BaseWidget className="bg-pink-400">
@@ -81,7 +82,7 @@ export default function GeneralInformation(props) {
 							</label>
 							<br />
 							{!usernameTooShort ? (
-								<div onClick={() => setSubmitting(true)}>
+								<div onClick={() => setIsSubmitting(true)}>
 									<SubmitOrder content={getContent(props.content)} />
 								</div>
 							) : (
