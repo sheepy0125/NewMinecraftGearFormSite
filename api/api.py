@@ -58,7 +58,7 @@ class Reviews:
 	username = database.Column(database.String(16), nullable=False)
 	content = database.Column(database.String(500), nullable=False)
 	date_created = database.Column(database.String(50), nullable=False)
-	rating_out_of_ten = database.Column(databse.Integer, nullable=False)
+	rating_out_of_ten = database.Column(database.Integer, nullable=False)
 
 """ Functions """
 # Send JSON file as data
@@ -129,12 +129,12 @@ def ping_route() -> dict:
 	return {"worked": True, "code": 200}
 
 # Get select dictionary
-@api.route("/get_select_dictionary", methods=["GET"])
+@api.route("/get-select-dictionary", methods=["GET"])
 def get_selection_dictionary() -> dict:
 	return send_json_file_as_data("form_select_dictionary")
 
 # Get all enchantments for selected gear
-@api.route("/get_enchants_for_gear", methods=["POST"])
+@api.route("/get-enchants-for-gear", methods=["POST"])
 def get_enchants_for_gear() -> dict:
 	with open("json_files/gear_enchant_dictionary.json") as all_gear_enchants_file:
 		all_gear_enchants_info: dict = load(all_gear_enchants_file)
@@ -165,7 +165,7 @@ def get_enchants_for_gear() -> dict:
 """ Form routes """
 
 # Submit
-@api.route("/submit", methods=["POST"])
+@api.route("/submit-form", methods=["POST"])
 def submit_route() -> dict:
 	ordered_json: dict = request.json
 
@@ -277,10 +277,10 @@ def submit_review_route() -> dict:
 
 	# Create review
 	review_submission: Reviews = Reviews(
-		username=review_username
-		content=review_content
-		rating_out_of_ten=review_rating
-		date_created=date_created
+		username=review_username,
+		content=review_content,
+		rating_out_of_ten=review_rating,
+		date_created=date_created,
 	)
 	# Save to database!
 	database.session.add(review_submission)

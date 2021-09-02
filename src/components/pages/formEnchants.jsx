@@ -24,7 +24,7 @@ export default function FormEnchants(props) {
 
 	// Fetch the data
 	function fetchData() {
-		post("/get_enchants_for_gear", Object.keys(props.orderNumberDictionary))
+		post("/get-enchants-for-gear", Object.keys(props.orderNumberDictionary))
 			.then((resp) => {
 				setSortedList(resp.data.data.sorted_list);
 				setEnchantDict(resp.data.data.enchant_dict);
