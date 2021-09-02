@@ -22,6 +22,7 @@ api.config["JSON_SORT_KEYS"]: bool = False
 database: SQLAlchemy = SQLAlchemy(api)
 
 """ Database """
+
 class Orders(database.Model):
 	order_id = database.Column(database.Integer, primary_key=True)
 	username = database.Column(database.String(16), nullable=False)
@@ -51,6 +52,13 @@ GET_ORDER_CONTENT_COLUMNS: tuple = (
 	Orders.content
 	# Missing columns: [pin]
 )
+
+class Reviews:
+	post_id = database.Column(database.Integer, primary_key=True)
+	username = database.Column(database.String(16), nullable=False)
+	content = database.Column(database.String(500), nullable=False)
+	date_created = database.Column(database.String(50), nullable=False)
+	rating_out_of_ten = database.Column(databse.Integer, nullable=False)
 
 """ Functions """
 # Send JSON file as data
@@ -154,6 +162,8 @@ def get_enchants_for_gear() -> dict:
 
 		return {"worked": True, "data": {"sorted_list": maintaining_order_selected_gear_items, "enchant_dict": enchant_dict}, "code": 200}
 
+""" Form routes """
+
 # Submit
 @api.route("/submit", methods=["POST"])
 def submit_route() -> dict:
@@ -252,6 +262,42 @@ def delete_order_route() -> dict:
 	database.session.commit()
 	
 	return {"worked": True, "message": "The order has successfully been deleted.", "code": 200}
+
+""" Reviews route """
+
+# Submit review
+@api.route("/submit-review", methods=["POST"])
+def submit_review_route() -> dict:
+	review_json: dict = {}
+
+	review_username: str = review_json["username"]
+	review_rating: int = review_json["rating"]
+	review_content: str = review_json["content"]
+	date_created: str = get_current_time()
+
+	# Create review
+	review_submission: Reviews = Reviews(
+		username=review_username
+		content=review_content
+		rating_out_of_ten=review_rating
+		date_created=date_created
+	)
+	# Save to database!
+	database.session.add(review_submission)
+	database.session.commit()
+
+	return {"worked": True, code: 200}
+
+# Get reviews
+@api.route("/get-reviews", methods=["GET"])
+def get_reviews_route() -> dict:
+	starting_id: int = int(request.args["starting_id"])
+	ending_id: int = int(request.args["ending_id"])
+
+	all_reviews: Reviews = Reviews.query.order_by(Reviews.queue_number).filter(ending_id >= Reviews.post_id >= starting_id).all()
+	all_reviews_list: list = [(dict(row)) for row in all_reviews] # Convert rows to list of dicts
+
+	return {"worked": True, "reviews": all_reviews_list, "code": 200}
 
 """ Error handlers """
 

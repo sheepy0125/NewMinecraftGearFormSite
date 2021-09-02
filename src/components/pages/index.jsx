@@ -5,6 +5,7 @@ import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import ListWidget from "../boilerplate/widgets/listWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
+import Reviews from "../reviews.jsx";
 
 export default function Index() {
 	return (
@@ -26,7 +27,9 @@ export default function Index() {
 					</ListWidget>
 					<ListWidget>
 						<p className="text-center">Some things to note</p>
-						<li className="font-thin">If you are ordering gear that is NOT diamond, then you must drop it off (iron chestplate, turtle helmet, etc.)</li>
+						<li className="font-thin">
+							If you are ordering gear that is NOT diamond, then you must drop it off (iron chestplate, turtle helmet, etc.)
+						</li>
 						<li className="font-thin">
 							You may only order up to 5 of an item that costs diamonds to make (e.g. diamond hoe) and 3 of an item that doesn't
 							<br />
@@ -41,6 +44,8 @@ export default function Index() {
 					</ListWidget>
 				</div>
 			</BaseWidget>
+
+			<Reviews />
 		</MainWidget>
 	);
 }
