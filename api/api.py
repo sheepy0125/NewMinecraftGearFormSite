@@ -1,6 +1,6 @@
 """
 API for god gear ordering site
-Created on 06/14/2021
+Created on 14/06/2021 (dd/mm/yyyy)
 """
 
 """ Setup """
@@ -12,18 +12,23 @@ from time import strftime
 
 with open("json_files/config.json") as config_file:
 	config_dict: dict = load(config_file)
-	MASTER_PASSWORD = config_dict["masterPassword"]
+	MASTER_PASSWORD: str = config_dict["masterPassword"]
+	ORDERS_DB_PATH: str = config_dict["ordersDatabasePath"]
+	REVIEWS_DB_PATH: str = config_dict["reviewsDatabasePath"]
 
 api: Flask = Flask(__name__, template_folder=None, static_folder="static")
-# api.config["SQLALCHEMY_DATABASE_URI"]: str = f"sqlite:///database/order.db" # Production
-api.config["SQLALCHEMY_DATABASE_URI"]: str = f"sqlite:///database/test.db" # Testing
 api.config["SQLALCHEMY_TRACK_MODIFICATIONS"]: bool = False # Honestly, no idea what this does, but it removes the warning
 api.config["JSON_SORT_KEYS"]: bool = False
+api.config["SQLALCHEMY_BINDS"]: dict = {
+	"orders_db": f"sqlite:///{ORDERS_DB_PATH}",
+	"reviews_db": f"sqlite:///{REVIEWS_DB_PATH}",
+}
 database: SQLAlchemy = SQLAlchemy(api)
 
-""" Database """
+""" Database classes """
 
 class Orders(database.Model):
+	__bind_key__: str = "orders_db"
 	order_id = database.Column(database.Integer, primary_key=True)
 	username = database.Column(database.String(16), nullable=False)
 	content = database.Column(database.PickleType, nullable=False)
@@ -54,6 +59,7 @@ GET_ORDER_CONTENT_COLUMNS: tuple = (
 )
 
 class Reviews:
+	__bind_key__: str = "reviews_db"
 	post_id = database.Column(database.Integer, primary_key=True)
 	username = database.Column(database.String(16), nullable=False)
 	content = database.Column(database.String(500), nullable=False)
@@ -122,7 +128,63 @@ def get_new_queue_number(prioritize: bool) -> int:
 	# The queue number will be the last position
 	return Orders.query.count() + 1
 
+# Delete order
+def delete_order(order_id: int) -> None:
+	# Get the order
+	order: Order = Orders.query.filter_by(order_id=order_id).first()
+	order_queue_number: int = order.queue_number
+
+	# We need to update the other order's queue numbers and IDs
+	# In order to prevent collisions with matching IDs and queue numbers, we should just set them to an arbitrary unique number
+	order.order_id = order.queue_number = randint(1000, 1500)
+	database.session.commit()
+
+	# Now update the orders
+	update_queue_numbers_for_other_orders(starting_queue_number=order_queue_number, change_by=-1)
+	update_ids_for_other_orders(starting_id=order_id, change_by=-1)
+
+	# After that's all done, we can finally delete the order.
+	database.session.delete(order)
+	database.session.commit()
+
+# Submit order
+def submit_order(ordered_json: dict) -> Orders:
+	order_username: str = ordered_json["general"]["username"]
+	order_prioritize: bool = ordered_json["general"]["prioritize"]
+	order_additional_information: str = ordered_json["general"]["additional"]
+	ordered_content_dict: dict = ordered_json; del ordered_content_dict["general"]
+	order_pin: str = get_random_pin()
+	order_queue_number: int = get_new_queue_number(prioritize=order_prioritize)
+	date_created: str = get_current_time()
+
+	# Update other queue numbers
+	update_queue_numbers_for_other_orders(starting_queue_number=order_queue_number, change_by=1)
+
+	# Create order
+	order_submission: Orders = Orders(
+		username=order_username,
+		content=ordered_content_dict,
+		additional_information=order_additional_information,
+		pin=order_pin,
+		date_created=date_created,
+		date_modified="N/A",
+		queue_number=order_queue_number,
+		is_prioritized=order_prioritize,
+		status="Recieved" # TODO: change from str to int value from 1-4 & have it in the config file in a list?
+	)
+	# Save to database!
+	database.session.add(order_submission)
+	database.session.commit()
+
+	return order_submission
+
+# Get all orders
+def get_all_orders() -> list:
+	all_orders: Orders = Orders.query.order_by(Orders.queue_number).with_entities(*VIEW_ALL_ORDERS_COLUMNS).all()
+	return [(dict(row)) for row in all_orders] # Convert rows to list of dict
+
 """ Routes """
+
 # Ping
 @api.route("/ping", methods=["GET"])
 def ping_route() -> dict:
@@ -166,44 +228,15 @@ def get_enchants_for_gear() -> dict:
 
 # Submit
 @api.route("/submit-form", methods=["POST"])
-def submit_route() -> dict:
+def submit_order_route() -> dict:
 	ordered_json: dict = request.json
-
-	order_username: str = ordered_json["general"]["username"]
-	order_prioritize: bool = ordered_json["general"]["prioritize"]
-	order_additional_information: str = ordered_json["general"]["additional"]
-	ordered_content_dict: dict = ordered_json; del ordered_content_dict["general"]
-	order_pin: str = get_random_pin()
-	order_queue_number: int = get_new_queue_number(prioritize=order_prioritize)
-	date_created: str = get_current_time()
-
-	# Update other queue numbers
-	update_queue_numbers_for_other_orders(starting_queue_number=order_queue_number, change_by=1)
-
-	# Create order
-	order_submission: Orders = Orders(
-		username=order_username,
-		content=ordered_content_dict,
-		additional_information=order_additional_information,
-		pin=order_pin,
-		date_created=date_created,
-		date_modified="N/A",
-		queue_number=order_queue_number,
-		is_prioritized=order_prioritize,
-		status="Recieved" # TODO: change from str to int value from 1-4 & have it in the config file in a list?
-	)
-	# Save to database!
-	database.session.add(order_submission)
-	database.session.commit()
-
-	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_pin, "order_queue_number": order_queue_number}, "code": 200}
+	order_submission: Orders = submit_order(ordered_json)
+	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_submission.pin, "order_queue_number": order_submission.queue_number}, "code": 200}
 
 # View all orders
 @api.route("/view-all-orders", methods=["GET"])
 def view_all_orders_route() -> dict:
-	all_orders: Orders = Orders.query.order_by(Orders.queue_number).with_entities(*VIEW_ALL_ORDERS_COLUMNS).all()
-	all_orders_list: list = [(dict(row)) for row in all_orders] # Convert rows to list of dicts
-
+	all_orders_list: list = get_all_orders()
 	return {"worked": True, "data": all_orders_list, "code": 200}
 
 # Get order content
@@ -245,21 +278,7 @@ def delete_order_route() -> dict:
 			return {"worked": False, "message": "The master password isn't correct!", "code": 403}
 
 	# Finish
-	order: Order = Orders.query.filter_by(order_id=order_id).first()
-	order_queue_number: int = order.queue_number
-
-	# We need to update the other order's queue numbers and IDs
-	# In order to prevent collisions with matching IDs and queue numbers, we should just set them to an arbitrary unique number
-	order.order_id = order.queue_number = randint(1000, 1500)
-	database.session.commit()
-
-	# Now update the orders
-	update_queue_numbers_for_other_orders(starting_queue_number=order_queue_number, change_by=-1)
-	update_ids_for_other_orders(starting_id=order_id, change_by=-1)
-
-	# After that's all done, we can finally delete the order.
-	database.session.delete(order)
-	database.session.commit()
+	delete_order(order_id=order_id)
 	
 	return {"worked": True, "message": "The order has successfully been deleted.", "code": 200}
 
