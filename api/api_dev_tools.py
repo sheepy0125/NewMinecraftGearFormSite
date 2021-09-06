@@ -5,10 +5,12 @@ Created on 03/09/2021 (dd/mm/yyyy)
 
 """ Setup """
 
-from api import database, Orders, Reviews, send_json_file_as_data, get_current_time, get_random_pin, update_queue_numbers_for_other_orders, \
-				update_ids_for_other_orders, get_new_queue_number, delete_order, submit_order, get_all_orders
+from api import database, Orders, Reviews, delete_order, submit_order, get_all_orders, delete_review, submit_review, get_all_reviews, \
+				ORDERS_DB_PATH, REVIEWS_DB_PATH
 from api_dev_tools_boilerplate import BaseWindow
 from tkinter import Text, Entry, END
+from os import remove
+from json import loads
 
 """ Main window class """
 class MainWindow(BaseWindow):
@@ -21,86 +23,81 @@ class MainWindow(BaseWindow):
 	def menu(self) -> None:
 		self.reset_win()
 		self.label("API Dev Tools").pack(pady=8)
-		self.button("View all orders", on_click=lambda: self.view_all_orders_page()).pack(pady=8)
-		self.button("Delete order", on_click=lambda: self.delete_order_page()).pack(pady=8)
-		self.button("Submit order", on_click=lambda: self.submit_order_page()).pack(pady=8)
+		self.label("Orders").pack(pady=8)
+		self.button("View all orders", on_click=lambda: self.view_all_rows_page(table="orders")).pack(pady=8)
+		self.button("Delete order", on_click=lambda: self.delete_row_page(table="orders")).pack(pady=8)
+		self.button("Submit order", on_click=lambda: self.submit_row_page(table="orders")).pack(pady=8)
+		self.button("Reset / create new orders table", on_click=lambda: reset_table(table_path=ORDERS_DB_PATH, table="orders_db")).pack(pady=8)
+		self.label("Reviews").pack(pady=8)
+		self.button("View all reviews", on_click=lambda: self.view_all_rows_page(table="reviews")).pack(pady=8)
+		self.button("Delete review", on_click=lambda: self.delete_row_page(table="reviews")).pack(pady=8)
+		self.button("Submit review", on_click=lambda: self.submit_row_page(table="reviews")).pack(pady=8)
+		self.button("Reset / create new reviews table", on_click=lambda: reset_table(table_path=REVIEWS_DB_PATH, table="reviews_db")).pack(pady=8)
 		self.button("Quit", on_click=lambda: self.exit_win()).pack(pady=8)
 		self.main_loop()
 
-	# View order page
-	def view_all_orders_page(self) -> None:
+	# View all rows of table
+	def view_all_rows_page(self, table: str):
 		self.reset_win()
 
-		# Get all orders
-		all_orders: list = get_all_orders()
-		
-		# Formatted nicely
-		all_orders_text_formatted: Text = self.text(rows=10)
-		all_orders_text_formatted.insert("1.0", "All orders (formatted)\n")
-		for order in all_orders:
-			all_orders_text_formatted.insert(
-				END,
-				f"\nID: {order['order_id']} | QUEUE NUMBER: {order['queue_number']} | USERNAME: {order['username']} | "
-				f"DATE_CREATED: {order['date_created']} | STATUS: {order['status']} | ADDITIONAL INFORMATION: {order['additional_information']}"
-			)
-		all_orders_text_formatted.config(state="disabled")
-		all_orders_text_formatted.config(wrap="none")
+		all_rows: list = eval(f"get_all_{table}()")
 
-		# Raw JSON
-		all_orders_text_raw: Text = self.text(rows=10)
-		all_orders_text_raw.insert("1.0", "All orders (raw)\n")
-		for order in all_orders:
-			all_orders_text_raw.insert(
+		all_rows_text: Text = self.text(rows=10)
+		all_rows_text.insert("1.0", f"All {table} (raw)\n")
+		for row in all_rows:
+			all_rows_text.insert(
 				END,
-				f"\n{order}"
+				f"\n{row},"
 			)
-		all_orders_text_raw.config(state="disabled")
+		all_rows_text.config(state="disabled")
 
-		self.label("Viewing all orders").pack(pady=8)
-		all_orders_text_formatted.pack(pady=8)
-		all_orders_text_raw.pack(pady=8)
+		self.label(f"Viewing all {table}").pack(pady=8)
+		all_rows_text.pack(pady=8)
 		self.button("Back to menu", on_click=lambda: self.menu()).pack(pady=8)
 		self.main_loop()
 
-	# Delete order page
-	def delete_order_page(self) -> None:
-		# Run delete order command
-		def run_delete_order():
+	# Delete row page
+	def delete_row_page(self, table: str) -> None:
+		table: str = table.rsplit("s")[0]
+
+		# Run delete row command
+		def run_delete_row():
 			try:
-				order_id: int = int(order_id_entry.get())
-				delete_order(order_id)
-				StatusWindow(f"Successfully deleted order with ID {order_id}.")
+				row_id: int = int(row_id_entry.get())
+				eval(f"delete_{table}(row_id)")
+				StatusWindow(f"Successfully deleted {table} with ID {row_id}.")
 
 			except Exception as exception:
 				error_handling(exception)
 
 		self.reset_win()
-		self.label("Deleting order").pack(pady=8)
-		self.label("Order ID").pack(pady=2)
-		order_id_entry: Entry = self.entry(width=(self.widget_size[0] // 3))
-		order_id_entry.pack()
-		self.button("Delete order", on_click=lambda: run_delete_order()).pack(pady=8)
+		self.label(f"Deleting {table}").pack(pady=8)
+		self.label(f"{''.join([table[0].upper(), table[1::]])} ID").pack(pady=2)
+		row_id_entry: Entry = self.entry(width=(self.widget_size[0] // 3))
+		row_id_entry.pack()
+		self.button(f"Delete {table}", on_click=lambda: run_delete_row()).pack(pady=8)
 		self.button("Back to menu", on_click=lambda: self.menu()).pack(pady=8)
 		self.main_loop()
 
-	# Submit order page
-	def submit_order_page(self) -> None:
-		# Run submit order command
-		def run_submit_order():
+	# Submit row page
+	def submit_row_page(self, table: str) -> None:
+		table: str = table.rsplit("s")[0]
+
+		# Run submit row command
+		def run_submit_row():
 			try:
-				true, false, null = True, False, None # JSON vs Python dictionaries!
-				order_json: dict = eval(json_input_text.get("1.0", END)) # Sure, using eval() isn't the best, but I don't feel like importing the JSON module
-				submission_result: dict = submit_order(order_json)
-				StatusWindow(f"Successfully submitted order. Data returned: {submission_result}")
+				row_json: dict = loads(json_input_text.get("1.0", END))
+				submission_result: dict = eval(f"submit_{table}(row_json)")
+				StatusWindow(f"Successfully submitted {table}. Data returned: {submission_result}")
 
 			except Exception as exception:
 				error_handling(exception)
 		
 		self.reset_win()
-		self.label("Submit order with raw JSON").pack(pady=8)
+		self.label(f"Submit {table} with raw JSON").pack(pady=8)
 		json_input_text: Text = self.text(rows=10)
 		json_input_text.pack(pady=8)
-		self.button("Submit order", on_click=lambda: run_submit_order()).pack(pady=8)
+		self.button(f"Submit {table}", on_click=lambda: run_submit_row()).pack(pady=8)
 		self.button("Back to menu", on_click=lambda: self.menu()).pack(pady=8)
 		self.main_loop()
 
@@ -120,9 +117,30 @@ class StatusWindow(BaseWindow):
 
 """ Functions """
 
+# Reset tables
+def reset_table(table_path: str, table: str) -> None:
+	# Attempt to remove table
+	try:
+		remove(table_path)
+
+	# Didn't work, file doesn't exist	
+	except Exception:
+		pass
+
+	try:
+		# Create table
+		database.create_all(bind=table)
+		database.session.commit()
+
+		# Status
+		StatusWindow("Successfully reset database!")
+	
+	except Exception as exception:
+		error_handling(exception)
+
 # Exception handling
-def error_handling(exception=None):
+def error_handling(exception=None) -> StatusWindow:
 	error_formatted: str = "unknown error" if exception is None else f"{type(exception).__name__}: {exception}"
-	StatusWindow(f"An error occurred: {error_formatted}")
+	return StatusWindow(f"An error occurred: {error_formatted}")
 
 MainWindow().menu()

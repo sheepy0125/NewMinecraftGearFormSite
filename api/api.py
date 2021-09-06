@@ -53,18 +53,26 @@ VIEW_ALL_ORDERS_COLUMNS: tuple = (
 )
 
 GET_ORDER_CONTENT_COLUMNS: tuple = (
-	*VIEW_ALL_ORDERS_COLUMNS, # TODO: d
+	*VIEW_ALL_ORDERS_COLUMNS,
 	Orders.content
 	# Missing columns: [pin]
 )
 
-class Reviews:
+class Reviews(database.Model):
 	__bind_key__: str = "reviews_db"
 	post_id = database.Column(database.Integer, primary_key=True)
 	username = database.Column(database.String(16), nullable=False)
 	content = database.Column(database.String(500), nullable=False)
 	date_created = database.Column(database.String(50), nullable=False)
 	rating_out_of_ten = database.Column(database.Integer, nullable=False)
+
+VIEW_ALL_REVIEWS_COLUMNS: tuple = (
+	Reviews.post_id,
+	Reviews.username,
+	Reviews.content,
+	Reviews.date_created,
+	Reviews.rating_out_of_ten
+)
 
 """ Functions """
 # Send JSON file as data
@@ -82,6 +90,8 @@ def get_current_time() -> str:
 # Get random pin
 def get_random_pin() -> str:
 	return str(randint(0, 9999)).zfill(4)
+
+""" Orders """
 
 # Update queue numbers for other orders
 def update_queue_numbers_for_other_orders(starting_queue_number: int, change_by: int=1) -> None:
@@ -148,11 +158,11 @@ def delete_order(order_id: int) -> None:
 	database.session.commit()
 
 # Submit order
-def submit_order(ordered_json: dict) -> Orders:
-	order_username: str = ordered_json["general"]["username"]
-	order_prioritize: bool = ordered_json["general"]["prioritize"]
-	order_additional_information: str = ordered_json["general"]["additional"]
-	ordered_content_dict: dict = ordered_json; del ordered_content_dict["general"]
+def submit_order(order_json: dict) -> Orders:
+	order_username: str = order_json["general"]["username"]
+	order_prioritize: bool = order_json["general"]["prioritize"]
+	order_additional_information: str = order_json["general"]["additional"]
+	ordered_content_dict: dict = order_json; del ordered_content_dict["general"]
 	order_pin: str = get_random_pin()
 	order_queue_number: int = get_new_queue_number(prioritize=order_prioritize)
 	date_created: str = get_current_time()
@@ -182,6 +192,45 @@ def submit_order(ordered_json: dict) -> Orders:
 def get_all_orders() -> list:
 	all_orders: Orders = Orders.query.order_by(Orders.queue_number).with_entities(*VIEW_ALL_ORDERS_COLUMNS).all()
 	return [(dict(row)) for row in all_orders] # Convert rows to list of dict
+
+""" Reviews """
+
+# Delete review
+def delete_review(post_id: int) -> None:
+	review: Reviews = Reviews.query.filter_by(post_id=post_id).first()
+	database.session.delete(review)
+	database.session.commit()
+
+# Submit review
+def submit_review(review_json: dict) -> Reviews:
+	review_username: str = review_json["username"]
+	content: str = review_json["content"]
+	rating_out_of_ten: int = int(review_json["rating"])
+	date_created: str = get_current_time()
+
+	# Create review
+	review_submission: Reviews = Reviews(
+		username=review_username,
+		content=content,
+		rating_out_of_ten=rating_out_of_ten,
+		date_created=date_created
+	)
+
+	# Save to database!
+	database.session.add(review_submission)
+	database.session.commit()
+
+	return review_submission
+
+# Get all reviews
+def get_all_reviews() -> list:
+	all_reviews: Reviews = Reviews.query.order_by(Reviews.post_id).with_entities(*VIEW_ALL_REVIEWS_COLUMNS).all()
+	return [(dict(row)) for row in all_reviews] # Convert rows to list of dict
+
+# Get reviews
+def get_reviews(starting_id: int, ending_id: int) -> list:
+	reviews: Reviews = Reviews.query.order_by(Reviews.post_id).filter(starting_id >= Reviews.post_id >= ending_id).with_entities(*VIEW_ALL_REVIEWS_COLUMNS).all()
+	return [(dict(row)) for row in all_reviews] # Convert rows to list of dict
 
 """ Routes """
 
@@ -229,8 +278,8 @@ def get_enchants_for_gear() -> dict:
 # Submit
 @api.route("/submit-form", methods=["POST"])
 def submit_order_route() -> dict:
-	ordered_json: dict = request.json
-	order_submission: Orders = submit_order(ordered_json)
+	order_json: dict = request.json
+	order_submission: Orders = submit_order(order_json)
 	return {"worked": True, "data": {"order_id": order_submission.order_id, "order_pin": order_submission.pin, "order_queue_number": order_submission.queue_number}, "code": 200}
 
 # View all orders
@@ -313,8 +362,7 @@ def get_reviews_route() -> dict:
 	starting_id: int = int(request.args["starting_id"])
 	ending_id: int = int(request.args["ending_id"])
 
-	all_reviews: Reviews = Reviews.query.order_by(Reviews.queue_number).filter(ending_id >= Reviews.post_id >= starting_id).all()
-	all_reviews_list: list = [(dict(row)) for row in all_reviews] # Convert rows to list of dicts
+	all_reviews_list: list =get_reviews(starting_id, ending_id)
 
 	return {"worked": True, "reviews": all_reviews_list, "code": 200}
 
