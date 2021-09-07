@@ -1,7 +1,7 @@
 // Form inputs viewing
 // Used for displaying form inputs when the user is viewing an order, so not functional
 
-import {EnchantItem, Label, DummyEnchantRadioButton, DummyEnchantCheckbox} from "../components/formElements.jsx"; // Why?
+import {EnchantItem, Label, DummyEnchantRadioButton, DummyEnchantCheckbox} from "./formElements.jsx";
 
 export default function renderFormInputs({inputList, setItemInputs}) {
 	// See /src/itemInputsModel.txt

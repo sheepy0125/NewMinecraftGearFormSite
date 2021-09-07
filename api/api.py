@@ -227,11 +227,6 @@ def get_all_reviews() -> list:
 	all_reviews: Reviews = Reviews.query.order_by(Reviews.post_id).with_entities(*VIEW_ALL_REVIEWS_COLUMNS).all()
 	return [(dict(row)) for row in all_reviews] # Convert rows to list of dict
 
-# Get reviews
-def get_reviews(starting_id: int, ending_id: int) -> list:
-	reviews: Reviews = Reviews.query.order_by(Reviews.post_id).filter(starting_id >= Reviews.post_id >= ending_id).with_entities(*VIEW_ALL_REVIEWS_COLUMNS).all()
-	return [(dict(row)) for row in all_reviews] # Convert rows to list of dict
-
 """ Routes """
 
 # Ping
@@ -362,7 +357,7 @@ def get_reviews_route() -> dict:
 	starting_id: int = int(request.args["starting_id"])
 	ending_id: int = int(request.args["ending_id"])
 
-	all_reviews_list: list =get_reviews(starting_id, ending_id)
+	all_reviews_list: list = get_all_reviews()[(starting_id - 1):ending_id]
 
 	return {"worked": True, "reviews": all_reviews_list, "code": 200}
 

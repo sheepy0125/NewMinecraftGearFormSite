@@ -2,7 +2,7 @@
 // Inputs for when editing
 
 import {AllCheckerCheckbox, CheckboxGroup} from "@createnl/grouped-checkboxes";
-import {EnchantItem, Label, EnchantRadioButton, EnchantCheckbox} from "../components/formElements.jsx"; // Why?
+import {EnchantItem, Label, EnchantRadioButton, EnchantCheckbox} from "./formElements.jsx";
 
 /* In order to have access to inputList, setItemInputs, and inputContent, we have to wrap everything
  * in this function. It'd be better not to have to do this...
