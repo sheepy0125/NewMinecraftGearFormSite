@@ -357,9 +357,16 @@ def get_reviews_route() -> dict:
 	starting_id: int = int(request.args["starting_id"])
 	ending_id: int = int(request.args["ending_id"])
 
-	all_reviews_list: list = get_all_reviews()[(starting_id - 1):ending_id]
+	all_reviews_list: list = get_all_reviews()
+	reviews_list: list = all_reviews_list[(starting_id - 1):ending_id]
 
-	return {"worked": True, "reviews": all_reviews_list, "code": 200}
+	# See if we can load more
+	can_load_more = False
+	if len(all_reviews_list) > ending_id:
+		can_load_more = True
+	print(len(all_reviews_list), ending_id)
+
+	return {"worked": True, "reviews": reviews_list, "can_load_more": can_load_more, "code": 200}
 
 """ Error handlers """
 
