@@ -13,20 +13,20 @@ import Navbar from "../boilerplate/navbar.jsx";
 import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/table.jsx";
 
 // Show mobile table column
-function showMobileTableColumn({columnName: column, type}) {
+function showMobileTableColumn({columnName, type}) {
 	// If the type is a list, then show each item
-	let show = column;
+	let show = columnName;
 	if (type === "list") {
 		show = (
 			<>
-				{column.map((item, index) => (
-					<p>{item}</p>
+				{columnName.map((item, index) => (
+					<p key={`list ${item} ${index}`}>{item}</p>
 				))}
 			</>
 		);
 	}
 
-	return show;
+	return columnName.length > 0 ? show : null;
 }
 
 export default function EnchantmentDictionary() {
@@ -36,12 +36,13 @@ export default function EnchantmentDictionary() {
 
 	// Fetch enchantments
 	function fetchEnchantments() {
-		get("get-enchantment-dictionary").then((resp) => {
-			setEnchantments(convertToHTML(resp.data.data));
-		});
-		// .catch((resp) => {
-		// history.push("/api-error");
-		// });
+		get("get-enchantment-dictionary")
+			.then((resp) => {
+				setEnchantments(convertToHTML(resp.data.data));
+			})
+			.catch((resp) => {
+				history.push("/api-error");
+			});
 	}
 
 	// Convert to HTML
@@ -65,7 +66,7 @@ export default function EnchantmentDictionary() {
 									<MobileTableRow key={`${row.name} mobile`}>
 										<MobileTableColumn title>{row.name}</MobileTableColumn>
 										<MobileTableColumn>
-											{showMobileTableColumn({columnName: enchantment[row.valueName], type: row.type})}
+											{showMobileTableColumn({columnName: enchantment[row.valueName], type: row.type}) || "N/A"}
 										</MobileTableColumn>
 									</MobileTableRow>
 								))}
