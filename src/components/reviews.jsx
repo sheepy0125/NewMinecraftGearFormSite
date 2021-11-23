@@ -11,9 +11,13 @@ import Button from "./boilerplate/button.jsx";
 function ReviewWidget(props) {
 	return (
 		<div className="block w-full px-8 py-4 text-sm font-normal text-left bg-white border border-black lg:rounded-lg">
-			<div className="w-full overflow-y-auto break-words border-pink-600 lg:border">
-				<p className="text-left max-h-28 lg:h-28 sm:text-center lg:text-left">{props.children}</p>
-				<p className="text-left truncate sm:text-center lg:text-right">-{props.authorUsername}</p>
+			<div className="w-full">
+				<p className="overflow-y-auto text-left break-words max-h-28 lg:h-28 sm:text-center lg:text-left">{props.children}</p>
+				{/* Use a flexbox to have the username take up only half the box at maximum (when big enough) */}
+				<div className="lg:flex">
+					<p className="flex-1 order-1" />
+					<p className="flex-1 order-2 text-left truncate max-w-max sm:text-center lg:text-right">-{props.authorUsername}</p>
+				</div>
 			</div>
 			<p className="text-sm font-thin text-center text-gray-500 md:text-base">
 				review {props.reviewID} ⋅ {props.ratingOutOfTen / 2}/5 stars <br />
@@ -106,7 +110,7 @@ export default function Reviews() {
 									<Button className="w-full mx-4">Load more</Button>
 								</div>
 							) : (
-								<p className="text-sm text-center text-gray-500">looks like you've reached the end</p>
+								<>{reviewIDRange.current[1] > 5 && <p className="text-sm text-center text-gray-500">looks like you've reached the end</p>}</>
 							)}
 						</>
 					) : (
