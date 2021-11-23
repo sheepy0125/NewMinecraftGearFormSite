@@ -68,7 +68,7 @@ export default function GeneralInformation(props) {
 				{!isSubmitting ? (
 					<>
 						<p className="font-thin">Input general information here.</p>
-						<BaseWidget className="bg-pink-400">
+						<BaseWidget className="bg-blue-400">
 							<label className="block p-4">
 								<p>Username</p>
 								<input type="text" value={username} onChange={usernameChanged} minLength={usernameMinLength} maxLength={usernameMaxLength} />

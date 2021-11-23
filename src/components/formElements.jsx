@@ -16,7 +16,7 @@ export function EnchantItem(props) {
 // Label
 export function Label(props) {
 	return (
-		<label className="flex w-full px-1 my-1 bg-pink-200 bg-opacity-25 cursor-pointer" key={props.id || ""}>
+		<label className="flex w-full px-1 my-1 bg-blue-200 bg-opacity-25 cursor-pointer" key={props.id || ""}>
 			{props.children}
 		</label>
 	);

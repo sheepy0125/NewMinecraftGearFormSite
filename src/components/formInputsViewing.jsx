@@ -7,7 +7,7 @@ export default function renderFormInputs({inputList, setItemInputs}) {
 	// See /src/itemInputsModel.txt
 	setItemInputs(
 		inputList.map((item) => (
-			<div className="block w-full px-8 py-4 text-center bg-pink-300 rounded-lg" key={`${item.defaultItemName}`}>
+			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={`${item.defaultItemName}`}>
 				<p className="mx-auto font-bold">{item.defaultItemName}</p>
 
 				{/* Item name */}

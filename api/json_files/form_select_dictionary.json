@@ -15,5 +15,5 @@
 	{"name": "Shield", "cost": 0, "max": 3},
 	{"name": "Fishing Rod", "cost": 0, "max": 3},
 	{"name": "Carrot on Stick", "cost": 0, "max": 3},
-	{"name": "Elytra", "cost": 15, "max": 5}
+	{"name": "Elytra", "cost": -1, "max": 5}
 ]

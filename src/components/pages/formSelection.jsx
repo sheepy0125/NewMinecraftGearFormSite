@@ -81,16 +81,25 @@ export default function FormSelection(props) {
 			[event.target.name]: dictionaryValue,
 		}));
 
-		getNewPrice({itemName: event.target.name, itemCount: Number(event.target.value), itemCost: Number(event.target.getAttribute("cost"))});
+		// If the cost is less than one, set it equal to 0
+		let itemCost = Number(event.target.getAttribute("cost")) || 0;
+		if (itemCost < 1) itemCost = 0;
+		getNewPrice({itemName: event.target.name, itemCount: Number(event.target.value), itemCost: itemCost});
 	}
 
 	// Convert the JSON data to input tags
 	function convertToInputs(data) {
 		return data.map((item) => (
-			<div className="block w-full px-8 py-4 text-center bg-pink-300 rounded-lg" key={item.name}>
+			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={item.name}>
 				<p>{item.name}</p>
 				<p className="font-medium">
-					This costs {item.cost} diamond{item.cost !== 1 ? "s" : ""}.
+					{item.cost >= 0 ? (
+						<span>
+							This costs {item.cost} diamond{item.cost !== 1 ? "s" : ""}.
+						</span>
+					) : (
+						<span>You must provide this.</span>
+					)}
 				</p>
 				<input
 					type="number"
@@ -127,7 +136,7 @@ export default function FormSelection(props) {
 				<p className="font-semibold">Form</p>
 				<p className="font-thin">Select what you would like to order here.</p>
 				{itemInputs ? (
-					<BaseWidget className="bg-pink-400">
+					<BaseWidget className="bg-blue-400">
 						<TotalCost />
 						<FormWidget>{itemInputs}</FormWidget>
 						<TotalCost />

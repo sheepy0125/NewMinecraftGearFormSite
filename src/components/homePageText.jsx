@@ -13,15 +13,12 @@ export default function HomePageText() {
 			<div>
 				<ListWidget>
 					<p className="text-center">How much will this cost?</p>
-					<li className="font-thin">The materials to make the gear OR the gear already made,</li>
-					<li className="font-thin">15 diamonds per elytra, and</li>
+					<li className="font-thin">The materials to make the gear OR the gear already made &amp;</li>
 					<li className="font-thin">10 diamonds as a flat rate (profit)</li>
 				</ListWidget>
 				<ListWidget>
 					<p className="text-center">Some things to note</p>
-					<li className="font-thin">
-						If you are ordering gear that is NOT diamond, then you must drop it off (iron chestplate, turtle helmet, etc.)
-					</li>
+					<li className="font-thin">If you are ordering gear that is NOT diamond, then you must drop it off (iron chestplate, elytra, turtle helmet, etc.)</li>
 					<li className="font-thin">
 						You may only order up to 5 of an item that costs diamonds to make (e.g. diamond hoe) and 3 of an item that doesn't
 						<br />

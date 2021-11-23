@@ -95,21 +95,14 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 	// See /src/itemInputsModel.txt
 	setItemInputs(
 		inputList.map((item) => (
-			<div className="block w-full px-8 py-4 text-center bg-pink-300 rounded-lg" key={`${item.itemName}`}>
+			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={`${item.itemName}`}>
 				<p className="mx-auto font-bold">{item.itemName}</p>
 
 				{/* Item name */}
 				<div className="name">
 					<label>
 						<p>Name of {item.itemName}</p>
-						<input
-							type="text"
-							name={`${item.itemName} Name`}
-							className="w-full"
-							maxLength={55}
-							item-for={item.itemName}
-							onChange={itemNameChanged}
-						/>
+						<input type="text" name={`${item.itemName} Name`} className="w-full" maxLength={55} item-for={item.itemName} onChange={itemNameChanged} />
 					</label>
 				</div>
 
@@ -173,14 +166,7 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 				<div className="additional">
 					<label>
 						<p>Additional information</p>
-						<input
-							type="text"
-							name={`${item.itemName} Additional`}
-							className="w-full"
-							maxLength={128}
-							item-for={item.itemName}
-							onChange={itemAdditionalChanged}
-						/>
+						<input type="text" name={`${item.itemName} Additional`} className="w-full" maxLength={128} item-for={item.itemName} onChange={itemAdditionalChanged} />
 					</label>
 				</div>
 			</div>

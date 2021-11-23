@@ -40,7 +40,7 @@ export default function ViewOrder() {
 	// Render order details
 	function renderOrderDetails({details}) {
 		return (
-			<div className="block w-full px-8 py-4 text-center bg-pink-300 rounded-lg font-light">
+			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg font-light">
 				<p>ID: {details.orderID}</p>
 				<p>Queue number: {details.queueNumber}</p>
 				<p>Username: {details.username}</p>
