@@ -7,7 +7,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
 from json import load
-from time import strftime
+from time import strftime, sleep
 
 with open("json_files/config.json") as config_file:
     config_dict: dict = load(config_file)
@@ -399,9 +399,11 @@ def get_order_content_route() -> dict:
     return {"worked": True, "data": order_content, "code": 200}
 
 
-# Delete order
 @api.route("/delete-order", methods=["GET"])
 def delete_order_route() -> dict:
+    # Security
+    sleep(randint(3000, 5000) / 1000)
+
     # Get order ID and password / pin
     order_id: int = int(request.args["id"])
 
@@ -441,7 +443,7 @@ def delete_order_route() -> dict:
     }
 
 
-""" Reviews route """
+### Review routes ###
 
 # Submit review
 @api.route("/submit-review", methods=["POST"])
