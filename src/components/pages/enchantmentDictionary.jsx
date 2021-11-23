@@ -26,7 +26,7 @@ function showMobileTableColumn({columnName, type}) {
 		);
 	}
 
-	return columnName.length > 0 ? show : null;
+	return columnName.length != 0 ? show : null;
 }
 
 export default function EnchantmentDictionary() {
