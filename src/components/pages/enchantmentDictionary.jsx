@@ -26,7 +26,7 @@ function showMobileTableColumn({columnName, type}) {
 		);
 	}
 
-	return columnName.length != 0 ? show : null;
+	return columnName.length !== 0 ? show : null;
 }
 
 export default function EnchantmentDictionary() {
@@ -118,7 +118,9 @@ export default function EnchantmentDictionary() {
 				{enchantments ? <>{enchantments}</> : <LoadingWidget />}
 				<br />
 				<Button>
-					<a href="/static/get-enchantment-dictionary">Get this in JSON form</a> {/* how 2 get api resp from react using proxy help */}
+					<a href="https://raw.githubusercontent.com/sheepy0125/NewMinecraftGearFormSite/main/api/json_files/enchantment_dictionary.json">
+						Get this in JSON form
+					</a>
 				</Button>
 			</BaseWidget>
 		</MainWidget>
