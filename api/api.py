@@ -183,6 +183,9 @@ def get_new_queue_number(prioritize: bool) -> int:
 def delete_order(order_id: int) -> None:
     """Delete an order without any error handling"""
 
+    # Security
+    sleep(0.5)
+
     # Get the order
     order: Orders = Orders.query.filter_by(order_id=order_id).first()
     order_queue_number: int = order.queue_number
