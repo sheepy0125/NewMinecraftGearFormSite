@@ -112,7 +112,7 @@ export default function EnchantmentDictionary() {
 	return (
 		<MainWidget>
 			<Title>Sheepy's God Gear Services - Enchantment dictionary</Title>
-			<Navbar currentPage="/view-all-orders" />
+			<Navbar currentPage="/enchantment-dictionary" />
 			<BaseWidget className="text-center text-lg">
 				<p>Enchantment dictionary</p>
 				{enchantments ? <>{enchantments}</> : <LoadingWidget />}
