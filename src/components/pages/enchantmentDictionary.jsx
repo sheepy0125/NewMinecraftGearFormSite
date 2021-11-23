@@ -36,7 +36,7 @@ export default function EnchantmentDictionary() {
 
 	// Fetch enchantments
 	function fetchEnchantments() {
-		get("get-enchantment-dictionary")
+		get("api/get-enchantment-dictionary")
 			.then((resp) => {
 				setEnchantments(convertToHTML(resp.data.data));
 			})

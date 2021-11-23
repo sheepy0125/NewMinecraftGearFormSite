@@ -306,22 +306,22 @@ def get_all_reviews() -> list:
 ### Routes ###
 
 
-@api.route("/ping", methods=["GET"])
+@api.route("/api/ping", methods=["GET"])
 def ping_route() -> dict:
     return {"worked": True, "code": 200}
 
 
-@api.route("/get-select-dictionary", methods=["GET"])
+@api.route("/api/get-select-dictionary", methods=["GET"])
 def get_selection_dictionary() -> dict:
     return send_json_file_as_data("form_select_dictionary")
 
 
-@api.route("/get-enchantment-dictionary", methods=["GET"])
+@api.route("/api/get-enchantment-dictionary", methods=["GET"])
 def get_enchantment_dictionary() -> dict:
     return send_json_file_as_data("enchantment_dictionary")
 
 
-@api.route("/get-enchants-for-gear", methods=["POST"])
+@api.route("/api/get-enchants-for-gear", methods=["POST"])
 def get_enchants_for_gear() -> dict:
     with open("json_files/gear_enchant_dictionary.json") as all_gear_enchants_file:
         all_gear_enchants_info: dict = load(all_gear_enchants_file)
@@ -357,7 +357,7 @@ def get_enchants_for_gear() -> dict:
 ### Form routes ###
 
 
-@api.route("/submit-form", methods=["POST"])
+@api.route("/api/submit-form", methods=["POST"])
 def submit_order_route() -> dict:
     order_json: dict = request.json
     order_submission: Orders = submit_order(order_json)
@@ -372,13 +372,13 @@ def submit_order_route() -> dict:
     }
 
 
-@api.route("/view-all-orders", methods=["GET"])
+@api.route("/api/view-all-orders", methods=["GET"])
 def view_all_orders_route() -> dict:
     all_orders_list: list = get_all_orders()
     return {"worked": True, "data": all_orders_list, "code": 200}
 
 
-@api.route("/get-order-content", methods=["GET"])
+@api.route("/api/get-order-content", methods=["GET"])
 def get_order_content_route() -> dict:
     order_id: int = int(request.args["id"])
 
@@ -402,7 +402,7 @@ def get_order_content_route() -> dict:
     return {"worked": True, "data": order_content, "code": 200}
 
 
-@api.route("/delete-order", methods=["GET"])
+@api.route("/api/delete-order", methods=["GET"])
 def delete_order_route() -> dict:
     # Security
     sleep(randint(3000, 5000) / 1000)
@@ -449,7 +449,7 @@ def delete_order_route() -> dict:
 ### Review routes ###
 
 # Submit review
-@api.route("/submit-review", methods=["POST"])
+@api.route("/api/submit-review", methods=["POST"])
 def submit_review_route() -> dict:
     review_json: dict = {}
 
@@ -473,7 +473,7 @@ def submit_review_route() -> dict:
 
 
 # Get reviews
-@api.route("/get-reviews", methods=["GET"])
+@api.route("/api/get-reviews", methods=["GET"])
 def get_reviews_route() -> dict:
     starting_id: int = int(request.args["starting_id"])
     ending_id: int = int(request.args["ending_id"])

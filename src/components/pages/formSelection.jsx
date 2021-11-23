@@ -22,7 +22,7 @@ export default function FormSelection(props) {
 
 	// Fetch the inputs
 	function fetchInputs() {
-		get("/get-select-dictionary") // Example output: [{"name": "Sword", "cost": 2, "max": 5}, {"name": "Pickaxe", "cost": 3, "max": 5}]
+		get("api/get-select-dictionary") // Example output: [{"name": "Sword", "cost": 2, "max": 5}, {"name": "Pickaxe", "cost": 3, "max": 5}]
 			.then((resp) => {
 				setItemInputs(convertToInputs(resp.data.data));
 			})

@@ -51,7 +51,7 @@ export default function Reviews() {
 		 *
 		 * but for now, i'm too lazy to do it, so just writing this for later
 		 */
-		get(`/get-reviews?starting_id=${reviewIDRange.current[0]}&ending_id=${reviewIDRange.current[1]}`)
+		get(`api/get-reviews?starting_id=${reviewIDRange.current[0]}&ending_id=${reviewIDRange.current[1]}`)
 			.then((resp) => {
 				setReviews(resp.data.reviews);
 				setCanLoadMore(resp.data.can_load_more);

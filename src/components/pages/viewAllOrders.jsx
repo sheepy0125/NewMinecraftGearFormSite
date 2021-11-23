@@ -37,7 +37,7 @@ export default function ViewAllOrders() {
 
 	// Fetch orders
 	function fetchOrders() {
-		get("view-all-orders")
+		get("api/view-all-orders")
 			.then((resp) => {
 				setOrders(convertToHTML(resp.data.data));
 			})

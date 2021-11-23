@@ -26,7 +26,7 @@ export default function DeleteOrder(props) {
 
 	// Fetch order information
 	function fetchOrderInformation() {
-		get(`get-order-content?id=${paramsDictionary.id}&minimal=true`)
+		get(`api/get-order-content?id=${paramsDictionary.id}&minimal=true`)
 			.then((resp) => {
 				if (!resp.data.worked) throw Error("Failed to get order content"); // Throw error if failed to get order content
 				setOrderInformation(resp.data.data);
@@ -48,7 +48,7 @@ export default function DeleteOrder(props) {
 		else deleteURL = `delete-order?id=${id}&master-password=${masterPassword}`;
 
 		setIsLoading(true);
-		get(deleteURL)
+		get(`api/${deleteURL}`)
 			.then((resp) => {
 				setDeletionResponse(resp.data);
 			})

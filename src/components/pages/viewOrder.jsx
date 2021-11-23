@@ -26,7 +26,7 @@ export default function ViewOrder() {
 
 	// Fetch content
 	function fetchContent() {
-		get(`get-order-content?id=${paramsDictionary.id}`)
+		get(`api/get-order-content?id=${paramsDictionary.id}`)
 			.then((resp) => {
 				if (!resp.data.worked) throw Error("Failed to get order content"); // Throw error if failed to get order content
 				setOrderContent(resp.data.data);
