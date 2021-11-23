@@ -44,7 +44,7 @@ export default function DeleteOrder(props) {
 		const masterPassword = (masterPasswordInput.current && masterPasswordInput.current.value) || null;
 
 		let deleteURL;
-		if (pin) deleteURL = `delete-order?id=${id}&pin=${pin}`;
+		if (!useMasterPassword) deleteURL = `delete-order?id=${id}&pin=${pin}`;
 		else deleteURL = `delete-order?id=${id}&master-password=${masterPassword}`;
 
 		setIsLoading(true);
