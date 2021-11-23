@@ -1,0 +1,88 @@
+[
+	{"name": "Mending", "maximumLevel": 1, "purpose": "Repair the item with experience", "compatibleItems": ["Everything"], "incompatibleEnchants": ["Infinity"]},
+	{"name": "Unbreaking", "maximumLevel": 3, "purpose": "Less durability used", "compatibleItems": ["Everything"], "incompatibleEnchants": []},
+	{"name": "Curse of binding", "maximumLevel": 1, "purpose": "Make it impossible to unequip item", "compatibleItems": ["Everything"], "incompatibleEnchants": []},
+	{"name": "Curse of vanishing", "maximumLevel": 1, "purpose": "Get rid of item when you die with it", "compatibleItems": ["Everything"], "incompatibleEnchants": []},
+	{"name": "Sharpness", "maximumLevel": 5, "purpose": "Deal more damage to entities", "compatibleItems": ["Sword"], "incompatibleEnchants": ["Smite", "Bane of arthropods"]},
+	{"name": "Smite", "maximumLevel": 5, "purpose": "Deal more damage to undead mobs", "compatibleItems": ["Sword"], "incompatibleEnchants": ["Sharpness", "Bane of arthropods"]},
+	{"name": "Bane of Arthropods", "maximumLevel": 5, "purpose": "Deal more damage to spiders", "compatibleItems": ["Sword"], "incompatibleEnchants": ["Sharpness", "Smite"]},
+	{"name": "Sweeping edge", "maximumLevel": 3, "purpose": "Attack entities around targeted entity with more damage", "compatibleItems": ["Sword"], "incompatibleEnchants": []},
+	{"name": "Looting", "maximumLevel": 3, "purpose": "Get higher drop rates from entities", "compatibleItems": ["Sword"], "incompatibleEnchants": []},
+	{"name": "Knockback", "maximumLevel": 2, "purpose": "Hit entities back farther", "compatibleItems": ["Sword"], "incompatibleEnchants": []},
+	{"name": "Fire aspect", "maximumLevel": 2, "purpose": "Conflict fire upon sword swing", "compatibleItems": ["Sword"], "incompatibleEnchants": []},
+	{
+		"name": "Protection",
+		"maximumLevel": 4,
+		"purpose": "Take less damage overall",
+		"compatibleItems": ["Helmet", "Chestplate", "Leggings", "Boots"],
+		"incompatibleEnchants": ["Blast protection", "Fire protection", "Projectile protection"]
+	},
+	{
+		"name": "Blast protection",
+		"maximumLevel": 4,
+		"purpose": "Take less damage from explosisons",
+		"compatibleItems": ["Helmet", "Chestplate", "Leggings", "Boots"],
+		"incompatibleEnchants": ["Protection", "Fire protection", "Projectile protection"]
+	},
+	{
+		"name": "Fire protection",
+		"maximumLevel": 4,
+		"purpose": "Take less damage from fire and lava",
+		"compatibleItems": ["Helmet", "Chestplate", "Leggings", "Boots"],
+		"incompatibleEnchants": ["Protection", "Blast protection", "Projectile protection"]
+	},
+	{
+		"name": "Projectile Protection",
+		"maximumLevel": 4,
+		"purpose": "Take less damage from projectiles",
+		"compatibleItems": ["Helmet", "Chestplate", "Leggings", "Boots"],
+		"incompatibleEnchants": ["Protection", "Blast protection", "Fire protection"]
+	},
+	{
+		"name": "Thorns",
+		"maximumLevel": 3,
+		"purpose": "When entity hits you, armor hits back",
+		"compatibleItems": ["Helmet", "Chestplate", "Leggings", "Boots"],
+		"incompatibleEnchants": []
+	},
+	{"name": "Aqua affinity", "maximumLevel": 1, "purpose": "Break blocks underwater faster", "compatibleItems": ["Helmet"], "incompatibleEnchants": []},
+	{"name": "Respiration", "maximumLevel": 3, "purpose": "Breath for longer underwater", "compatibleItems": ["Helmet"], "incompatibleEnchants": []},
+	{"name": "Feather falling", "maximumLevel": 4, "purpose": "Take less damage from long falls", "compatibleItems": ["Boots"], "incompatibleEnchants": []},
+	{"name": "Soul speed", "maximumLevel": 3, "purpose": "Walk on soul soil or soul sand quicker", "compatibleItems": ["Boots"], "incompatibleEnchants": []},
+	{"name": "Depth strider", "maximumLevel": 3, "purpose": "Move around in water quicker", "compatibleItems": ["Boots"], "incompatibleEnchants": ["Frost walker"]},
+	{"name": "Frost walker", "maximumLevel": 2, "purpose": "Turn water into ice", "compatibleItems": ["Boots"], "incompatibleEnchants": ["Depth strider"]},
+	{"name": "Efficiency", "maximumLevel": 5, "purpose": "Break blocks faster", "compatibleItems": ["Pickaxe", "Shovel", "Axe", "Hoe", "Shears"], "incompatibleEnchants": []},
+	{"name": "Silk touch", "maximumLevel": 1, "purpose": "Get the block broken", "compatibleItems": ["Pickaxe", "Shovel", "Axe", "Hoe"], "incompatibleEnchants": ["Fortune"]},
+	{
+		"name": "Fortune",
+		"maximumLevel": 3,
+		"purpose": "Get higher drop rates on blocks broken",
+		"compatibleItems": ["Pickaxe", "Shovel", "Axe", "Hoe"],
+		"incompatibleEnchants": ["Silk touch"]
+	},
+	{"name": "Infinity", "maximumLevel": 1, "purpose": "Use infinite arrows as long as you have at least one", "compatibleItems": ["Bow"], "incompatibleEnchants": ["Mending"]},
+	{"name": "Power", "maximumLevel": 5, "purpose": "Make projectile have more damage dealt", "compatibleItems": ["Bow"], "incompatibleEnchants": []},
+	{"name": "Punch", "maximumLevel": 2, "purpose": "Knock entities back farther with projectile", "compatibleItems": ["Bow"], "incompatibleEnchants": []},
+	{"name": "Flame", "maximumLevel": 1, "purpose": "Make arrow turn on fire", "compatibleItems": ["Bow"], "incompatibleEnchants": []},
+	{"name": "Impaling", "maximumLevel": 5, "purpose": "Make trident hit harder", "compatibleItems": ["Trident"], "incompatibleEnchants": []},
+	{
+		"name": "Riptide",
+		"maximumLevel": 3,
+		"purpose": "When in water or raining, launch in direction thrown",
+		"compatibleItems": ["Trident"],
+		"incompatibleEnchants": ["Channeling", "Loyalty"]
+	},
+	{
+		"name": "Channeling",
+		"maximumLevel": 1,
+		"purpose": "When thundering, spawn lightning where trident falls",
+		"compatibleItems": ["Trident"],
+		"incompatibleEnchants": ["Riptide"]
+	},
+	{"name": "Loyalty", "maximumLevel": 3, "purpose": "Return trident when thrown", "compatibleItems": ["Trident"], "incompatibleEnchants": ["Riptide"]},
+	{"name": "Quick charge", "maximumLevel": 3, "purpose": "Reload crossbow faster", "compatibleItems": ["Crossbow"], "incompatibleEnchants": []},
+	{"name": "Piercing", "maximumLevel": 4, "purpose": "Shoot through entities with projectile", "compatibleItems": ["Crossbow"], "incompatibleEnchants": ["Multishot"]},
+	{"name": "Multishot", "maximumLevel": 1, "purpose": "Shoot 3 projectiles instead of one", "compatibleItems": ["Crossbow"], "incompatibleEnchants": ["Piercing"]},
+	{"name": "Luck of the sea", "maximumLevel": 3, "purpose": "Higher chance of getting treasure when fishing", "compatibleItems": ["Fishing Rod"], "incompatibleEnchants": []},
+	{"name": "Lure", "maximumLevel": 3, "purpose": "Make fish swim to your rod faster", "compatibleItems": ["Fishing Rod"], "incompatibleEnchants": []}
+]

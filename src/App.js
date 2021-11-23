@@ -10,6 +10,7 @@ const LazyApiError = lazy(() => import("./components/pages/errors/apiError.jsx")
 const LazyViewAllOrdersPage = lazy(() => import("./components/pages/viewAllOrders.jsx"));
 const LazyViewOrderPage = lazy(() => import("./components/pages/viewOrder.jsx"));
 const LazyDeleteOrderPage = lazy(() => import("./components/pages/deleteOrder.jsx"));
+const LazyEnchantmentDictionaryPage = lazy(() => import("./components/pages/enchantmentDictionary.jsx"));
 const LazyPageNotFound = lazy(() => import("./components/pages/errors/pageNotFound.jsx"));
 const LazyNotImplemented = lazy(() => import("./components/pages/errors/notImplemented.jsx"));
 
@@ -38,11 +39,6 @@ export default function App() {
 						<LazySubmitResult />
 					</Route>
 
-					{/* API error */}
-					<Route path="/api-error">
-						<LazyApiError />
-					</Route>
-
 					{/* View all orders */}
 					<Route path="/view-all-orders">
 						<LazyViewAllOrdersPage />
@@ -58,9 +54,19 @@ export default function App() {
 						<LazyDeleteOrderPage />
 					</Route>
 
+					{/* Enchantment dictionary */}
+					<Route path="/enchantment-dictionary">
+						<LazyEnchantmentDictionaryPage />
+					</Route>
+
 					{/* Not implemented */}
 					<Route path="/not-implemented">
 						<LazyNotImplemented />
+					</Route>
+
+					{/* API error */}
+					<Route path="/api-error">
+						<LazyApiError />
 					</Route>
 
 					{/* 404 */}

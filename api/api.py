@@ -313,6 +313,11 @@ def get_selection_dictionary() -> dict:
     return send_json_file_as_data("form_select_dictionary")
 
 
+@api.route("/get-enchantment-dictionary", methods=["GET"])
+def get_enchantment_dictionary() -> dict:
+    return send_json_file_as_data("enchantment_dictionary")
+
+
 @api.route("/get-enchants-for-gear", methods=["POST"])
 def get_enchants_for_gear() -> dict:
     with open("json_files/gear_enchant_dictionary.json") as all_gear_enchants_file:

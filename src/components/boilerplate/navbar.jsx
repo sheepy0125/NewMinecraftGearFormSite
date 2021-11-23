@@ -38,7 +38,7 @@ export default function Navbar(props) {
 				<NavItem currentPage={currentPage} forceFreshPage={props.forceFreshPage} link="/view-all-orders">
 					View orders
 				</NavItem>
-				<NavItem currentPage={currentPage} forceFreshPage={props.forceFreshPage} link="/not-implemented">
+				<NavItem currentPage={currentPage} forceFreshPage={props.forceFreshPage} link="/enchantment-dictionary">
 					Enchantment dictionary
 				</NavItem>
 			</nav>

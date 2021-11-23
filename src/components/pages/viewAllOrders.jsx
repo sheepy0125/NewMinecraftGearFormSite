@@ -10,20 +10,7 @@ import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import Hyperlink from "../boilerplate/hyperlink.jsx";
-
-// Table column
-function TableColumn(props) {
-	return <td className="flex-1 text-lg text-left bg-white border border-black">{props.children}</td>;
-}
-
-// Mobile order row
-function OrderRow(props) {
-	return <div className="break-words sm:flex">{props.children}</div>;
-}
-// Mobile order column
-function OrderColumn(props) {
-	return <div className={`flex-1 bg-white border border-black ${props.title ? "bg-gray-200" : "bg-white font-thin sm:text-left"}`}>{props.children}</div>;
-}
+import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/table.jsx";
 
 // Options
 function Options(props) {
@@ -79,17 +66,17 @@ export default function ViewAllOrders() {
 						<div key={order.order_id} className="text-sm lg:text-base">
 							<div className="border border-black">
 								{columns.map((row) => (
-									<OrderRow key={row.name}>
-										<OrderColumn title>{row.name}</OrderColumn>
-										<OrderColumn>{showOrderColumn(order[row.valueName])}</OrderColumn>
-									</OrderRow>
+									<MobileTableRow key={`${row.name} mobile`}>
+										<MobileTableColumn title>{row.name}</MobileTableColumn>
+										<MobileTableColumn>{showOrderColumn(order[row.valueName])}</MobileTableColumn>
+									</MobileTableRow>
 								))}
-								<OrderRow>
-									<OrderColumn title>Options</OrderColumn>
-									<OrderColumn>
+								<MobileTableRow>
+									<MobileTableColumn title>Options</MobileTableColumn>
+									<MobileTableColumn>
 										<Options id={order.order_id} />
-									</OrderColumn>
-								</OrderRow>
+									</MobileTableColumn>
+								</MobileTableRow>
 							</div>
 
 							{/* Line break to show difference between orders */}
@@ -103,7 +90,7 @@ export default function ViewAllOrders() {
 					<thead>
 						<tr className="flex">
 							{columns.map((row) => (
-								<TableColumn key={row.name}>{row.name}</TableColumn>
+								<TableColumn key={`${row.name} desktop`}>{row.name}</TableColumn>
 							))}
 							<TableColumn>Options</TableColumn>
 						</tr>
