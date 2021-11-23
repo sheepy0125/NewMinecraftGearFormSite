@@ -118,9 +118,7 @@ export default function EnchantmentDictionary() {
 				{enchantments ? <>{enchantments}</> : <LoadingWidget />}
 				<br />
 				<Button>
-					<a href="https://raw.githubusercontent.com/sheepy0125/NewMinecraftGearFormSite/main/api/json_files/enchantment_dictionary.json">
-						Get this in JSON form
-					</a>
+					<a href="/api/get-enchantment-dictionary">Get this in JSON form</a>
 				</Button>
 			</BaseWidget>
 		</MainWidget>

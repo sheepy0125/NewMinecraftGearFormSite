@@ -9,16 +9,17 @@ import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
-import Hyperlink from "../boilerplate/hyperlink.jsx";
+import a from "../boilerplate/hyperlink.jsx";
+import Button from "../boilerplate/button.jsx";
 import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/table.jsx";
 
 // Options
 function Options(props) {
 	return (
 		<>
-			<Hyperlink href={`/view-order?id=${props.id}`}>View order</Hyperlink>
-			<Hyperlink href={`/not-implemented?id=${props.id}`}>Edit order</Hyperlink>
-			<Hyperlink href={`/delete-order?id=${props.id}`}>Delete order</Hyperlink>
+			<a href={`/view-order?id=${props.id}`}>View order</a>
+			<a href={`/not-implemented?id=${props.id}`}>Edit order</a>
+			<a href={`/delete-order?id=${props.id}`}>Delete order</a>
 		</>
 	);
 }
@@ -125,6 +126,10 @@ export default function ViewAllOrders() {
 			<BaseWidget className="text-center text-lg">
 				<p>Viewing all orders</p>
 				{orders ? <>{orders}</> : <LoadingWidget />}
+				<br />
+				<Button>
+					<a href="/api/view-all-orders">Get this in JSON form</a>
+				</Button>
 			</BaseWidget>
 		</MainWidget>
 	);
