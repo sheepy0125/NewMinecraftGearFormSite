@@ -7,7 +7,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
 from json import load
-from time import strftime
+from time import strftime, sleep
 
 with open("json_files/config.json") as config_file:
     config_dict: dict = load(config_file)
@@ -182,6 +182,9 @@ def get_new_queue_number(prioritize: bool) -> int:
 
 def delete_order(order_id: int) -> None:
     """Delete an order without any error handling"""
+
+    # Security
+    sleep(0.5)
 
     # Get the order
     order: Orders = Orders.query.filter_by(order_id=order_id).first()
