@@ -12,6 +12,7 @@ import FormWidget from "../boilerplate/widgets/formWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
+import Button from "../boilerplate/button.jsx";
 import renderFormInputs from "../formInputsViewing.jsx";
 
 export default function ViewOrder() {
@@ -114,6 +115,9 @@ export default function ViewOrder() {
 				) : (
 					<LoadingWidget />
 				)}
+				<Button>
+					<a href={`/api/get-order-content?id=${paramsDictionary.id}`}>Get this in JSON form</a>
+				</Button>
 			</BaseWidget>
 		</MainWidget>
 	);
