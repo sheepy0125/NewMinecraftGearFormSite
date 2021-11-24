@@ -9,7 +9,7 @@ import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
-import a from "../boilerplate/hyperlink.jsx";
+import Hyperlink from "../boilerplate/hyperlink.jsx";
 import Button from "../boilerplate/button.jsx";
 import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/table.jsx";
 
@@ -17,9 +17,9 @@ import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/tab
 function Options(props) {
 	return (
 		<>
-			<a href={`/view-order?id=${props.id}`}>View order</a>
-			<a href={`/not-implemented?id=${props.id}`}>Edit order</a>
-			<a href={`/delete-order?id=${props.id}`}>Delete order</a>
+			<Hyperlink href={`/view-order?id=${props.id}`}>View order</Hyperlink>
+			{/* <Hyperlink href={`/not-implemented?id=${props.id}`}>Edit order</Hyperlink> */}
+			<Hyperlink href={`/delete-order?id=${props.id}`}>Delete order</Hyperlink>
 		</>
 	);
 }
