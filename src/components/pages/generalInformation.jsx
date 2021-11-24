@@ -12,11 +12,16 @@ import SubmitOrder from "../submitOrder.jsx";
 const usernameMaxLength = 16;
 const usernameMinLength = 3;
 const additionalMaxLength = 128;
+const discordMaxLength = 36;
+const deliverToMaxLength = 128;
 
 export default function GeneralInformation(props) {
 	const [username, setUsername] = useState("");
 	const [additional, setAdditional] = useState("");
 	const [usernameTooShort, setUsernameTooShort] = useState(true);
+	const [discord, setDiscord] = useState("");
+	const [deliverTo, setDeliverTo] = useState("");
+
 	const [isPrioritized, setIsPrioritized] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,6 +33,8 @@ export default function GeneralInformation(props) {
 				...content.general,
 				username: username,
 				additional: additional,
+				discord: discord,
+				deliver_to: deliverTo,
 				prioritize: isPrioritized,
 			},
 		};
@@ -39,7 +46,7 @@ export default function GeneralInformation(props) {
 
 		// Check username
 		const usernameTooShortCheck = newUsername.length < usernameMinLength;
-		const usernameInvalidCharacterCheck = /[^a-zA-Z0-9_]/.test(newUsername); // Totally not copied off of StackOverflow
+		const usernameInvalidCharacterCheck = /[\W]/.test(newUsername);
 		if (usernameInvalidCharacterCheck) return;
 		usernameTooShortCheck ? setUsernameTooShort(true) : setUsernameTooShort(false);
 
@@ -47,10 +54,22 @@ export default function GeneralInformation(props) {
 		setUsername(newUsername);
 	}
 
+	// Discord changed
+	function discordChanged(event) {
+		const newDiscord = event.target.value;
+		setDiscord(newDiscord);
+	}
+
 	// Additional changed
 	function additionalChanged(event) {
 		const newAdditional = event.target.value;
 		setAdditional(newAdditional);
+	}
+
+	// Deliver to changed
+	function deliverToChanged(event) {
+		const newDeliverTo = event.target.value;
+		setDeliverTo(newDeliverTo);
 	}
 
 	// Prioritize checkbox changed
@@ -74,8 +93,21 @@ export default function GeneralInformation(props) {
 								<input type="text" value={username} onChange={usernameChanged} minLength={usernameMinLength} maxLength={usernameMaxLength} />
 							</label>
 							<label className="block p-4">
+								<p>Discord username</p>
+								<input type="text" value={discord} onChange={discordChanged} maxLength={discordMaxLength} />
+							</label>
+							<p className="text-xs font-thin">
+								Please include both your Discord username and the discriminator (4 numbers).
+								<br />
+								If you don't know this, it's okay to leave it blank.
+							</p>
+							<label className="block p-4">
 								<p>Additional information</p>
 								<input type="text" value={additional} onChange={additionalChanged} maxLength={additionalMaxLength} />
+							</label>
+							<label className="block p-4">
+								<p>Deliver to</p>
+								<input type="text" value={deliverTo} onChange={deliverToChanged} maxLength={deliverToMaxLength} />
 							</label>
 							<label className="block p-4">
 								<input type="checkbox" defaultChecked onChange={prioritizeCheckboxChanged} /> Prioritize order (+10 diamonds)

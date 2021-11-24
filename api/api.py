@@ -31,8 +31,10 @@ class Orders(database.Model):
     __bind_key__: str = "orders_db"
     order_id = database.Column(database.Integer, primary_key=True)
     username = database.Column(database.String(16), nullable=False)
+    discord = database.Column(database.String(128), nullable=False)
     content = database.Column(database.PickleType, nullable=False)
     additional_information = database.Column(database.String(128), nullable=False)
+    deliver_to = database.Column(database.String(128), nullable=False)
     date_created = database.Column(database.String(50), nullable=False)
     date_modified = database.Column(database.String(50), nullable=False)
     is_prioritized = database.Column(database.Boolean, nullable=False)
@@ -49,13 +51,15 @@ VIEW_ALL_ORDERS_COLUMNS: tuple = (
     Orders.date_modified,
     Orders.is_prioritized,
     Orders.queue_number,
-    Orders.status
-    # Missing columns: [content, pin]
+    Orders.status,
+    # Missing columns: [content, pin, deliver_to, discord]
 )
 
 GET_ORDER_CONTENT_COLUMNS: tuple = (
     *VIEW_ALL_ORDERS_COLUMNS,
-    Orders.content
+    Orders.content,
+    Orders.deliver_to,
+    Orders.discord,
     # Missing columns: [pin]
 )
 
@@ -216,8 +220,10 @@ def submit_order(order_json: dict) -> Orders:
     """
 
     order_username: str = order_json["general"]["username"]
+    order_discord: str = order_json["general"]["discord"]
     order_prioritize: bool = order_json["general"]["prioritize"]
     order_additional_information: str = order_json["general"]["additional"]
+    order_deliver_to: str = order_json["general"]["deliver_to"]
     ordered_content_dict: dict = order_json
     del ordered_content_dict["general"]
     order_pin: str = get_random_pin()
@@ -232,8 +238,10 @@ def submit_order(order_json: dict) -> Orders:
     # Create order
     order_submission: Orders = Orders(
         username=order_username,
+        discord=order_discord,
         content=ordered_content_dict,
         additional_information=order_additional_information,
+        deliver_to=order_deliver_to,
         pin=order_pin,
         date_created=date_created,
         date_modified="N/A",

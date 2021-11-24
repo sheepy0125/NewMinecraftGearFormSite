@@ -41,15 +41,24 @@ export default function ViewOrder() {
 	// Render order details
 	function renderOrderDetails({details}) {
 		return (
-			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg font-light">
+			<div className="block mx-4 font-light bg-blue-300 rounded-lg">
 				<p>ID: {details.orderID}</p>
 				<p>Queue number: {details.queueNumber}</p>
 				<p>Username: {details.username}</p>
+				<p>Discord username: {details.discord}</p>
 				<p>Prioritize: {details.isPrioritized ? "yes" : "no"}</p>
 				<p>Date created: {details.creationDate}</p>
 				<p>Date modified: {details.modifiedDate}</p>
+				<br />
 				<label>
-					Additional information:
+					Deliver to
+					<br />
+					<input type="text" value={details.deliverTo} readOnly />
+				</label>
+				<br />
+				<br />
+				<label>
+					Additional information
 					<br />
 					<input type="text" value={details.additionalInformation} readOnly />
 				</label>
@@ -66,10 +75,12 @@ export default function ViewOrder() {
 			orderID: orderContent.order_id,
 			queueNumber: orderContent.queue_number,
 			username: orderContent.username,
+			discord: orderContent.discord,
 			creationDate: orderContent.date_created,
 			modifiedDate: orderContent.date_modified,
 			isPrioritized: orderContent.is_prioritized,
 			additionalInformation: orderContent.additional_information,
+			deliverTo: orderContent.deliver_to,
 		};
 
 		// Do the HTML stuffs for the order details stuffs
@@ -106,7 +117,7 @@ export default function ViewOrder() {
 		<MainWidget>
 			<Title>Sheepy's God Gear Services - Viewing order {paramsDictionary.id}</Title>
 			<Navbar currentPage="/view-all-orders" forceFreshPage={true} />
-			<BaseWidget className="text-center text-lg">
+			<BaseWidget className="text-lg text-center">
 				{itemInputs ? (
 					<div>
 						{orderDetails}
