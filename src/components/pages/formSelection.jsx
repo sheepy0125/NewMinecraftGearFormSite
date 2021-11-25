@@ -81,9 +81,7 @@ export default function FormSelection(props) {
 			[event.target.name]: dictionaryValue,
 		}));
 
-		// If the cost is less than one, set it equal to 0
 		let itemCost = Number(event.target.getAttribute("cost")) || 0;
-		if (itemCost < 1) itemCost = 0;
 		getNewPrice({itemName: event.target.name, itemCount: Number(event.target.value), itemCost: itemCost});
 	}
 
@@ -93,9 +91,9 @@ export default function FormSelection(props) {
 			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={item.name}>
 				<p>{item.name}</p>
 				<p className="font-medium">
-					{item.cost >= 0 ? (
+					{item.cost > 0 ? (
 						<span>
-							This costs {item.cost} diamond{item.cost !== 1 ? "s" : ""}.
+							This costs {item.cost} diamond{item.cost !== 1 ? "s" : ""} if not provided.
 						</span>
 					) : (
 						<span>You must provide this.</span>
