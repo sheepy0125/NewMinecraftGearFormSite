@@ -113,10 +113,7 @@ def verify_pin(order_id: int, pin: str) -> bool:
     """Returns if the pin is correct"""
 
     order_pin: str = Orders.query.filter_by(order_id=order_id).first().pin
-    if pin != order_pin:
-        return False
-
-    return True
+    return pin == order_pin
 
 
 def verify_password(password: str) -> bool:
@@ -491,7 +488,7 @@ def delete_order_route() -> dict:
     supplied_pin: str = request.args.get("pin")
     supplied_password: str = request.args.get("password")
     credential_result: dict = check_credentials(
-        password=supplied_password, pin=supplied_pin
+        password=supplied_password, pin=supplied_pin, order_id=order_id
     )
     if not credential_result["worked"]:
         return credential_result
