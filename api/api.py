@@ -473,7 +473,9 @@ def delete_order_route() -> dict:
 
     supplied_pin: str = request.args.get("pin")
     supplied_password: str = request.args.get("password")
-    credential_result: dict = check_credentials(supplied_pin, supplied_password)
+    credential_result: dict = check_credentials(
+        password=supplied_password, pin=supplied_pin
+    )
     if not credential_result["worked"]:
         return credential_result
 
@@ -558,7 +560,7 @@ def get_reviews_route() -> dict:
 ### Error handlers ###
 
 
-@api.errorhandler(Exception)
+# @api.errorhandler(Exception)
 def error_handler(error: Exception) -> dict:
     try:
         # HTTP error code (error.code works)
