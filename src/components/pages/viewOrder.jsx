@@ -2,7 +2,7 @@
 // Used to view a specific order
 
 import {useState, useEffect} from "react";
-import {useLocation, useHistory} from "react-router-dom";
+import {useLocation, useHistory, Link} from "react-router-dom";
 import {parse} from "query-string";
 import {get} from "axios";
 
@@ -125,6 +125,10 @@ export default function ViewOrder() {
 				)}
 				<Button>
 					<a href={`/api/get-order-content?id=${paramsDictionary.id}`}>Get this in JSON form</a>
+				</Button>
+				<br />
+				<Button>
+					<Link to={`/change-order-status?id=${paramsDictionary.id}`}>Change order status (admin only)</Link>
 				</Button>
 			</BaseWidget>
 		</MainWidget>
