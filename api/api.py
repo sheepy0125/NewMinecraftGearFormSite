@@ -205,15 +205,19 @@ def update_ids_for_other_orders(starting_id: int, change_by: int = 1) -> None:
         database.session.commit()
 
 
-def get_new_queue_number(prioritize: bool) -> int:
+def get_new_queue_number(prioritize: bool = False, completed: bool = False) -> int:
     """
     Handles getting a new queue number for a new order with prioritizing
-    factored in
+    and completed factored in
     """
 
-    # If there are no orders, then we can just return 1
-    if Orders.query.count() == 0:
+    num_of_orders: int = Orders.query.count()
+
+    if num_of_orders == 0:
         return 1
+
+    if completed:
+        return num_of_orders + 1
 
     if prioritize:
         # The queue number will be the first order that isn't prioritizing
@@ -224,8 +228,12 @@ def get_new_queue_number(prioritize: bool) -> int:
         except AttributeError:
             pass
 
-    # The queue number will be the last position
-    return Orders.query.count() + 1
+    # Order is unprioritized, put it in front of the first completed order
+    try:
+        return Orders.query.filter_by(status="Completed").first().queue_number
+    except AttributeError:
+        # There are no completed orders, so put it last
+        return num_of_orders + 1
 
 
 def delete_order(order_id: int) -> None:
@@ -310,16 +318,25 @@ def change_order_status(order_id: int, status: str) -> None:
     order.status = status
     database.session.commit()
 
-    if not status == "Completed":
+    if status != "Completed":
         return
 
     # Update the queue number to be the last one
-    # Again like in delete_order, we need to update the other order's queue numbers and IDs
+    # Again like in delete_order, we need to update the other order's queue numbers
     # So we'll just set ours to an arbitrary unique number to prevent collisions
-    order.order_id = order.queue_number = randint(1000, 1500)
+    original_queue_number = order.queue_number
+    order.queue_number = randint(1000, 1500)
     database.session.commit()
     update_queue_numbers_for_other_orders(
         starting_queue_number=order.queue_number, change_by=-1
+    )
+    # Reset queue number
+    order.queue_number = get_new_queue_number(completed=True)
+    database.session.commit()
+    # But now, we need to update the other order's queue numbers since we're putting
+    # this order at the end of the queue
+    update_queue_numbers_for_other_orders(
+        starting_queue_number=original_queue_number, change_by=-1
     )
 
 
