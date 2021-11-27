@@ -1,9 +1,10 @@
 // Submit order
 
-import {post} from "axios";
 import {useHistory} from "react-router-dom";
+import {post} from "axios";
 
 import Button from "./boilerplate/button.jsx";
+import {error} from "./pages/errors/apiError.jsx";
 
 // Submit
 function submit({content, history}) {
@@ -13,6 +14,8 @@ function submit({content, history}) {
 
 	post("api/submit-form", content)
 		.then((resp) => {
+			if (!resp.data.worked) throw Error(`Failed to submit order!!! (${resp.data.message}, code ${resp.data.code})`);
+
 			console.log("The order was submitted! Here is the returned data");
 			console.log(JSON.stringify(resp.data, null, 4));
 
@@ -28,12 +31,14 @@ function submit({content, history}) {
 			);
 		})
 		.catch((resp) => {
+			error(resp);
 			history.push("/api-error");
 		});
 }
 
 export default function SubmitOrder(props) {
-	let history = useHistory();
+	const history = useHistory();
+
 	const content = props.content;
 
 	return (

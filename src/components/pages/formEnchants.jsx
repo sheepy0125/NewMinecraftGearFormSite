@@ -1,8 +1,8 @@
 // Form enchants page
 
 import {useState, useEffect, useRef} from "react";
-import {post} from "axios";
 import {useHistory} from "react-router-dom";
+import {post} from "axios";
 
 import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
@@ -12,6 +12,7 @@ import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 import renderItemInputs from "../formInputsEditing.jsx";
+import {error} from "./errors/apiError.jsx";
 
 export default function FormEnchants(props) {
 	const history = useHistory();
@@ -24,11 +25,13 @@ export default function FormEnchants(props) {
 	function fetchData() {
 		post("api/get-enchants-for-gear", Object.keys(props.orderNumberDictionary))
 			.then((resp) => {
+				if (!resp.data.worked)
+					throw Error(`Failed to get enchantments for gear... is the gear invalid? (${resp.data.message}, code ${resp.data.code})`);
 				setSortedList(resp.data.data.sorted_list);
 				setEnchantDict(resp.data.data.enchant_dict);
 			})
 			.catch((resp) => {
-				console.error(resp.message || resp);
+				error(resp);
 				history.push("/api-error");
 			});
 	}

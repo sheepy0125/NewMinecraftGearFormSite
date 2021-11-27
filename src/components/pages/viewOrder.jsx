@@ -2,7 +2,7 @@
 // Used to view a specific order
 
 import {useState, useEffect} from "react";
-import {useHistory, useLocation} from "react-router-dom";
+import {useLocation, useHistory} from "react-router-dom";
 import {parse} from "query-string";
 import {get} from "axios";
 
@@ -14,9 +14,11 @@ import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 import renderFormInputs from "../formInputsViewing.jsx";
+import {error} from "./errors/apiError.jsx";
 
 export default function ViewOrder() {
 	const history = useHistory();
+
 	const paramsString = useLocation().search;
 	const paramsDictionary = parse(paramsString);
 
@@ -27,11 +29,11 @@ export default function ViewOrder() {
 	function fetchContent() {
 		get(`api/get-order-content?id=${paramsDictionary.id}`)
 			.then((resp) => {
-				if (!resp.data.worked) throw Error("Failed to get order content"); // Throw error if failed to get order content
+				if (!resp.data.worked) throw Error(`Failed fetching order content (${resp.data.message}, code ${resp.data.code})`);
 				setOrderContent(resp.data.data);
 			})
 			.catch((resp) => {
-				console.error(resp.message);
+				error(resp);
 				history.push("/api-error");
 			});
 	}

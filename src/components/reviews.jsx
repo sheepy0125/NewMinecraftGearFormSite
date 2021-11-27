@@ -7,6 +7,7 @@ import {get} from "axios";
 import BaseWidget from "./boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "./boilerplate/widgets/loadingWidget.jsx";
 import Button from "./boilerplate/button.jsx";
+import {error} from "./pages/errors/apiError.jsx";
 
 function ReviewWidget(props) {
 	return (
@@ -41,12 +42,13 @@ export default function Reviews() {
 	function fetchReviews() {
 		get(`api/get-reviews?starting_id=${reviewIDRange.current[0]}&ending_id=${reviewIDRange.current[1]}`)
 			.then((resp) => {
+				if (!resp.data.worked) throw Error(`Failed to fetch reviews (${resp.data.message}, code ${resp.data.code})`);
 				setReviews(resp.data.reviews);
 				setCanLoadMore(resp.data.can_load_more);
 				setIsLoading(false);
 			})
 			.catch((resp) => {
-				console.error(resp.message || resp);
+				error(resp);
 				history.push("/api-error");
 			});
 	}

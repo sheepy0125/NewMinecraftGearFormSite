@@ -12,6 +12,7 @@ import Navbar from "../boilerplate/navbar.jsx";
 import Hyperlink from "../boilerplate/hyperlink.jsx";
 import Button from "../boilerplate/button.jsx";
 import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/table.jsx";
+import {error} from "./errors/apiError.jsx";
 
 function Options(props) {
 	return (
@@ -35,9 +36,11 @@ export default function ViewAllOrders() {
 	function fetchOrders() {
 		get("api/view-all-orders")
 			.then((resp) => {
+				if (!resp.data.worked) throw Error(`Failed to get all order information (${resp.data.message}, code ${resp.data.code})`);
 				setOrders(convertToHTML(resp.data.data));
 			})
 			.catch((resp) => {
+				error(resp);
 				history.push("/api-error");
 			});
 	}
@@ -116,7 +119,7 @@ export default function ViewAllOrders() {
 		<MainWidget>
 			<Title>Sheepy's God Gear Services - View all orders</Title>
 			<Navbar currentPage="/view-all-orders" />
-			<BaseWidget className="text-center text-lg">
+			<BaseWidget className="text-lg text-center">
 				<p>Viewing all orders</p>
 				{orders ? <>{orders}</> : <LoadingWidget />}
 				<br />

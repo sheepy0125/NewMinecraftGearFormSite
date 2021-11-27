@@ -11,6 +11,7 @@ import Button from "../boilerplate/button.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/table.jsx";
+import {error} from "./errors/apiError.jsx";
 
 function showMobileTableColumn({columnName, type}) {
 	let show = columnName;
@@ -35,9 +36,12 @@ export default function EnchantmentDictionary() {
 	function fetchEnchantments() {
 		get("api/get-enchantment-dictionary")
 			.then((resp) => {
+				if (!resp.data.worked)
+					throw Error(`Failed to fetch enchantments for enchantment dictionary (${resp.data.message}, code ${resp.data.code})`);
 				setEnchantments(convertToHTML(resp.data.data));
 			})
 			.catch((resp) => {
+				error(resp);
 				history.push("/api-error");
 			});
 	}

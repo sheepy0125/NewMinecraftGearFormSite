@@ -8,6 +8,7 @@ import {get} from "axios";
 import BoxWidget from "./boilerplate/widgets/boxWidget.jsx";
 import LoadingWidget from "./boilerplate/widgets/loadingWidget.jsx";
 import Button from "./boilerplate/button.jsx";
+import {error} from "./pages/errors/apiError.jsx";
 
 export default function AuthenticationWidget(props) {
 	const history = useHistory();
@@ -23,11 +24,11 @@ export default function AuthenticationWidget(props) {
 	function fetchOrderInformation() {
 		get(`api/get-order-content?id=${props.id}&minimal=true`)
 			.then((resp) => {
-				if (!resp.data.worked) throw Error("Failed to get order content");
+				if (!resp.data.worked) throw Error(`Failed to fetch order content for authentication (${resp.data.message}, code ${resp.data.code})`);
 				setOrderInformation(resp.data.data);
 			})
 			.catch((resp) => {
-				console.error(resp.message || resp);
+				error(resp);
 				history.push("/api-error");
 			});
 	}
@@ -53,7 +54,7 @@ export default function AuthenticationWidget(props) {
 				setAuthResponse(resp.data);
 			})
 			.catch((resp) => {
-				console.error(resp.message || resp);
+				error(Error(`Failed to get response from auth attempt (${resp.message})`));
 				history.push("/api-error");
 			});
 	}

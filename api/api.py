@@ -580,15 +580,13 @@ def error_handler(error: Exception) -> dict:
         # HTTP error code (error.code works)
         return {
             "worked": False,
-            "message": "An HTTP exception has occured.",
-            "error_message": str(error),
+            "message": str(error),
             "code": error.code,
         }
     except Exception:
         # Internal error
         return {
             "worked": False,
-            "message": "An internal exception has occurred.",
-            "error_message": str(error),
+            "message": str(error),
             "code": 500,
         }

@@ -11,6 +11,7 @@ import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
+import {error} from "./errors/apiError.jsx";
 
 function TotalCost(props) {
 	return (
@@ -31,10 +32,11 @@ export default function FormSelection(props) {
 	function fetchInputs() {
 		get("api/get-select-dictionary") // Example output: [{"name": "Sword", "cost": 2, "max": 5}, {"name": "Pickaxe", "cost": 3, "max": 5}]
 			.then((resp) => {
+				if (!resp.data.worked) throw Error(`Failed to get item selection dictionary (${resp.data.message}, code ${resp.data.code})`);
 				setItemInputs(convertToInputs(resp.data.data));
 			})
 			.catch((resp) => {
-				console.error(resp.message || resp);
+				error(resp);
 				history.push("/api-error");
 			});
 	}
@@ -126,9 +128,9 @@ export default function FormSelection(props) {
 				<p className="font-thin">Select what you would like to order here.</p>
 				{itemInputs ? (
 					<BaseWidget className="bg-blue-400">
-						<TotalCost totalPirce={totalPrice} />
+						<TotalCost totalPrice={totalPrice} />
 						<FormWidget>{itemInputs}</FormWidget>
-						<TotalCost totalPirce={totalPrice} />
+						<TotalCost totalPrice={totalPrice} />
 						<br />
 						<span onClick={goToNextPage}>
 							<Button>Next page</Button>
