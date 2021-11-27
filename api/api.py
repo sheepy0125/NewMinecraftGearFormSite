@@ -109,6 +109,50 @@ def get_random_pin() -> str:
     return str(randint(0, 9999)).zfill(4)
 
 
+def verify_pin(order_id: int, pin: str) -> bool:
+    """Returns if the pin is correct"""
+
+    order_pin: str = Orders.query.filter_by(order_id=order_id).first().pin
+    if pin != order_pin:
+        return False
+
+    return True
+
+
+def verify_password(password: str) -> bool:
+    """Returns if the password is correct"""
+
+    if password != MASTER_PASSWORD:
+        return False
+
+    return True
+
+
+def check_credentials(password: str = None, pin: str = None, order_id: int = 0) -> dict:
+    if password is not None:
+        if not verify_password(password):
+            return {
+                "worked": False,
+                "message": "The master password isn't correct!",
+                "code": 403,
+            }
+    elif pin is not None:
+        if not verify_pin(order_id, pin):
+            return {
+                "worked": False,
+                "message": "The PIN isn't correct!",
+                "code": 403,
+            }
+    else:
+        return {
+            "worked": False,
+            "message": "No credentials were given!",
+            "code": 401,
+        }
+
+    return {"worked": True, "code": 200}
+
+
 ### Order functions ###
 
 
@@ -187,9 +231,6 @@ def get_new_queue_number(prioritize: bool) -> int:
 def delete_order(order_id: int) -> None:
     """Delete an order without any error handling"""
 
-    # Security
-    sleep(0.5)
-
     # Get the order
     order: Orders = Orders.query.filter_by(order_id=order_id).first()
     order_queue_number: int = order.queue_number
@@ -200,8 +241,6 @@ def delete_order(order_id: int) -> None:
     # (yes, I know this isn't the... best way...  to do it, but it works)
     order.order_id = order.queue_number = randint(1000, 1500)
     database.session.commit()
-
-    # Now update the orders
     update_queue_numbers_for_other_orders(
         starting_queue_number=order_queue_number, change_by=-1
     )
@@ -212,7 +251,6 @@ def delete_order(order_id: int) -> None:
     database.session.commit()
 
 
-# Submit order
 def submit_order(order_json: dict) -> Orders:
     """
     Turns :param order_json: into an Orders object.
@@ -256,7 +294,6 @@ def submit_order(order_json: dict) -> Orders:
     return order_submission
 
 
-# Get all orders
 def get_all_orders() -> list:
     all_orders: Orders = (
         Orders.query.order_by(Orders.queue_number)
@@ -264,6 +301,26 @@ def get_all_orders() -> list:
         .all()
     )
     return [(dict(row)) for row in all_orders]  # Convert rows to list of dict
+
+
+def change_order_status(order_id: int, status: str) -> None:
+    """Changes the status column for an order"""
+
+    order: Orders = Orders.query.filter_by(order_id=order_id).first()
+    order.status = status
+    database.session.commit()
+
+    if not status == "Completed":
+        return
+
+    # Update the queue number to be the last one
+    # Again like in delete_order, we need to update the other order's queue numbers and IDs
+    # So we'll just set ours to an arbitrary unique number to prevent collisions
+    order.order_id = order.queue_number = randint(1000, 1500)
+    database.session.commit()
+    update_queue_numbers_for_other_orders(
+        starting_queue_number=order.queue_number, change_by=-1
+    )
 
 
 ### Review functions ###
@@ -412,44 +469,39 @@ def get_order_content_route() -> dict:
 
 @api.route("/api/delete-order", methods=["GET"])
 def delete_order_route() -> dict:
-    # Security
-    sleep(randint(3000, 5000) / 1000)
-
-    # Get order ID and password / pin
     order_id: int = int(request.args["id"])
 
-    # User supplied pin, compare
-    if (user_supplied_master_password := request.args.get("master-password")) is None:
-        user_supplied_pin: str = request.args["pin"]
-        # Compare pins
-        order_pin: str = Orders.query.filter_by(order_id=order_id).first().pin
-        if user_supplied_pin != order_pin:
-            return {"worked": False, "message": "The pin isn't correct!", "code": 403}
+    supplied_pin: str = request.args.get("pin")
+    supplied_password: str = request.args.get("password")
+    credential_result: dict = check_credentials(supplied_pin, supplied_password)
+    if not credential_result["worked"]:
+        return credential_result
 
-    # User supplied master password, compare
-    else:
-        # Easter egg
-        if user_supplied_master_password == "LaCraftyIsSmelly":
-            return {
-                "worked": False,
-                "message": "The password you've entered is the truth.",
-                "code": 403,
-            }
-
-        # Compare the super secure master passwords /s
-        if user_supplied_master_password != MASTER_PASSWORD:
-            return {
-                "worked": False,
-                "message": "The master password isn't correct!",
-                "code": 403,
-            }
-
-    # Finish
     delete_order(order_id=order_id)
 
     return {
         "worked": True,
         "message": "The order has successfully been deleted.",
+        "code": 200,
+    }
+
+
+@api.route("/api/change-order-status", methods=["GET"])
+def change_order_status_route() -> dict:
+    order_id: int = int(request.args["id"])
+    status: str = request.args["status"]
+
+    supplied_pin: str = request.args.get("pin")
+    supplied_password: str = request.args.get("password")
+    credential_result: dict = check_credentials(supplied_password, supplied_pin)
+    if not credential_result["worked"]:
+        return credential_result
+
+    change_order_status(order_id=order_id, status=status)
+
+    return {
+        "worked": True,
+        "message": "The order status was successfully changed.",
         "code": 200,
     }
 
@@ -522,4 +574,5 @@ def error_handler(error: Exception) -> dict:
             "worked": False,
             "message": "An internal exception has occurred.",
             "error_message": str(error),
+            "code": 500,
         }
