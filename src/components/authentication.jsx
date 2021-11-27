@@ -18,7 +18,7 @@ export default function AuthenticationWidget(props) {
 
 	const pinInput = useRef(null);
 	const masterPasswordInput = useRef(null);
-	const [useMasterPassword, setUseMasterPassword] = useState(false);
+	const [useMasterPassword, setUseMasterPassword] = useState(!props.allowPIN);
 
 	// Fetch order information
 	function fetchOrderInformation() {
@@ -49,6 +49,7 @@ export default function AuthenticationWidget(props) {
 		const password = (masterPasswordInput.current && masterPasswordInput.current.value) || null;
 
 		let url = useMasterPassword ? `${props.url}?id=${id}&password=${password}` : `${props.url}?id=${id}&pin=${pin}`;
+		props.otherParams && (url += `&${props.otherParams}`);
 
 		get(`api/${url}`)
 			.then((resp) => {
@@ -105,15 +106,17 @@ export default function AuthenticationWidget(props) {
 							</label>
 						)}
 						<br />
-						<label>
-							<input
-								type="checkbox"
-								onClick={() => {
-									setUseMasterPassword(!useMasterPassword);
-								}}
-							/>{" "}
-							Use master password
-						</label>
+						{props.allowPIN && (
+							<label>
+								<input
+									type="checkbox"
+									onClick={() => {
+										setUseMasterPassword(!useMasterPassword);
+									}}
+								/>{" "}
+								Use master password
+							</label>
+						)}
 						<div onClick={authAttempt}>
 							<Button className="w-full">{props.buttonMessage}</Button>
 						</div>
@@ -127,7 +130,9 @@ export default function AuthenticationWidget(props) {
 				<BoxWidget>
 					{authResponse.worked ? (
 						<>
-							<p className="text-2xl">Order {props.id} has been deleted!</p>
+							<p className="text-2xl">
+								Order {props.id} has successfully {props.whatDidMessage}!
+							</p>
 							<div onClick={() => history.push("/view-all-orders")}>
 								<Button className="w-full">Back to view orders page</Button>
 							</div>

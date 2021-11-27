@@ -9,8 +9,9 @@ const LazySubmitResult = lazy(() => import("./components/pages/submitResult.jsx"
 const LazyApiError = lazy(() => import("./components/pages/errors/apiError.jsx"));
 const LazyViewAllOrdersPage = lazy(() => import("./components/pages/viewAllOrders.jsx"));
 const LazyViewOrderPage = lazy(() => import("./components/pages/viewOrder.jsx"));
-const LazyDeleteOrderPage = lazy(() => import("./components/pages/deleteOrder.jsx"));
 const LazyEnchantmentDictionaryPage = lazy(() => import("./components/pages/enchantmentDictionary.jsx"));
+const LazyDeleteOrderPage = lazy(() => import("./components/pages/deleteOrder.jsx"));
+const LazyChangeOrderStatusPage = lazy(() => import("./components/pages/changeOrderStatus.jsx"));
 const LazyPageNotFound = lazy(() => import("./components/pages/errors/pageNotFound.jsx"));
 const LazyNotImplemented = lazy(() => import("./components/pages/errors/notImplemented.jsx"));
 
@@ -49,14 +50,19 @@ export default function App() {
 						<LazyViewOrderPage />
 					</Route>
 
+					{/* Enchantment dictionary */}
+					<Route path="/enchantment-dictionary">
+						<LazyEnchantmentDictionaryPage />
+					</Route>
+
 					{/* Delete order */}
 					<Route path="/delete-order">
 						<LazyDeleteOrderPage />
 					</Route>
 
-					{/* Enchantment dictionary */}
-					<Route path="/enchantment-dictionary">
-						<LazyEnchantmentDictionaryPage />
+					{/* Change order status */}
+					<Route path="/change-order-status">
+						<LazyChangeOrderStatusPage />
 					</Route>
 
 					{/* Not implemented */}
