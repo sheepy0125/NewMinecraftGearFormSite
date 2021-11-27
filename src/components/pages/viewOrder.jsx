@@ -20,12 +20,10 @@ export default function ViewOrder() {
 	const paramsString = useLocation().search;
 	const paramsDictionary = parse(paramsString);
 
-	// Not using refs here since it'll only be set once
 	const [orderContent, setOrderContent] = useState({});
 	const [itemInputs, setItemInputs] = useState(null);
 	const [orderDetails, setOrderDetails] = useState(null);
 
-	// Fetch content
 	function fetchContent() {
 		get(`api/get-order-content?id=${paramsDictionary.id}`)
 			.then((resp) => {
@@ -38,7 +36,6 @@ export default function ViewOrder() {
 			});
 	}
 
-	// Render order details
 	function renderOrderDetails({details}) {
 		return (
 			<div className="block mx-4 font-light bg-blue-300 rounded-lg">
@@ -66,7 +63,7 @@ export default function ViewOrder() {
 		);
 	}
 
-	// When order content changes
+	// Order content changed
 	useEffect(() => {
 		if (!orderContent.content) return;
 
@@ -83,7 +80,6 @@ export default function ViewOrder() {
 			deliverTo: orderContent.deliver_to,
 		};
 
-		// Do the HTML stuffs for the order details stuffs
 		setOrderDetails(renderOrderDetails({details: details}));
 
 		// Order form
@@ -108,7 +104,6 @@ export default function ViewOrder() {
 		});
 	}, [orderContent]); /* eslint-disable-line */
 
-	// Fetch content upon first load
 	useEffect(() => {
 		fetchContent();
 	}, []); /* eslint-disable-line */

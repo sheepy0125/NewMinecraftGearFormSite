@@ -39,18 +39,6 @@ export default function Reviews() {
 	const reviewIDRange = useRef([1, reviewIDPaginateBy]);
 
 	function fetchReviews() {
-		/* There is actually a problem with this.
-		 * Every time the user switches to the review tab, it fetches the reviews again.
-		 * We need to have the reviews saved in between tab switches
-		 * But don't get the reviews until the user switches to the reviews tab!
-		 *
-		 * Possible solutions:
-		 * 1. save reviews in index.jsx
-		 * 2. store reviews in local/session storage temporarily
-		 * 3. save review widgets only so to not rerender them, and just don't fetch the reviews anymore
-		 *
-		 * but for now, i'm too lazy to do it, so just writing this for later
-		 */
 		get(`api/get-reviews?starting_id=${reviewIDRange.current[0]}&ending_id=${reviewIDRange.current[1]}`)
 			.then((resp) => {
 				setReviews(resp.data.reviews);
@@ -63,9 +51,8 @@ export default function Reviews() {
 			});
 	}
 
-	// Set review widgets HTML
+	// Reviews changed
 	useEffect(() => {
-		// If no reviews yet, don't bother
 		if (!reviews) return;
 
 		setReviewWidgetsHTML((oldReviewWidgetsHTML) => [
@@ -84,7 +71,6 @@ export default function Reviews() {
 		]);
 	}, [reviews]);
 
-	// Fetch reviews on load
 	useEffect(() => {
 		fetchReviews();
 	}, []); /* eslint-disable-line */
@@ -98,19 +84,28 @@ export default function Reviews() {
 				<>
 					{reviews.length > 0 ? (
 						<>
-							<BaseWidget className={`grid-cols-1 gap-2 mx-auto bg-white lg:grid-cols-2 xl:grid-cols-3 grid`}>{reviewWidgetsHTML}</BaseWidget>
+							<BaseWidget className={`grid-cols-1 gap-2 mx-auto bg-white lg:grid-cols-2 xl:grid-cols-3 grid`}>
+								{reviewWidgetsHTML}
+							</BaseWidget>
 							{canLoadMore ? (
 								<div
 									onClick={() => {
 										const currentReviewIDRange = reviewIDRange.current;
-										reviewIDRange.current = [currentReviewIDRange[0] + reviewIDPaginateBy, currentReviewIDRange[1] + reviewIDPaginateBy];
+										reviewIDRange.current = [
+											currentReviewIDRange[0] + reviewIDPaginateBy,
+											currentReviewIDRange[1] + reviewIDPaginateBy,
+										];
 										fetchReviews();
 									}}
 								>
 									<Button className="w-full mx-4">Load more</Button>
 								</div>
 							) : (
-								<>{reviewIDRange.current[1] > 5 && <p className="text-sm text-center text-gray-500">looks like you've reached the end</p>}</>
+								<>
+									{reviewIDRange.current[1] > 5 && (
+										<p className="text-sm text-center text-gray-500">looks like you've reached the end</p>
+									)}
+								</>
 							)}
 						</>
 					) : (

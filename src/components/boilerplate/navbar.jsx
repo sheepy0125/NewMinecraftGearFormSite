@@ -1,7 +1,8 @@
 // Navbar
 
-import Button from "./button.jsx";
 import {Link} from "react-router-dom";
+
+import Button from "./button.jsx";
 import BaseWidget from "./widgets/baseWidget.jsx";
 
 // Nav item

@@ -9,7 +9,6 @@ import {EnchantItem, Label, EnchantRadioButton, EnchantCheckbox} from "./formEle
  * TODO: refactor to not have this
  */
 export default function renderItemInputs({inputList, setItemInputs, inputContent}) {
-	// Enchant changed
 	function enchantChangedCheckbox(event) {
 		const itemFor = event.target.getAttribute("item-for");
 		const enchantment = event.target.getAttribute("enchant");
@@ -30,19 +29,18 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 
 		const newMultipleSelection = inputContent.current[itemFor].enchantments.multipleSelection;
 
-		// Get the list index based off of an item in selectionList
+		// Get the list index based off of an item in selectionList (what does this mean?)
 		for (const multipleSelectionDict of newMultipleSelection) {
 			// Check if one of the keys for the multiple selection dict isn't the first key of the selectionList
 			if (!Object.keys(multipleSelectionDict).includes(selectionList[0])) continue;
 
 			// This is the correct list.
 			// Set everything in it to be false
-			for (const enchantment of Object.keys(multipleSelectionDict)) multipleSelectionDict[enchantment] = false;
+			for (const enchant of Object.keys(multipleSelectionDict)) multipleSelectionDict[enchant] = false;
 
 			// If the enchantment is null, that means it's a none checkbox and we can end here.
 			if (enchantment === null) break;
 
-			// Set enchantment selected to true
 			multipleSelectionDict[enchantment] = true;
 		}
 
@@ -55,12 +53,12 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 		};
 	}
 
-	// All enchant checkbox
 	function allEnchantCheckboxChanged(event) {
 		const itemFor = event.target.getAttribute("item-for");
 		const checked = event.target.checked;
 
 		const newCheckboxes = inputContent.current[itemFor].enchantments.checkboxes;
+
 		// Update everything at once
 		for (const enchantment of Object.keys(newCheckboxes)) newCheckboxes[enchantment] = checked;
 
@@ -70,7 +68,6 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 		};
 	}
 
-	// Text input changed
 	function textInputChanged({event, keyFor, textKey}) {
 		const textValue = event.target.value;
 
@@ -80,13 +77,11 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 		};
 	}
 
-	// Item name changed
 	function itemNameChanged(event) {
 		const itemFor = event.target.getAttribute("item-for");
 		textInputChanged({event: event, keyFor: itemFor, textKey: "name"});
 	}
 
-	// Item additional changed
 	function itemAdditionalChanged(event) {
 		const itemFor = event.target.getAttribute("item-for");
 		textInputChanged({event: event, keyFor: itemFor, textKey: "additional"});
@@ -102,7 +97,14 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 				<div className="name">
 					<label>
 						<p>Name of {item.itemName}</p>
-						<input type="text" name={`${item.itemName} Name`} className="w-full" maxLength={55} item-for={item.itemName} onChange={itemNameChanged} />
+						<input
+							type="text"
+							name={`${item.itemName} Name`}
+							className="w-full"
+							maxLength={55}
+							item-for={item.itemName}
+							onChange={itemNameChanged}
+						/>
 					</label>
 				</div>
 
@@ -166,7 +168,14 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 				<div className="additional">
 					<label>
 						<p>Additional information</p>
-						<input type="text" name={`${item.itemName} Additional`} className="w-full" maxLength={128} item-for={item.itemName} onChange={itemAdditionalChanged} />
+						<input
+							type="text"
+							name={`${item.itemName} Additional`}
+							className="w-full"
+							maxLength={128}
+							item-for={item.itemName}
+							onChange={itemAdditionalChanged}
+						/>
 					</label>
 				</div>
 			</div>

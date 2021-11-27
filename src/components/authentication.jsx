@@ -20,7 +20,6 @@ export default function AuthenticationWidget(props) {
 	const masterPasswordInput = useRef(null);
 	const [useMasterPassword, setUseMasterPassword] = useState(!props.allowPIN);
 
-	// Fetch order information
 	function fetchOrderInformation() {
 		get(`api/get-order-content?id=${props.id}&minimal=true`)
 			.then((resp) => {
@@ -33,14 +32,12 @@ export default function AuthenticationWidget(props) {
 			});
 	}
 
-	// Reset page
 	function resetPage() {
 		setUseMasterPassword(false);
 		setAuthResponse(null);
 		masterPasswordInput.current = "";
 	}
 
-	// Auth attempt
 	function authAttempt() {
 		setIsLoading(true);
 
@@ -54,7 +51,6 @@ export default function AuthenticationWidget(props) {
 		get(`api/${url}`)
 			.then((resp) => {
 				setAuthResponse(resp.data);
-				setIsLoading(false);
 			})
 			.catch((resp) => {
 				console.error(resp.message || resp);
@@ -62,18 +58,17 @@ export default function AuthenticationWidget(props) {
 			});
 	}
 
-	// Forgot PIN
 	function forgotPin() {
 		history.push("/not-implemented");
 	}
 
-	// Done loading
+	// Authentication response changed
 	useEffect(() => {
-		if (authResponse === null) return;
+		if (!authResponse) return;
+
 		setIsLoading(false);
 	}, [authResponse]);
 
-	// Fetch order information on load
 	useEffect(() => {
 		fetchOrderInformation();
 	}, []); /* eslint-disable-line */

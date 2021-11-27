@@ -12,9 +12,7 @@ import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/table.jsx";
 
-// Show mobile table column
 function showMobileTableColumn({columnName, type}) {
-	// If the type is a list, then show each item
 	let show = columnName;
 	if (type === "list") {
 		show = (
@@ -34,7 +32,6 @@ export default function EnchantmentDictionary() {
 
 	const [enchantments, setEnchantments] = useState(null);
 
-	// Fetch enchantments
 	function fetchEnchantments() {
 		get("api/get-enchantment-dictionary")
 			.then((resp) => {
@@ -45,7 +42,6 @@ export default function EnchantmentDictionary() {
 			});
 	}
 
-	// Convert to HTML
 	function convertToHTML(enchantmentsData) {
 		const columns = [
 			{name: "Name", valueName: "name", type: "text"},
@@ -72,8 +68,6 @@ export default function EnchantmentDictionary() {
 								))}
 							</div>
 
-							{/* Line break to show difference between orders */}
-							{/* Don't show on last order though */}
 							{enchantmentID < enchantmentsData.length - 1 && <br />}
 						</div>
 					))}
@@ -104,7 +98,6 @@ export default function EnchantmentDictionary() {
 		);
 	}
 
-	// Fetch enchantments on first load
 	useEffect(() => {
 		fetchEnchantments();
 	}, []); /* eslint-disable-line */
@@ -113,7 +106,7 @@ export default function EnchantmentDictionary() {
 		<MainWidget>
 			<Title>Sheepy's God Gear Services - Enchantment dictionary</Title>
 			<Navbar currentPage="/enchantment-dictionary" />
-			<BaseWidget className="text-center text-lg">
+			<BaseWidget className="text-lg text-center">
 				<p>Enchantment dictionary</p>
 				{enchantments ? <>{enchantments}</> : <LoadingWidget />}
 				<br />

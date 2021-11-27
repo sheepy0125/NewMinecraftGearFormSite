@@ -9,6 +9,7 @@ import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import SubmitOrder from "../submitOrder.jsx";
 
+// I don't know why I felt the need to declare constants here
 const usernameMaxLength = 16;
 const usernameMinLength = 3;
 const additionalMaxLength = 128;
@@ -25,7 +26,6 @@ export default function GeneralInformation(props) {
 	const [isPrioritized, setIsPrioritized] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	// Get content
 	function getContent(content) {
 		return {
 			...content,
@@ -40,7 +40,6 @@ export default function GeneralInformation(props) {
 		};
 	}
 
-	// Username changed
 	function usernameChanged(event) {
 		const newUsername = event.target.value;
 
@@ -50,29 +49,24 @@ export default function GeneralInformation(props) {
 		if (usernameInvalidCharacterCheck) return;
 		usernameTooShortCheck ? setUsernameTooShort(true) : setUsernameTooShort(false);
 
-		// Username's fine
 		setUsername(newUsername);
 	}
 
-	// Discord changed
 	function discordChanged(event) {
 		const newDiscord = event.target.value;
 		setDiscord(newDiscord);
 	}
 
-	// Additional changed
 	function additionalChanged(event) {
 		const newAdditional = event.target.value;
 		setAdditional(newAdditional);
 	}
 
-	// Deliver to changed
 	function deliverToChanged(event) {
 		const newDeliverTo = event.target.value;
 		setDeliverTo(newDeliverTo);
 	}
 
-	// Prioritize checkbox changed
 	function prioritizeCheckboxChanged(event) {
 		const newChecked = event.target.checked;
 		setIsPrioritized(newChecked);
@@ -90,7 +84,13 @@ export default function GeneralInformation(props) {
 						<BaseWidget className="bg-blue-400">
 							<label className="block p-4">
 								<p>Username</p>
-								<input type="text" value={username} onChange={usernameChanged} minLength={usernameMinLength} maxLength={usernameMaxLength} />
+								<input
+									type="text"
+									value={username}
+									onChange={usernameChanged}
+									minLength={usernameMinLength}
+									maxLength={usernameMaxLength}
+								/>
 							</label>
 							<label className="block p-4">
 								<p>Discord username</p>

@@ -32,7 +32,6 @@ function submit({content, history}) {
 		});
 }
 
-// Submit order render
 export default function SubmitOrder(props) {
 	let history = useHistory();
 	const content = props.content;

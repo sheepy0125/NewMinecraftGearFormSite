@@ -13,7 +13,6 @@ import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 import renderItemInputs from "../formInputsEditing.jsx";
 
-// Form enchants
 export default function FormEnchants(props) {
 	const history = useHistory();
 
@@ -22,7 +21,6 @@ export default function FormEnchants(props) {
 	const [itemInputs, setItemInputs] = useState(null);
 	const inputContent = useRef({});
 
-	// Fetch the data
 	function fetchData() {
 		post("api/get-enchants-for-gear", Object.keys(props.orderNumberDictionary))
 			.then((resp) => {
@@ -35,60 +33,53 @@ export default function FormEnchants(props) {
 			});
 	}
 
-	// Fetch data upon first load
 	useEffect(() => {
 		fetchData();
 	}, []); /* eslint-disable-line */
 
-	// Data has changed
+	// Data changed
 	useEffect(() => {
-		if (sortedList && enchantDict) {
-			// They both have data, fetch the inputs
-			const defaultInputList = [];
-			const defaultInputContent = {general: {estimatedCost: props.estimatedCost}};
+		if (!(sortedList && enchantDict)) return;
 
-			// Iterate through each item ordered
-			for (const item of sortedList) {
-				// Check how many of the item were ordered
-				const orderedNumber = props.orderNumberDictionary[item];
+		const defaultInputList = [];
+		const defaultInputContent = {general: {estimatedCost: props.estimatedCost}};
 
-				// For the number that it was ordered, append to inputList
-				for (let currNumber = 1; currNumber <= orderedNumber; currNumber++) {
-					const itemName = `${item} ${currNumber}`;
-					const checkboxes = enchantDict[item].checkboxes;
-					const multipleSelection = enchantDict[item].multipleSelection;
+		for (const item of sortedList) {
+			const orderedNumber = props.orderNumberDictionary[item];
 
-					// Add to input list
-					defaultInputList.push({itemName: itemName, checkboxes: checkboxes, multipleSelection: multipleSelection});
+			for (let currNumber = 1; currNumber <= orderedNumber; currNumber++) {
+				const itemName = `${item} ${currNumber}`;
+				const checkboxes = enchantDict[item].checkboxes;
+				const multipleSelection = enchantDict[item].multipleSelection;
 
-					// Set default input content
-					defaultInputContent[itemName] = {enchantments: {checkboxes: {}, multipleSelection: []}, name: "", additional: ""};
+				defaultInputList.push({itemName: itemName, checkboxes: checkboxes, multipleSelection: multipleSelection});
 
-					// Get default checkboxes
-					const defaultCheckboxes = defaultInputContent[itemName].enchantments.checkboxes;
-					for (const checkbox of checkboxes) {
-						defaultCheckboxes[checkbox] = false;
-					}
-					defaultInputContent[itemName].enchantments.checkboxes = defaultCheckboxes;
+				// Set default input content
+				defaultInputContent[itemName] = {enchantments: {checkboxes: {}, multipleSelection: []}, name: "", additional: ""};
 
-					// Get default multiple selection
-					const defaultMultipleSelection = defaultInputContent[itemName].enchantments.multipleSelection;
-					for (const multipleSelectionList of multipleSelection) {
-						const multipleSelectionDict = {};
-						for (const multipleSelectionEnchantment of multipleSelectionList) {
-							multipleSelectionDict[multipleSelectionEnchantment] = false;
-						}
-						defaultMultipleSelection.push(multipleSelectionDict);
-					}
-					defaultInputContent[itemName].enchantments.multipleSelection = defaultMultipleSelection;
+				// Get default checkboxes and multiple selection
+				const defaultCheckboxes = defaultInputContent[itemName].enchantments.checkboxes;
+				for (const checkbox of checkboxes) {
+					defaultCheckboxes[checkbox] = false;
 				}
-			}
+				defaultInputContent[itemName].enchantments.checkboxes = defaultCheckboxes;
 
-			// Do the HTML stuffs
-			inputContent.current = defaultInputContent;
-			// We need to pass the inputContent ref here so it can be set as well as read.
-			renderItemInputs({inputList: defaultInputList, inputContent: inputContent, setItemInputs: setItemInputs});
+				const defaultMultipleSelection = defaultInputContent[itemName].enchantments.multipleSelection;
+				for (const multipleSelectionList of multipleSelection) {
+					const multipleSelectionDict = {};
+					for (const multipleSelectionEnchantment of multipleSelectionList) {
+						multipleSelectionDict[multipleSelectionEnchantment] = false;
+					}
+					defaultMultipleSelection.push(multipleSelectionDict);
+				}
+				defaultInputContent[itemName].enchantments.multipleSelection = defaultMultipleSelection;
+			}
 		}
+
+		// Do the HTML stuffs
+		inputContent.current = defaultInputContent;
+		// We need to pass the inputContent ref here so it can be set as well as read
+		renderItemInputs({inputList: defaultInputList, inputContent: inputContent, setItemInputs: setItemInputs});
 	}, [sortedList, enchantDict]); /* eslint-disable-line */
 
 	return (

@@ -13,30 +13,25 @@ import Hyperlink from "../boilerplate/hyperlink.jsx";
 import Button from "../boilerplate/button.jsx";
 import {TableColumn, MobileTableColumn, MobileTableRow} from "../boilerplate/table.jsx";
 
-// Options
 function Options(props) {
 	return (
 		<>
 			<Hyperlink href={`/view-order?id=${props.id}`}>View order</Hyperlink>
-			{/* <Hyperlink href={`/not-implemented?id=${props.id}`}>Edit order</Hyperlink> */}
 			<Hyperlink href={`/delete-order?id=${props.id}`}>Delete order</Hyperlink>
 		</>
 	);
 }
 
-// Show order column
 function showOrderColumn(columnName) {
 	// If it is a boolean type, show y/n
 	return typeof columnName !== "boolean" ? columnName : columnName ? "Yes" : "No";
 }
 
-// View all orders
 export default function ViewAllOrders() {
 	const history = useHistory();
 
 	const [orders, setOrders] = useState(null);
 
-	// Fetch orders
 	function fetchOrders() {
 		get("api/view-all-orders")
 			.then((resp) => {
@@ -47,7 +42,6 @@ export default function ViewAllOrders() {
 			});
 	}
 
-	// Convert to HTML
 	function convertToHTML(ordersData) {
 		const columns = [
 			{name: "Queue number", valueName: "queue_number"},
@@ -114,7 +108,6 @@ export default function ViewAllOrders() {
 		);
 	}
 
-	// Fetch orders on first load
 	useEffect(() => {
 		fetchOrders();
 	}, []); /* eslint-disable-line */

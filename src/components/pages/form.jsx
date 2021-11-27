@@ -1,4 +1,5 @@
 // Handler for selection and enchanting pages combined
+
 import {useState} from "react";
 
 import FormSelection from "./formSelection.jsx";
@@ -13,12 +14,15 @@ export default function Form() {
 		return <FormSelection nextPage={goToEnchantSelectionPage} />;
 	}
 	function enchantSelectionPage(content) {
-		return <FormEnchants orderNumberDictionary={content.orderNumberDictionary} estimatedCost={content.totalPrice} nextPage={goToGeneralInformationPage} />;
+		return (
+			<FormEnchants orderNumberDictionary={content.orderNumberDictionary} estimatedCost={content.totalPrice} nextPage={goToGeneralInformationPage} />
+		);
 	}
 	function generalInformationPage(content) {
 		return <GeneralInformation content={content} />;
 	}
 
+	// Page transitions
 	function goToEnchantSelectionPage(content) {
 		setCurrentPage(enchantSelectionPage(content));
 	}

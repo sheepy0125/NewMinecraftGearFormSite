@@ -8,12 +8,10 @@
 
 import {Checkbox} from "@createnl/grouped-checkboxes"; // I love you
 
-// Enchant item
 export function EnchantItem(props) {
 	return <p className="mx-2 sm:mx-auto">{props.children}</p>;
 }
 
-// Label
 export function Label(props) {
 	return (
 		<label className="flex w-full px-1 my-1 bg-blue-200 bg-opacity-25 cursor-pointer" key={props.id || ""}>
@@ -22,7 +20,6 @@ export function Label(props) {
 	);
 }
 
-// Enchant radio button
 export function EnchantRadioButton(props) {
 	const enchant = props.enchant;
 	const itemName = props.itemName;
@@ -44,7 +41,6 @@ export function EnchantRadioButton(props) {
 	);
 }
 
-// Enchant checkbox
 export function EnchantCheckbox(props) {
 	const enchant = props.enchant;
 	const itemName = props.itemName;

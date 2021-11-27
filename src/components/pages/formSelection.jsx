@@ -1,4 +1,4 @@
-// Form page
+// Form selection page
 
 import {useState, useEffect} from "react";
 import {useHistory} from "react-router-dom";
@@ -12,6 +12,14 @@ import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 
+function TotalCost(props) {
+	return (
+		<p>
+			Estimated cost: {Math.floor(props.totalPrice / 64)} stacks {props.totalPrice % 64} diamonds.
+		</p>
+	);
+}
+
 export default function FormSelection(props) {
 	const history = useHistory();
 
@@ -20,7 +28,6 @@ export default function FormSelection(props) {
 	const [itemPrices, setItemPrices] = useState({});
 	const [totalPrice, setTotalPrice] = useState(0);
 
-	// Fetch the inputs
 	function fetchInputs() {
 		get("api/get-select-dictionary") // Example output: [{"name": "Sword", "cost": 2, "max": 5}, {"name": "Pickaxe", "cost": 3, "max": 5}]
 			.then((resp) => {
@@ -32,7 +39,6 @@ export default function FormSelection(props) {
 			});
 	}
 
-	// Get new price (onChange)
 	function getNewPrice({itemName, itemCount, itemCost}) {
 		const cost = Number(itemCount) * Number(itemCost);
 		setItemPrices((prevItemPrices) => ({
@@ -40,9 +46,10 @@ export default function FormSelection(props) {
 			[itemName]: cost,
 		}));
 	}
-	// When itemPrices changes, update the total price.
+
+	// Item prices changed
 	useEffect(() => {
-		let total = 10; // Total is initially set to 10 for the flat rate.
+		let total = 10;
 
 		for (const itemCost of Object.values(itemPrices)) {
 			total += itemCost;
@@ -51,30 +58,17 @@ export default function FormSelection(props) {
 		setTotalPrice(total);
 	}, [itemPrices]);
 
-	// Total cost component
-	function TotalCost() {
-		return (
-			<p>
-				Estimated cost: {Math.floor(totalPrice / 64)} stacks {totalPrice % 64} diamonds.
-			</p>
-		);
-	}
-
-	// On input change
 	function numberChanged(event) {
 		// Check to make sure it is valid
 
-		// Is it greater than the maximum amount?
 		if (Number(event.target.value) > Number(event.target.max)) {
 			event.target.value = event.target.max;
-		}
-		// Is it less than or 0?
-		else if (event.target.value <= 0) {
+		} else if (event.target.value <= 0) {
 			event.target.value = 0;
 		}
 
 		const value = Number(event.target.value);
-		const dictionaryValue = value !== 0 ? value : undefined; // Set it to be undefined if the value is 0 (so it doesn't exist anymore)
+		const dictionaryValue = value !== 0 ? value : undefined; // Set it to be undefined if the value is 0 (same as `delete`)
 
 		setOrderNumberDictionary((prevDict) => ({
 			...prevDict,
@@ -85,7 +79,6 @@ export default function FormSelection(props) {
 		getNewPrice({itemName: event.target.name, itemCount: Number(event.target.value), itemCost: itemCost});
 	}
 
-	// Convert the JSON data to input tags
 	function convertToInputs(data) {
 		return data.map((item) => (
 			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={item.name}>
@@ -116,15 +109,13 @@ export default function FormSelection(props) {
 		));
 	}
 
-	// Go to next page
 	function goToNextPage() {
 		props.nextPage({orderNumberDictionary: orderNumberDictionary, totalPrice: totalPrice});
 	}
 
-	// Fetch inputs on first load
 	useEffect(() => {
 		fetchInputs();
-	}, []); /* eslint-disable-line */ // This is stupid. [] makes it so it only runs the first time.
+	}, []); /* eslint-disable-line */
 
 	return (
 		<MainWidget>
@@ -135,9 +126,9 @@ export default function FormSelection(props) {
 				<p className="font-thin">Select what you would like to order here.</p>
 				{itemInputs ? (
 					<BaseWidget className="bg-blue-400">
-						<TotalCost />
+						<TotalCost totalPirce={totalPrice} />
 						<FormWidget>{itemInputs}</FormWidget>
-						<TotalCost />
+						<TotalCost totalPirce={totalPrice} />
 						<br />
 						<span onClick={goToNextPage}>
 							<Button>Next page</Button>

@@ -1,8 +1,9 @@
 // API error page
 
+import {Link} from "react-router-dom";
+
 import BoxWidget from "../../boilerplate/widgets/boxWidget.jsx";
 import Button from "../../boilerplate/button.jsx";
-import {Link} from "react-router-dom";
 
 export default function ApiError() {
 	return (

@@ -8,7 +8,7 @@ import BaseWidget from "../boilerplate/widgets/baseWidget";
 import BoxWidget from "../boilerplate/widgets/boxWidget";
 import AuthenticationWidget from "../authentication";
 
-export default function DeleteOrder(props) {
+export default function ChangeOrderStatus(props) {
 	const paramsString = useLocation().search;
 	const paramsDictionary = parse(paramsString);
 
