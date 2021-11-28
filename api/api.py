@@ -206,6 +206,8 @@ def get_new_queue_number(prioritize: bool = False, completed: bool = False) -> i
     """
     Handles getting a new queue number for a new order with prioritizing
     and completed factored in
+    Doesn't handle setting new queue numbers for orders that are already
+    existing
     """
 
     num_of_orders: int = Orders.query.count()
@@ -213,21 +215,31 @@ def get_new_queue_number(prioritize: bool = False, completed: bool = False) -> i
     if num_of_orders == 0:
         return 1
 
-    if completed:
-        return num_of_orders + 1
+    # if completed:
+    # Do the same thing as if an order is unprioritized
 
     if prioritize:
         # The queue number will be the first order that isn't prioritizing
         try:
-            return Orders.query.filter_by(is_prioritized=False).first().queue_number
+            return (
+                Orders.query.filter_by(is_prioritized=False)
+                .filter(Orders.status != "Completed")
+                .first()
+                .queue_number
+            )
 
         # An attribute error will occur when there are no orders that aren't needed to be prioritized
         except AttributeError:
             pass
 
-    # Order is unprioritized, put it in front of the first completed order
+    # Order is unprioritized or completed, put it in front of the first completed order
     try:
-        return Orders.query.filter_by(status="Completed").first().queue_number
+        return (
+            Orders.query.filter_by(status="Completed")
+            .order_by(Orders.order_id)  # Prevents messed up queue nums if not in order
+            .all()[-1]  # Get the last one (what's desc??? lol)
+            .queue_number
+        )
     except AttributeError:
         # There are no completed orders, so put it last
         return num_of_orders + 1
