@@ -4,7 +4,7 @@
 /build
 /venv
 /api/__pycache__
-/.vscode
+/.vscode/*
 *.lock
 *.log
 package-lock.json
@@ -12,3 +12,7 @@ package-lock.json
 # Private information
 config.json
 order.db
+reviews.db
+
+# Testing
+!/.vscode/launch.json
