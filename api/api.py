@@ -1,20 +1,24 @@
 """
 API for god gear ordering site
-Created on 14/06/2021 (dd/mm/yyyy)
+Created on 2021-06-14
 """
 
+### Setup ###
+# Import
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
 from json import load
 from time import strftime
 
+# Load config
 with open("json_files/config.json") as config_file:
     config_dict: dict = load(config_file)
     MASTER_PASSWORD: str = config_dict["masterPassword"]
     ORDERS_DB_PATH: str = config_dict["ordersDatabasePath"]
     REVIEWS_DB_PATH: str = config_dict["reviewsDatabasePath"]
 
+# Flask setup
 api: Flask = Flask(__name__, template_folder=None, static_folder="static")
 api.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 api.config["JSON_SORT_KEYS"] = False
@@ -24,9 +28,7 @@ api.config["SQLALCHEMY_BINDS"] = {
 }
 database: SQLAlchemy = SQLAlchemy(api)
 
-### Database models ###
-
-
+### Database schemas ###
 class Orders(database.Model):
     __bind_key__: str = "orders_db"
     order_id = database.Column(database.Integer, primary_key=True)
@@ -81,9 +83,283 @@ VIEW_ALL_REVIEWS_COLUMNS: tuple = (
     Reviews.rating_out_of_ten,
 )
 
+### Database classes ###
+class OrdersDatabase:
+    """
+    Handles database operations for orders.
+
+    Exports:
+     - delete_order
+     - submit_order
+     - get_all_orders
+     - change_order_status
+
+    Will be used more as a namespace than a class;
+    references the :class:`Orders` schema.
+    """
+
+    @staticmethod
+    def _update_queue_numbers_for_other_orders(
+        starting_queue_number: int, change_by: int = 1
+    ) -> None:
+        """For every order past an order, update the queue order"""
+
+        # Get all the orders that need to be changed
+        try:
+            all_orders_need_change: Orders = Orders.query.filter(
+                Orders.queue_number >= starting_queue_number
+            ).all()
+
+        # No orders need to be changed, time to quit!
+        # (AttributeError: 'NoneType' object has no attribute 'queue_number')
+        except AttributeError:
+            return
+
+        for order_need_change in all_orders_need_change:
+            order_need_change.queue_number += change_by
+
+        # Commit changes (if any)
+        if len(all_orders_need_change) > 0:
+            database.session.commit()
+
+    @staticmethod
+    def _update_ids_for_other_orders(starting_id: int, change_by: int = 1) -> None:
+        """
+        For every order past an order, update the ID.
+        Useful for deleting orders
+        """
+
+        # Get all the orders that need to be changed
+        try:
+            all_orders_need_change: Orders = Orders.query.filter(
+                Orders.order_id >= starting_id
+            ).all()
+
+        # No orders need to be changed, time to quit!
+        # (AttributeError: 'NoneType' object has no attribute 'order_id')
+        except AttributeError:
+            return
+
+        for order_need_change in all_orders_need_change:
+            order_need_change.order_id += change_by
+
+        # Commit changes (if any)
+        if len(all_orders_need_change) > 0:
+            database.session.commit()
+
+    @staticmethod
+    def _get_new_queue_number(prioritize: bool = False, completed: bool = False) -> int:
+        """
+        Handles getting a new queue number for a new order with prioritizing
+        and completed factored in
+        Doesn't handle setting new queue numbers for orders that are already
+        existing
+        """
+
+        num_of_orders: int = Orders.query.count()
+
+        if num_of_orders == 0:
+            # Yay, first order!
+            return 1
+
+        if prioritize:
+            # The queue number will be the first order that isn't prioritizing
+            try:
+                return (
+                    Orders.query.filter_by(is_prioritized=False)
+                    .filter(Orders.status != "Completed")
+                    .first()
+                    .queue_number
+                )
+
+            # An attribute error will occur when there are no orders that aren't needed to be prioritized
+            except AttributeError:
+                pass
+
+        # Order isn't prioritized and/or completed, put it in front of the first completed order
+        try:
+            return (
+                Orders.query.filter_by(status="Completed")
+                .order_by(
+                    Orders.order_id
+                    # Prevents messed up queue numbers if not in order
+                )
+                .all()[-1]  # Get the last one (what's descending? lol)
+                .queue_number
+            )
+        except AttributeError:
+            # There are no completed orders, so put it last
+            return num_of_orders + 1
+
+    @staticmethod
+    def delete_order(order_id: int) -> None:
+        """Delete an order without any error handling"""
+
+        # Get the order
+        order: Orders = Orders.query.filter_by(order_id=order_id).first()
+        order_queue_number: int = order.queue_number
+
+        # We need to update the other order's queue numbers and IDs
+        # In order to prevent collisions with matching IDs and queue numbers,
+        # we should just set it to an arbitrary unique number
+        # (yes, I know this isn't the... best way...  to do it, but it works)
+        order.order_id = order.queue_number = randint(1000, 1500)
+        database.session.commit()
+        OrdersDatabase._update_queue_numbers_for_other_orders(
+            starting_queue_number=order_queue_number, change_by=-1
+        )
+        OrdersDatabase._update_ids_for_other_orders(starting_id=order_id, change_by=-1)
+
+        # After that's all done, we can finally delete the order.
+        database.session.delete(order)
+        database.session.commit()
+
+        # No need for fixing the ID and queue numbers, the order's gone already
+
+    @staticmethod
+    def submit_order(order_json: dict) -> Orders:
+        """
+        Turns :param order_json: into an Orders object.
+        Also handles queue numbers
+        """
+
+        order_username: str = order_json["general"]["username"]
+        order_discord: str = order_json["general"]["discord"]
+        order_prioritize: bool = order_json["general"]["prioritize"]
+        order_additional_information: str = order_json["general"]["additional"]
+        order_deliver_to: str = order_json["general"]["deliver_to"]
+        ordered_content_dict: dict = order_json
+        del ordered_content_dict["general"]
+        order_pin: str = get_random_pin()
+        order_queue_number: int = OrdersDatabase._get_new_queue_number(
+            prioritize=order_prioritize
+        )
+        date_created: str = get_current_time()
+
+        # Update other queue numbers
+        OrdersDatabase._update_queue_numbers_for_other_orders(
+            starting_queue_number=order_queue_number, change_by=1
+        )
+
+        # Create order
+        order_submission: Orders = Orders(
+            username=order_username,
+            discord=order_discord,
+            content=ordered_content_dict,
+            additional_information=order_additional_information,
+            deliver_to=order_deliver_to,
+            pin=order_pin,
+            date_created=date_created,
+            date_modified="N/A",
+            queue_number=order_queue_number,
+            is_prioritized=order_prioritize,
+            status="Received",  # TODO: integer from 1-4 to show status
+        )
+        # Save to database!
+        database.session.add(order_submission)
+        database.session.commit()
+
+        return order_submission
+
+    @staticmethod
+    def get_all_orders() -> list:
+        all_orders: Orders = (
+            Orders.query.order_by(Orders.queue_number)
+            .with_entities(*VIEW_ALL_ORDERS_COLUMNS)
+            .all()
+        )
+        return [(dict(row)) for row in all_orders]  # Convert rows to list of dict
+
+    @staticmethod
+    def change_order_status(order_id: int, status: str) -> None:
+        """Changes the status column for an order"""
+
+        order: Orders = Orders.query.filter_by(order_id=order_id).first()
+        order.status = status
+        database.session.commit()
+
+        if status != "Completed":
+            return
+
+        # Update the queue number to be the last one
+        # Again like in delete_order, we need to update the other order's queue numbers
+        # So we'll just set ours to an arbitrary unique number to prevent collisions
+        original_queue_number = order.queue_number
+        order.queue_number = randint(1000, 1500)
+        database.session.commit()
+        OrdersDatabase._update_queue_numbers_for_other_orders(
+            starting_queue_number=order.queue_number, change_by=-1
+        )
+        # Reset queue number
+        order.queue_number = OrdersDatabase._get_new_queue_number(completed=True)
+        database.session.commit()
+        # But now, we need to update the other order's queue numbers since we're putting
+        # this order at the end of the queue
+        OrdersDatabase._update_queue_numbers_for_other_orders(
+            starting_queue_number=original_queue_number, change_by=-1
+        )
+
+
+class ReviewDatabase:
+    """
+    Handles database operations for reviews.
+
+    Exports:
+     - delete_review
+     - submit_review
+     - get_all_reviews
+
+    More of a namespace than a class;
+    references the :class:`Reviews` schema.
+    """
+
+    @staticmethod
+    def delete_review(post_id: int) -> None:
+        """Deletes a review (why even... okay)"""
+
+        review: Reviews = Reviews.query.filter_by(post_id=post_id).first()
+        database.session.delete(review)
+        database.session.commit()
+
+    @staticmethod
+    def submit_review(review_json: dict) -> Reviews:
+        """
+        Turns :param:`review_json` into a Reviews object
+        and saves it to the database.
+        """
+
+        review_username: str = review_json["username"]
+        content: str = review_json["content"]
+        rating_out_of_ten: int = int(review_json["rating"])
+        date_created: str = get_current_time()
+
+        # Create review
+        review_submission: Reviews = Reviews(
+            username=review_username,
+            content=content,
+            rating_out_of_ten=rating_out_of_ten,
+            date_created=date_created,
+        )
+
+        # Save to database!
+        database.session.add(review_submission)
+        database.session.commit()
+
+        return review_submission
+
+    @staticmethod
+    def get_all_reviews() -> list:
+        """Returns a list of all reviews in dict form"""
+
+        all_reviews: Reviews = (
+            Reviews.query.order_by(Reviews.post_id)
+            .with_entities(*VIEW_ALL_REVIEWS_COLUMNS)
+            .all()
+        )
+        return [(dict(row)) for row in all_reviews]  # Convert rows to list of dict
+
+
 ### Functions ###
-
-
 def send_json_file_as_data(filename: str) -> dict:
     """Returns the JSON data of a file"""
 
@@ -150,253 +426,7 @@ def check_credentials(password: str = None, pin: str = None, order_id: int = 0) 
     return {"worked": True, "code": 200}
 
 
-### Order functions ###
-
-
-def update_queue_numbers_for_other_orders(
-    starting_queue_number: int, change_by: int = 1
-) -> None:
-    """For every order past an order, update the queue order"""
-
-    # Get all the orders that need to be changed
-    try:
-        all_orders_need_change: Orders = Orders.query.filter(
-            Orders.queue_number >= starting_queue_number
-        ).all()
-
-    # No orders need to be changed, time to quit!
-    # (AttributeError: 'NoneType' object has no attribute 'queue_number')
-    except AttributeError:
-        return
-
-    for order_need_change in all_orders_need_change:
-        order_need_change.queue_number += change_by
-
-    # Commit changes (if any)
-    if len(all_orders_need_change) > 0:
-        database.session.commit()
-
-
-def update_ids_for_other_orders(starting_id: int, change_by: int = 1) -> None:
-    """
-    For every order past an order, update the ID.
-    Useful for deleting orders
-    """
-
-    # Get all the orders that need to be changed
-    try:
-        all_orders_need_change: Orders = Orders.query.filter(
-            Orders.order_id >= starting_id
-        ).all()
-
-    # No orders need to be changed, time to quit!
-    # (AttributeError: 'NoneType' object has no attribute 'order_id')
-    except AttributeError:
-        return
-
-    for order_need_change in all_orders_need_change:
-        order_need_change.order_id += change_by
-
-    # Commit changes (if any)
-    if len(all_orders_need_change) > 0:
-        database.session.commit()
-
-
-def get_new_queue_number(prioritize: bool = False, completed: bool = False) -> int:
-    """
-    Handles getting a new queue number for a new order with prioritizing
-    and completed factored in
-    Doesn't handle setting new queue numbers for orders that are already
-    existing
-    """
-
-    num_of_orders: int = Orders.query.count()
-
-    if num_of_orders == 0:
-        return 1
-
-    # if completed:
-    # Do the same thing as if an order is not prioritized
-
-    if prioritize:
-        # The queue number will be the first order that isn't prioritizing
-        try:
-            return (
-                Orders.query.filter_by(is_prioritized=False)
-                .filter(Orders.status != "Completed")
-                .first()
-                .queue_number
-            )
-
-        # An attribute error will occur when there are no orders that aren't needed to be prioritized
-        except AttributeError:
-            pass
-
-    # Order is not prioritized or completed, put it in front of the first completed order
-    try:
-        return (
-            Orders.query.filter_by(status="Completed")
-            .order_by(Orders.order_id)  # Prevents messed up queue nums if not in order
-            .all()[-1]  # Get the last one (what's descending? lol)
-            .queue_number
-        )
-    except AttributeError:
-        # There are no completed orders, so put it last
-        return num_of_orders + 1
-
-
-def delete_order(order_id: int) -> None:
-    """Delete an order without any error handling"""
-
-    # Get the order
-    order: Orders = Orders.query.filter_by(order_id=order_id).first()
-    order_queue_number: int = order.queue_number
-
-    # We need to update the other order's queue numbers and IDs
-    # In order to prevent collisions with matching IDs and queue numbers,
-    # we should just set them to an arbitrary unique number
-    # (yes, I know this isn't the... best way...  to do it, but it works)
-    order.order_id = order.queue_number = randint(1000, 1500)
-    database.session.commit()
-    update_queue_numbers_for_other_orders(
-        starting_queue_number=order_queue_number, change_by=-1
-    )
-    update_ids_for_other_orders(starting_id=order_id, change_by=-1)
-
-    # After that's all done, we can finally delete the order.
-    database.session.delete(order)
-    database.session.commit()
-
-
-def submit_order(order_json: dict) -> Orders:
-    """
-    Turns :param order_json: into an Orders object.
-    Also handles queue numbers
-    """
-
-    order_username: str = order_json["general"]["username"]
-    order_discord: str = order_json["general"]["discord"]
-    order_prioritize: bool = order_json["general"]["prioritize"]
-    order_additional_information: str = order_json["general"]["additional"]
-    order_deliver_to: str = order_json["general"]["deliver_to"]
-    ordered_content_dict: dict = order_json
-    del ordered_content_dict["general"]
-    order_pin: str = get_random_pin()
-    order_queue_number: int = get_new_queue_number(prioritize=order_prioritize)
-    date_created: str = get_current_time()
-
-    # Update other queue numbers
-    update_queue_numbers_for_other_orders(
-        starting_queue_number=order_queue_number, change_by=1
-    )
-
-    # Create order
-    order_submission: Orders = Orders(
-        username=order_username,
-        discord=order_discord,
-        content=ordered_content_dict,
-        additional_information=order_additional_information,
-        deliver_to=order_deliver_to,
-        pin=order_pin,
-        date_created=date_created,
-        date_modified="N/A",
-        queue_number=order_queue_number,
-        is_prioritized=order_prioritize,
-        status="Received",
-    )
-    # Save to database!
-    database.session.add(order_submission)
-    database.session.commit()
-
-    return order_submission
-
-
-def get_all_orders() -> list:
-    all_orders: Orders = (
-        Orders.query.order_by(Orders.queue_number)
-        .with_entities(*VIEW_ALL_ORDERS_COLUMNS)
-        .all()
-    )
-    return [(dict(row)) for row in all_orders]  # Convert rows to list of dict
-
-
-def change_order_status(order_id: int, status: str) -> None:
-    """Changes the status column for an order"""
-
-    order: Orders = Orders.query.filter_by(order_id=order_id).first()
-    order.status = status
-    database.session.commit()
-
-    if status != "Completed":
-        return
-
-    # Update the queue number to be the last one
-    # Again like in delete_order, we need to update the other order's queue numbers
-    # So we'll just set ours to an arbitrary unique number to prevent collisions
-    original_queue_number = order.queue_number
-    order.queue_number = randint(1000, 1500)
-    database.session.commit()
-    update_queue_numbers_for_other_orders(
-        starting_queue_number=order.queue_number, change_by=-1
-    )
-    # Reset queue number
-    order.queue_number = get_new_queue_number(completed=True)
-    database.session.commit()
-    # But now, we need to update the other order's queue numbers since we're putting
-    # this order at the end of the queue
-    update_queue_numbers_for_other_orders(
-        starting_queue_number=original_queue_number, change_by=-1
-    )
-
-
-### Review functions ###
-
-
-def delete_review(post_id: int) -> None:
-    """Deletes a review (why even... okay)"""
-
-    review: Reviews = Reviews.query.filter_by(post_id=post_id).first()
-    database.session.delete(review)
-    database.session.commit()
-
-
-def submit_review(review_json: dict) -> Reviews:
-    """Turns :param review_json: into a Reviews object"""
-
-    review_username: str = review_json["username"]
-    content: str = review_json["content"]
-    rating_out_of_ten: int = int(review_json["rating"])
-    date_created: str = get_current_time()
-
-    # Create review
-    review_submission: Reviews = Reviews(
-        username=review_username,
-        content=content,
-        rating_out_of_ten=rating_out_of_ten,
-        date_created=date_created,
-    )
-
-    # Save to database!
-    database.session.add(review_submission)
-    database.session.commit()
-
-    return review_submission
-
-
-def get_all_reviews() -> list:
-    """Returns a list of all reviews in dict form"""
-
-    all_reviews: Reviews = (
-        Reviews.query.order_by(Reviews.post_id)
-        .with_entities(*VIEW_ALL_REVIEWS_COLUMNS)
-        .all()
-    )
-    return [(dict(row)) for row in all_reviews]  # Convert rows to list of dict
-
-
 ### Routes ###
-
-
 @api.route("/api/ping", methods=["GET"])
 def ping_route() -> dict:
     return {"worked": True, "code": 200}
@@ -446,12 +476,10 @@ def get_enchants_for_gear() -> dict:
 
 
 ### Form routes ###
-
-
 @api.route("/api/submit-form", methods=["POST"])
 def submit_order_route() -> dict:
     order_json: dict = request.json
-    order_submission: Orders = submit_order(order_json)
+    order_submission: Orders = OrdersDatabase.submit_order(order_json)
     return {
         "worked": True,
         "data": {
@@ -465,7 +493,7 @@ def submit_order_route() -> dict:
 
 @api.route("/api/view-all-orders", methods=["GET"])
 def view_all_orders_route() -> dict:
-    all_orders_list: list = get_all_orders()
+    all_orders_list: list = OrdersDatabase.get_all_orders()
     return {"worked": True, "data": all_orders_list, "code": 200}
 
 
@@ -505,7 +533,7 @@ def delete_order_route() -> dict:
     if not credential_result["worked"]:
         return credential_result
 
-    delete_order(order_id=order_id)
+    OrdersDatabase.delete_order(order_id=order_id)
 
     return {
         "worked": True,
@@ -525,7 +553,7 @@ def change_order_status_route() -> dict:
     if not credential_result["worked"]:
         return credential_result
 
-    change_order_status(order_id=order_id, status=status)
+    OrdersDatabase.change_order_status(order_id=order_id, status=status)
 
     return {
         "worked": True,
@@ -539,24 +567,8 @@ def change_order_status_route() -> dict:
 # Submit review
 @api.route("/api/submit-review", methods=["POST"])
 def submit_review_route() -> dict:
-    review_json: dict = {}
-
-    review_username: str = review_json["username"]
-    review_rating: int = review_json["rating"]
-    review_content: str = review_json["content"]
-    date_created: str = get_current_time()
-
-    # Create review
-    review_submission: Reviews = Reviews(
-        username=review_username,
-        content=review_content,
-        rating_out_of_ten=review_rating,
-        date_created=date_created,
-    )
-    # Save to database!
-    database.session.add(review_submission)
-    database.session.commit()
-
+    review_json: dict = request.json
+    ReviewDatabase.submit_review(review_json)
     return {"worked": True, "code": 200}
 
 
@@ -566,14 +578,16 @@ def get_reviews_route() -> dict:
     starting_id: int = int(request.args["starting_id"])
     ending_id: int = int(request.args["ending_id"])
 
-    all_reviews_list: list = get_all_reviews()
+    # XXX: This is a really inefficient way to do pagination.
+    # XXX: However, since there won't be many reviews, it's fine for now.
+    # XXX: If there are many reviews, this will be a problem.
+    all_reviews_list: list = OrdersDatabase.get_all_reviews()
     reviews_list: list = all_reviews_list[(starting_id - 1) : ending_id]
 
     # See if we can load more
     can_load_more = False
     if len(all_reviews_list) > ending_id:
         can_load_more = True
-    print(len(all_reviews_list), ending_id)
 
     return {
         "worked": True,
@@ -584,21 +598,11 @@ def get_reviews_route() -> dict:
 
 
 ### Error handlers ###
-
-
 @api.errorhandler(Exception)
 def error_handler(error: Exception) -> dict:
-    try:
-        # HTTP error code (error.code works)
-        return {
-            "worked": False,
-            "message": str(error),
-            "code": error.code,
-        }
-    except Exception:
-        # Internal error
-        return {
-            "worked": False,
-            "message": str(error),
-            "code": 500,
-        }
+    # HTTP error code (error.code works)
+    return {
+        "worked": False,
+        "message": str(error),
+        "code": error.code if hasattr(error, "code") else 500,
+    }
