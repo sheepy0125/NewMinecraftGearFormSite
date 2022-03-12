@@ -1,4 +1,4 @@
-// Form inupts editing
+// Form inputs editing
 // Inputs for when editing
 
 import {AllCheckerCheckbox, CheckboxGroup} from "@createnl/grouped-checkboxes";
@@ -39,7 +39,7 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 			for (const enchant of Object.keys(multipleSelectionDict)) multipleSelectionDict[enchant] = false;
 
 			// If the enchantment is null, that means it's a none checkbox and we can end here.
-			if (enchantment === null) break;
+			if (!enchantment) break;
 
 			multipleSelectionDict[enchantment] = true;
 		}
@@ -92,7 +92,6 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 		inputList.map((item) => (
 			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={`${item.itemName}`}>
 				<p className="mx-auto font-bold">{item.itemName}</p>
-
 				{/* Item name */}
 				<div className="name">
 					<label>
@@ -107,7 +106,6 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 						/>
 					</label>
 				</div>
-
 				{/* Checkboxes */}
 				<div className="checkboxes">
 					<CheckboxGroup>

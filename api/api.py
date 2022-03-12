@@ -7,7 +7,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from random import randint
 from json import load
-from time import strftime, sleep
+from time import strftime
 
 with open("json_files/config.json") as config_file:
     config_dict: dict = load(config_file)
@@ -95,7 +95,7 @@ def send_json_file_as_data(filename: str) -> dict:
 def get_current_time() -> str:
     """
     Example output: "Monday, July 05 2021 at 09:00:48 PM Eastern"
-    This uses the eastern timezone lololol
+    This uses the eastern timezone, lol
     """
 
     # %A = Day of week, %B = Month, %d = Day of month, %Y = Year,
@@ -216,7 +216,7 @@ def get_new_queue_number(prioritize: bool = False, completed: bool = False) -> i
         return 1
 
     # if completed:
-    # Do the same thing as if an order is unprioritized
+    # Do the same thing as if an order is not prioritized
 
     if prioritize:
         # The queue number will be the first order that isn't prioritizing
@@ -232,12 +232,12 @@ def get_new_queue_number(prioritize: bool = False, completed: bool = False) -> i
         except AttributeError:
             pass
 
-    # Order is unprioritized or completed, put it in front of the first completed order
+    # Order is not prioritized or completed, put it in front of the first completed order
     try:
         return (
             Orders.query.filter_by(status="Completed")
             .order_by(Orders.order_id)  # Prevents messed up queue nums if not in order
-            .all()[-1]  # Get the last one (what's desc??? lol)
+            .all()[-1]  # Get the last one (what's descending? lol)
             .queue_number
         )
     except AttributeError:
@@ -302,7 +302,7 @@ def submit_order(order_json: dict) -> Orders:
         date_modified="N/A",
         queue_number=order_queue_number,
         is_prioritized=order_prioritize,
-        status="Recieved",
+        status="Received",
     )
     # Save to database!
     database.session.add(order_submission)
@@ -421,7 +421,7 @@ def get_enchants_for_gear() -> dict:
     maintaining_order_selected_gear_items: list = []
     all_gear_items: list = list(all_gear_enchants_info.keys())
 
-    # For each item, if it is in the selected items list, append it to the maintaining order list
+    # Maintain order (otherwise, it'll be alphabetical)
     for item_index in range(len(all_gear_items)):
         item: str = all_gear_items[item_index]
         if item in selected_gear_items:

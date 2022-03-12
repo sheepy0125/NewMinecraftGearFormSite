@@ -5,7 +5,7 @@ Item inputs model
 
 [===========================================Information(*)========================================]
 [ Username: {{username}}                                                                          ]
-[ Additonal information: {{additionalInformation}}                                                ]
+[ Additional information: {{additionalInformation}}                                               ]
 [ Date created: {{creationDate}}                                                                  ]
 [=================================================================================================]
 
