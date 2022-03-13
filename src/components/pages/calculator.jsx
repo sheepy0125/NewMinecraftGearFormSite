@@ -207,7 +207,7 @@ export default function Calculator(props) {
 			)}
 
 			<div className="w-full">
-				<Link to="/home" className="block mx-auto w-max ">
+				<Link to="/home" className="block mx-auto w-max">
 					<Button>Return home</Button>
 				</Link>
 				<div onClick={history.goBack} className="block mx-auto w-max ">
