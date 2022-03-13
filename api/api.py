@@ -300,7 +300,7 @@ class OrdersDatabase:
         )
 
 
-class ReviewDatabase:
+class ReviewsDatabase:
     """
     Handles database operations for reviews.
 
@@ -568,7 +568,7 @@ def change_order_status_route() -> dict:
 @api.route("/api/submit-review", methods=["POST"])
 def submit_review_route() -> dict:
     review_json: dict = request.json
-    ReviewDatabase.submit_review(review_json)
+    ReviewsDatabase.submit_review(review_json)
     return {"worked": True, "code": 200}
 
 
@@ -581,7 +581,7 @@ def get_reviews_route() -> dict:
     # XXX: This is a really inefficient way to do pagination.
     # XXX: However, since there won't be many reviews, it's fine for now.
     # XXX: If there are many reviews, this will be a problem.
-    all_reviews_list: list = OrdersDatabase.get_all_reviews()
+    all_reviews_list: list = ReviewsDatabase.get_all_reviews()
     reviews_list: list = all_reviews_list[(starting_id - 1) : ending_id]
 
     # See if we can load more

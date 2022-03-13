@@ -1,18 +1,14 @@
 """
 API dev tools
-Created on 03/09/2021 (dd/mm/yyyy)
+Created on 2021-09-03
 """
 
 from api import (
     database,
     Orders,
     Reviews,
-    delete_order,
-    submit_order,
-    get_all_orders,
-    delete_review,
-    submit_review,
-    get_all_reviews,
+    OrdersDatabase,
+    ReviewsDatabase,
     ORDERS_DB_PATH,
     REVIEWS_DB_PATH,
 )
@@ -25,7 +21,7 @@ from json import loads
 class MainWindow(BaseWindow):
     def __init__(self) -> None:
         super().__init__(
-            win_size=(800, 600), win_resizable=False, win_title="API Dev Tools"
+            win_size=(800, 800), win_resizable=False, win_title="API Dev Tools"
         )
 
     ### Pages ###
@@ -72,7 +68,9 @@ class MainWindow(BaseWindow):
     def view_all_rows_page(self, table: str):
         self.reset_win()
 
-        all_rows: list = eval(f"get_all_{table}()")
+        all_rows: list = eval(
+            f"{''.join([table[0].upper(), table[1::]])}Database.get_all_{table}()"
+        )
 
         all_rows_text: Text = self.text(rows=10)
         all_rows_text.insert("1.0", f"All {table} (raw)\n")
@@ -93,7 +91,9 @@ class MainWindow(BaseWindow):
         def run_delete_row():
             try:
                 row_id: int = int(row_id_entry.get())
-                eval(f"delete_{table}(row_id)")
+                eval(
+                    f"{''.join([table[0].upper(), table[1::]])}sDatabase.delete_{table}(row_id)"
+                )
                 StatusWindow(f"Successfully deleted {table} with ID {row_id}.")
 
             except Exception as exception:
@@ -116,7 +116,9 @@ class MainWindow(BaseWindow):
         def run_submit_row() -> None:
             try:
                 row_json = loads(json_input_text.get("1.0", END))  # NOSONAR (S1481)
-                submission_result: dict = eval(f"submit_{table}(row_json)")
+                submission_result: dict = eval(
+                    f"{''.join([table[0].upper(), table[1::]])}Database.submit_{table}(row_json)"
+                )
                 StatusWindow(
                     f"Successfully submitted {table}. Data returned: {submission_result}"
                 )
