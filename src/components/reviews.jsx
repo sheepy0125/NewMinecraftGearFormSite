@@ -75,7 +75,7 @@ export default function Reviews() {
 
 	useEffect(() => {
 		fetchReviews();
-	}, []); /* eslint-disable-line */
+	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return (
 		<BaseWidget>

@@ -104,7 +104,7 @@ export default function EnchantmentDictionary() {
 
 	useEffect(() => {
 		fetchEnchantments();
-	}, []); /* eslint-disable-line */
+	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return (
 		<MainWidget>

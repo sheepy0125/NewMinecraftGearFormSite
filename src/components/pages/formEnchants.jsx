@@ -38,7 +38,7 @@ export default function FormEnchants(props) {
 
 	useEffect(() => {
 		fetchData();
-	}, []); /* eslint-disable-line */
+	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	// Data changed
 	useEffect(() => {
@@ -83,7 +83,7 @@ export default function FormEnchants(props) {
 		inputContent.current = defaultInputContent;
 		// We need to pass the inputContent ref here so it can be set as well as read
 		renderItemInputs({inputList: defaultInputList, inputContent: inputContent, setItemInputs: setItemInputs});
-	}, [sortedList, enchantDict]); /* eslint-disable-line */
+	}, [sortedList, enchantDict]); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return (
 		<MainWidget>

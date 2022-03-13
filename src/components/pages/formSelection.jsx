@@ -117,7 +117,7 @@ export default function FormSelection(props) {
 
 	useEffect(() => {
 		fetchInputs();
-	}, []); /* eslint-disable-line */
+	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return (
 		<MainWidget>

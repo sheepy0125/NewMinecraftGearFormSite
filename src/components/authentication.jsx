@@ -72,7 +72,7 @@ export default function AuthenticationWidget(props) {
 
 	useEffect(() => {
 		fetchOrderInformation();
-	}, []); /* eslint-disable-line */
+	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return isLoading ? (
 		<LoadingWidget />

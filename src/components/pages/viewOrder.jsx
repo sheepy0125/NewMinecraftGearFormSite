@@ -104,11 +104,11 @@ export default function ViewOrder() {
 			setItemInputs: setItemInputs,
 			inputList: orderItemList,
 		});
-	}, [orderContent]); /* eslint-disable-line */
+	}, [orderContent]); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	useEffect(() => {
 		fetchContent();
-	}, []); /* eslint-disable-line */
+	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return (
 		<MainWidget>

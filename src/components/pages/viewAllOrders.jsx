@@ -113,7 +113,7 @@ export default function ViewAllOrders() {
 
 	useEffect(() => {
 		fetchOrders();
-	}, []); /* eslint-disable-line */
+	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return (
 		<MainWidget>
