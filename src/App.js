@@ -12,6 +12,7 @@ const LazyViewOrderPage = lazy(() => import("./components/pages/viewOrder.jsx"))
 const LazyEnchantmentDictionaryPage = lazy(() => import("./components/pages/enchantmentDictionary.jsx"));
 const LazyDeleteOrderPage = lazy(() => import("./components/pages/deleteOrder.jsx"));
 const LazyChangeOrderStatusPage = lazy(() => import("./components/pages/changeOrderStatus.jsx"));
+const LazyCalculatorPage = lazy(() => import("./components/pages/calculator.jsx"));
 const LazyPageNotFound = lazy(() => import("./components/pages/errors/pageNotFound.jsx"));
 const LazyNotImplemented = lazy(() => import("./components/pages/errors/notImplemented.jsx"));
 
@@ -63,6 +64,11 @@ export default function App() {
 					{/* Change order status */}
 					<Route path="/change-order-status">
 						<LazyChangeOrderStatusPage />
+					</Route>
+
+					{/* Calculator */}
+					<Route path="/calculator">
+						<LazyCalculatorPage />
 					</Route>
 
 					{/* Not implemented */}
