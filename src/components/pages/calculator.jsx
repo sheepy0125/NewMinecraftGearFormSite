@@ -13,8 +13,6 @@ import FormWidget from "../boilerplate/widgets/formWidget";
 import Button from "../boilerplate/button";
 
 function TotalCost(props) {
-	console.log(props);
-
 	// Will return the total cost after adding up all the checked items
 	let totalPrice = 10;
 
@@ -24,8 +22,6 @@ function TotalCost(props) {
 		index[itemInfo.name] = itemInfo.cost;
 		return index;
 	}, {});
-
-	console.log(itemCost);
 
 	// Add up the total cost of all the checked items
 	for (const item of props.uncheckedItems) {
@@ -126,7 +122,6 @@ export default function Calculator(props) {
 			// Strip number (space and then 1-digit number)
 			// const itemNameStripped = item.replace(" " + item.split(" ").at(-1), "");
 			const itemNameStripped = item.slice(0, -2);
-			console.log({item, itemNameStripped});
 
 			itemInfo.name = itemNameStripped;
 			itemInfo.realName = item;
@@ -145,7 +140,6 @@ export default function Calculator(props) {
 		if (!checked) {
 			// Add item
 			setItemsHave([...itemsHave, itemName]);
-			// setItemsNotHave(itemsNotHave.filter((item) => item !== itemName));
 			setItemsNotHave(removeItem(itemName, itemsNotHave));
 			return;
 		}
@@ -181,7 +175,7 @@ export default function Calculator(props) {
 			<BaseWidget className="bg-blue-400">
 				<p className="text-center">Select what you have</p>
 				{itemInformation ? (
-					<FormWidget className="grid-cols-2 sm:grid-cols-3">
+					<FormWidget className="sm:grid-cols-2">
 						{Object.values(orderContentItems).map((itemInfo, itemIndex) => (
 							<>
 								<ItemCheckboxWidget

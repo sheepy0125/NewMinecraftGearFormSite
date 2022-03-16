@@ -4,12 +4,9 @@ import {useState, useEffect} from "react";
 import {useHistory} from "react-router-dom";
 import {get} from "axios";
 
-import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import FormWidget from "../boilerplate/widgets/formWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
-import Title from "../boilerplate/title.jsx";
-import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 import {error} from "./errors/apiError.jsx";
 
@@ -120,26 +117,22 @@ export default function FormSelection(props) {
 	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return (
-		<MainWidget>
-			<Title>Sheepy's God Gear Services - Form</Title>
-			<Navbar currentPage="/form" />
-			<BaseWidget className="text-xl text-center">
-				<p className="font-semibold">Form</p>
-				<p className="font-thin">Select what you would like to order here.</p>
-				{itemInputs ? (
-					<BaseWidget className="bg-blue-400">
-						<TotalCost totalPrice={totalPrice} />
-						<FormWidget>{itemInputs}</FormWidget>
-						<TotalCost totalPrice={totalPrice} />
-						<br />
-						<span onClick={goToNextPage}>
-							<Button>Next page</Button>
-						</span>
-					</BaseWidget>
-				) : (
-					<LoadingWidget />
-				)}
-			</BaseWidget>
-		</MainWidget>
+		<BaseWidget className="text-xl text-center">
+			<p className="font-semibold">Form</p>
+			<p className="font-thin">Select what you would like to order here.</p>
+			{itemInputs ? (
+				<BaseWidget className="bg-blue-400">
+					<TotalCost totalPrice={totalPrice} />
+					<FormWidget>{itemInputs}</FormWidget>
+					<TotalCost totalPrice={totalPrice} />
+					<br />
+					<span onClick={goToNextPage}>
+						<Button>Next page</Button>
+					</span>
+				</BaseWidget>
+			) : (
+				<LoadingWidget />
+			)}
+		</BaseWidget>
 	);
 }

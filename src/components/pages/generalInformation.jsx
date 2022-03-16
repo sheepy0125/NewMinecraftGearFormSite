@@ -2,11 +2,8 @@
 
 import {useState} from "react";
 
-import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
-import Title from "../boilerplate/title.jsx";
-import Navbar from "../boilerplate/navbar.jsx";
 import SubmitOrder from "../submitOrder.jsx";
 
 // I don't know why I felt the need to declare constants here
@@ -73,59 +70,49 @@ export default function GeneralInformation(props) {
 	}
 
 	return (
-		<MainWidget>
-			<Title>Sheepy's God Gear Services - Form</Title>
-			<Navbar currentPage="/form" />
-			<BaseWidget className="text-xl text-center">
-				<p className="font-semibold">Form</p>
-				{!isSubmitting ? (
-					<>
-						<p className="font-thin">Input general information here.</p>
-						<BaseWidget className="bg-blue-400">
-							<label className="block p-4">
-								<p>Username</p>
-								<input
-									type="text"
-									value={username}
-									onChange={usernameChanged}
-									minLength={usernameMinLength}
-									maxLength={usernameMaxLength}
-								/>
-							</label>
-							<label className="block p-4">
-								<p>Discord username</p>
-								<input type="text" value={discord} onChange={discordChanged} maxLength={discordMaxLength} />
-							</label>
-							<p className="text-xs font-thin">
-								Please include both your Discord username and the discriminator (4 numbers).
-								<br />
-								If you don't know this, it's okay to leave it blank.
-							</p>
-							<label className="block p-4">
-								<p>Additional information</p>
-								<input type="text" value={additional} onChange={additionalChanged} maxLength={additionalMaxLength} />
-							</label>
-							<label className="block p-4">
-								<p>Deliver to</p>
-								<input type="text" value={deliverTo} onChange={deliverToChanged} maxLength={deliverToMaxLength} />
-							</label>
-							<label className="block p-4">
-								<input type="checkbox" defaultChecked onChange={prioritizeCheckboxChanged} /> Prioritize order (+10 diamonds)
-							</label>
+		<BaseWidget className="text-xl text-center">
+			<p className="font-semibold">Form</p>
+			{!isSubmitting ? (
+				<>
+					<p className="font-thin">Input general information here.</p>
+					<BaseWidget className="bg-blue-400">
+						<label className="block p-4">
+							<p>Username</p>
+							<input type="text" value={username} onChange={usernameChanged} minLength={usernameMinLength} maxLength={usernameMaxLength} />
+						</label>
+						<label className="block p-4">
+							<p>Discord username</p>
+							<input type="text" value={discord} onChange={discordChanged} maxLength={discordMaxLength} />
+						</label>
+						<p className="text-xs font-thin">
+							Please include both your Discord username and the discriminator (4 numbers).
 							<br />
-							{!usernameTooShort ? (
-								<div onClick={() => setIsSubmitting(true)}>
-									<SubmitOrder content={getContent(props.content)} />
-								</div>
-							) : (
-								<p>Your username isn't valid.</p>
-							)}
-						</BaseWidget>
-					</>
-				) : (
-					<LoadingWidget />
-				)}
-			</BaseWidget>
-		</MainWidget>
+							If you don't know this, it's okay to leave it blank.
+						</p>
+						<label className="block p-4">
+							<p>Additional information</p>
+							<input type="text" value={additional} onChange={additionalChanged} maxLength={additionalMaxLength} />
+						</label>
+						<label className="block p-4">
+							<p>Deliver to</p>
+							<input type="text" value={deliverTo} onChange={deliverToChanged} maxLength={deliverToMaxLength} />
+						</label>
+						<label className="block p-4">
+							<input type="checkbox" defaultChecked onChange={prioritizeCheckboxChanged} /> Prioritize order (+10 diamonds)
+						</label>
+						<br />
+						{!usernameTooShort ? (
+							<div onClick={() => setIsSubmitting(true)}>
+								<SubmitOrder content={getContent(props.content)} />
+							</div>
+						) : (
+							<p>Your username isn't valid.</p>
+						)}
+					</BaseWidget>
+				</>
+			) : (
+				<LoadingWidget />
+			)}
+		</BaseWidget>
 	);
 }

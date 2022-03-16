@@ -89,112 +89,110 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 
 	// See /src/itemInputsModel.txt
 	setItemInputs(
-		inputList.map((item) => (
-			<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={`${item.itemName}`}>
-				<p className="mx-auto font-bold">{item.itemName}</p>
-				{/* Item name */}
-				<div className="name">
-					<label>
-						<p>Name of {item.itemName}</p>
-						<input
-							type="text"
-							name={`${item.itemName} Name`}
-							className="w-full"
-							maxLength={55}
-							item-for={item.itemName}
-							onChange={itemNameChanged}
-						/>
-					</label>
-				</div>
-				{/* Checkboxes */}
-				<div className="checkboxes">
-					<CheckboxGroup>
-						{/* Iterate through each enchant */}
-						{item.checkboxes.map((enchant) => (
-							<Label key={`${item.itemName} ${enchant}`}>
-								{console.log(enchant)}
-								{console.log(inputContent.current[item.itemName].enchantments.checkboxes[enchant])}
-								<EnchantCheckbox
-									itemName={item.itemName}
-									enchant={enchant}
-									onChange={enchantChangedCheckbox}
-									defaultChecked={inputContent.current[item.itemName].enchantments.checkboxes[enchant]}
-								/>
-								<EnchantItem>{enchant}</EnchantItem>
+		inputList.map((item) => {
+			const currentItemContent = inputContent.current[item.itemName];
+			return (
+				<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={`${item.itemName}`}>
+					<p className="mx-auto font-bold">{item.itemName}</p>
+					{/* Item name */}
+					<div className="name">
+						<label>
+							<p>Name of {item.itemName}</p>
+							<input
+								type="text"
+								name={`${item.itemName} Name`}
+								className="w-full"
+								maxLength={55}
+								item-for={item.itemName}
+								onChange={itemNameChanged}
+								defaultValue={currentItemContent.name}
+							/>
+						</label>
+					</div>
+					{/* Checkboxes */}
+					<div className="checkboxes">
+						<CheckboxGroup>
+							{/* Iterate through each enchant */}
+							{item.checkboxes.map((enchant) => (
+								<Label key={`${item.itemName} ${enchant}`}>
+									<EnchantCheckbox
+										itemName={item.itemName}
+										enchant={enchant}
+										onChange={enchantChangedCheckbox}
+										defaultChecked={currentItemContent.enchantments.checkboxes[enchant]}
+									/>
+									<EnchantItem>{enchant}</EnchantItem>
+								</Label>
+							))}
+							<hr className="border-black" />
+							{/* All of the above */}
+							<Label>
+								<AllCheckerCheckbox item-for={item.itemName} checkbox-list={item.checkboxes} onChange={allEnchantCheckboxChanged} />
+								<EnchantItem>All of the above</EnchantItem>
 							</Label>
-						))}
-						<hr className="border-black" />
-						{/* All of the above */}
-						<Label>
-							<AllCheckerCheckbox item-for={item.itemName} checkbox-list={item.checkboxes} onChange={allEnchantCheckboxChanged} />
-							<EnchantItem>All of the above</EnchantItem>
-						</Label>
-					</CheckboxGroup>
-				</div>
-				{/* Multiple selection */}
-				<div className="multiple-selection">
-					{/* Iterate through each list */}
-					{item.multipleSelection.map((multipleSelectionList, listIndex) => (
-						<div key={`Multiple selection list ${listIndex} for ${item.itemName} wrapper wrapper`}>
-							{multipleSelectionList.length > 0 && (
-								<div className="my-4" key={`Multiple selection list ${listIndex} for ${item.itemName} wrapper`}>
-									{/* Iterate through each enchant */}
-									{multipleSelectionList.map((enchant) => (
-										<Label key={`Multiple selection enchantment ${enchant} for ${item.itemName}`}>
-											{/* {console.log(enchant)} */}
-											{/* {console.log(inputContent.current[item.itemName].enchantments.multipleSelection[listIndex][enchant])} */}
+						</CheckboxGroup>
+					</div>
+					{/* Multiple selection */}
+					<div className="multiple-selection">
+						{/* Iterate through each list */}
+						{item.multipleSelection.map((multipleSelectionList, listIndex) => (
+							<div key={`Multiple selection list ${listIndex} for ${item.itemName} wrapper wrapper`}>
+								{multipleSelectionList.length > 0 && (
+									<div className="my-4" key={`Multiple selection list ${listIndex} for ${item.itemName} wrapper`}>
+										{/* Iterate through each enchant */}
+										{multipleSelectionList.map((enchant) => (
+											<Label key={`Multiple selection enchantment ${enchant} for ${item.itemName}`}>
+												<EnchantRadioButton
+													enchant={enchant}
+													itemName={item.itemName}
+													multipleSelectionList={multipleSelectionList}
+													onChange={enchantChangedRadio}
+													listIndex={listIndex}
+													defaultChecked={currentItemContent.enchantments.multipleSelection[listIndex][enchant]}
+												/>
+												<EnchantItem>{enchant} </EnchantItem>
+											</Label>
+										))}
+										<hr className="border-black" />
+										{/* None */}
+										<Label>
 											<EnchantRadioButton
-												enchant={enchant}
+												enchant={null}
 												itemName={item.itemName}
 												multipleSelectionList={multipleSelectionList}
 												onChange={enchantChangedRadio}
 												listIndex={listIndex}
-												defaultChecked={inputContent.current[item.itemName].enchantments.multipleSelection[listIndex][enchant]}
+												defaultChecked={
+													// Only do default checked if none of the above are checked
+													Object.values(currentItemContent.enchantments.multipleSelection[listIndex]).every(
+														(enchant) => enchant === false
+													)
+												}
 											/>
-											<EnchantItem>
-												{enchant}{" "}
-												{inputContent.current[item.itemName].enchantments.multipleSelection[listIndex][enchant] ? "y" : "n"}
-											</EnchantItem>
+											<EnchantItem>None</EnchantItem>
 										</Label>
-									))}
-									<hr className="border-black" />
-									{/* None */}
-									<Label>
-										<EnchantRadioButton
-											enchant={null}
-											itemName={item.itemName}
-											multipleSelectionList={multipleSelectionList}
-											onChange={enchantChangedRadio}
-											listIndex={listIndex}
-											defaultChecked={
-												// Only do default checked if none of the above are checked
-												Object.values(inputContent.current[item.itemName].enchantments.multipleSelection[listIndex]).every(
-													(enchant) => enchant === false
-												)
-											}
-										/>
-										<EnchantItem>None</EnchantItem>
-									</Label>
-								</div>
-							)}
-						</div>
-					))}
+									</div>
+								)}
+							</div>
+						))}
+					</div>
+					{/* Additional information */}
+					<div className="additional">
+						<label>
+							<p>Additional information</p>
+							<input
+								type="text"
+								name={`${item.itemName} Additional`}
+								className="w-full"
+								maxLength={128}
+								item-for={item.itemName}
+								onChange={itemAdditionalChanged}
+								defaultValue={currentItemContent.additional}
+							/>
+						</label>
+					</div>
 				</div>
-				{/* Additional information */}
-				<div className="additional">
-					<label>
-						<p>Additional information</p>
-						<input
-							type="text"
-							name={`${item.itemName} Additional`}
-							className="w-full"
-							maxLength={128}
-							item-for={item.itemName}
-							onChange={itemAdditionalChanged}
-						/>
-					</label>
-				</div>
-			</div>
-		))
+			);
+		})
 	);
 }

@@ -4,23 +4,17 @@ import {useState, useEffect, useRef} from "react";
 import {useHistory} from "react-router-dom";
 import {post} from "axios";
 
-import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
 import BaseWidget from "../boilerplate/widgets/baseWidget.jsx";
 import FormWidget from "../boilerplate/widgets/formWidget.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
-import Title from "../boilerplate/title.jsx";
-import Navbar from "../boilerplate/navbar.jsx";
 import Button from "../boilerplate/button.jsx";
 import renderItemInputs from "../formInputsEditing.jsx";
 import {error} from "./errors/apiError.jsx";
 
 function convertOrderContentToInputList(orderContent) {
-	console.log(orderContent);
 	const inputList = [];
 	for (const [item, itemInfo] of Object.entries(orderContent)) {
 		const itemListDictionary = {};
-
-		console.log({item, itemInfo});
 
 		// Item name
 		itemListDictionary.itemName = item;
@@ -36,7 +30,6 @@ function convertOrderContentToInputList(orderContent) {
 			(multipleSelection) => Object.keys(multipleSelection).map((enchantmentName) => enchantmentName)
 		);
 
-		console.log({itemListDictionary});
 		inputList.push(itemListDictionary);
 	}
 	return inputList;
@@ -129,30 +122,25 @@ export default function FormEnchants(props) {
 		// Do the HTML stuffs
 		inputContent.current = defaultInputContent;
 		// We need to pass the inputContent ref here so it can be set as well as read
-		console.log({inputList: defaultInputList, inputContent: inputContent, setItemInputs: setItemInputs});
 		renderItemInputs({inputList: defaultInputList, inputContent: inputContent, setItemInputs: setItemInputs});
 	}, [sortedList, enchantDict]); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	return (
-		<MainWidget>
-			<Title>Sheepy's God Gear Services - Form</Title>
-			<Navbar currentPage="/form" />
-			<BaseWidget className="text-xl text-center">
-				<p className="font-semibold">Form</p>
-				<p className="font-thin">Select your enchantments for your selected gear.</p>
-				{itemInputs ? (
-					<>
-						<FormWidget>{itemInputs}</FormWidget>
-						{props.nextPage && (
-							<div onClick={() => props.nextPage(inputContent.current)}>
-								<Button>Next page</Button>
-							</div>
-						)}
-					</>
-				) : (
-					<LoadingWidget />
-				)}
-			</BaseWidget>
-		</MainWidget>
+		<BaseWidget className="text-xl text-center">
+			<p className="font-semibold">Form</p>
+			<p className="font-thin">Select your enchantments for your selected gear.</p>
+			{itemInputs ? (
+				<>
+					<FormWidget>{itemInputs}</FormWidget>
+					{props.nextPage && (
+						<div onClick={() => props.nextPage(inputContent.current)}>
+							<Button>Next page</Button>
+						</div>
+					)}
+				</>
+			) : (
+				<LoadingWidget />
+			)}
+		</BaseWidget>
 	);
 }

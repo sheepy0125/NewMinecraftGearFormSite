@@ -27,8 +27,6 @@ export function EnchantRadioButton(props) {
 	const onChange = props.onChange;
 	const listIndex = props.listIndex;
 	const defaultChecked = props.defaultChecked || false;
-	console.log(enchant);
-	console.log(defaultChecked);
 
 	return (
 		<input

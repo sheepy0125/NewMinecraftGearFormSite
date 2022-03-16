@@ -6,8 +6,12 @@ import {useLocation, useHistory} from "react-router-dom";
 import {parse} from "query-string";
 import {get} from "axios";
 
+import MainWidget from "../boilerplate/widgets/mainWidget.jsx";
+import Title from "../boilerplate/title.jsx";
+import Navbar from "../boilerplate/navbar.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import FormEnchants from "./formEnchants.jsx";
+import Form from "./formEdit.jsx";
 import {error} from "./errors/apiError.jsx";
 
 export default function EditOrder(props) {
@@ -34,10 +38,5 @@ export default function EditOrder(props) {
 		fetchContent();
 	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
-	return (
-		<>
-			{JSON.stringify(orderContent)}
-			{orderContent ? <FormEnchants orderContent={orderContent} /> : <LoadingWidget />}
-		</>
-	);
+	return <Form orderContent={orderContent} />;
 }
