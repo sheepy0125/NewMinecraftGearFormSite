@@ -27,6 +27,8 @@ export function EnchantRadioButton(props) {
 	const onChange = props.onChange;
 	const listIndex = props.listIndex;
 	const defaultChecked = props.defaultChecked || false;
+	console.log(enchant);
+	console.log(defaultChecked);
 
 	return (
 		<input
@@ -45,8 +47,9 @@ export function EnchantCheckbox(props) {
 	const enchant = props.enchant;
 	const itemName = props.itemName;
 	const onChange = props.onChange;
+	const defaultChecked = props.defaultChecked || false;
 
-	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} item-for={itemName} />;
+	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} item-for={itemName} checked={defaultChecked} />;
 }
 
 // Dummy enchant checkbox, doesn't do anything, either checked or unchecked forever

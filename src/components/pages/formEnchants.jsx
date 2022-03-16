@@ -14,6 +14,34 @@ import Button from "../boilerplate/button.jsx";
 import renderItemInputs from "../formInputsEditing.jsx";
 import {error} from "./errors/apiError.jsx";
 
+function convertOrderContentToInputList(orderContent) {
+	console.log(orderContent);
+	const inputList = [];
+	for (const [item, itemInfo] of Object.entries(orderContent)) {
+		const itemListDictionary = {};
+
+		console.log({item, itemInfo});
+
+		// Item name
+		itemListDictionary.itemName = item;
+
+		// Checkboxes
+		itemListDictionary.checkboxes = Object.keys(itemInfo.enchantments.checkboxes);
+
+		// Multiple selection
+		itemListDictionary.multipleSelection = itemInfo.enchantments.multipleSelection.map(
+			// NOSONAR (this isn't code!)
+			// Convert [{"enchantment": true, "enchantment2": false}, {"enchantment": true, "enchantment2": false}]
+			// to [["enchantment", "enchantment2"], ["enchantment", "enchantment2"]]
+			(multipleSelection) => Object.keys(multipleSelection).map((enchantmentName) => enchantmentName)
+		);
+
+		console.log({itemListDictionary});
+		inputList.push(itemListDictionary);
+	}
+	return inputList;
+}
+
 export default function FormEnchants(props) {
 	const history = useHistory();
 
@@ -37,11 +65,30 @@ export default function FormEnchants(props) {
 	}
 
 	useEffect(() => {
-		fetchData();
+		// If no information available, fetch the data
+		if (!props.orderContent) {
+			fetchData();
+			return;
+		}
+		// Use the information available
+		setEnchantDict(props.orderContent);
+		inputContent.current = props.orderContent;
+		// An input list is needed, which looks like [{itemName, checkboxes: [], multipleSelection: []}]
+		const inputList = convertOrderContentToInputList(props.orderContent);
+
+		// Do the HTML stuff
+		renderItemInputs({
+			inputList: inputList,
+			inputContent: inputContent,
+			setItemInputs: setItemInputs,
+		});
 	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	// Data changed
 	useEffect(() => {
+		// Don't do anything if the data was loaded in
+		if (props.orderContent) return;
+		// Also don't do anything if the data is still loading
 		if (!(sortedList && enchantDict)) return;
 
 		const defaultInputList = [];
@@ -82,6 +129,7 @@ export default function FormEnchants(props) {
 		// Do the HTML stuffs
 		inputContent.current = defaultInputContent;
 		// We need to pass the inputContent ref here so it can be set as well as read
+		console.log({inputList: defaultInputList, inputContent: inputContent, setItemInputs: setItemInputs});
 		renderItemInputs({inputList: defaultInputList, inputContent: inputContent, setItemInputs: setItemInputs});
 	}, [sortedList, enchantDict]); /* eslint-disable-line react-hooks/exhaustive-deps */
 
@@ -95,9 +143,11 @@ export default function FormEnchants(props) {
 				{itemInputs ? (
 					<>
 						<FormWidget>{itemInputs}</FormWidget>
-						<div onClick={() => props.nextPage(inputContent.current)}>
-							<Button>Next page</Button>
-						</div>
+						{props.nextPage && (
+							<div onClick={() => props.nextPage(inputContent.current)}>
+								<Button>Next page</Button>
+							</div>
+						)}
 					</>
 				) : (
 					<LoadingWidget />

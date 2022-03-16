@@ -9,6 +9,7 @@ const LazySubmitResult = lazy(() => import("./components/pages/submitResult.jsx"
 const LazyApiError = lazy(() => import("./components/pages/errors/apiError.jsx"));
 const LazyViewAllOrdersPage = lazy(() => import("./components/pages/viewAllOrders.jsx"));
 const LazyViewOrderPage = lazy(() => import("./components/pages/viewOrder.jsx"));
+const LazyEditOrderPage = lazy(() => import("./components/pages/editOrder.jsx"));
 const LazyEnchantmentDictionaryPage = lazy(() => import("./components/pages/enchantmentDictionary.jsx"));
 const LazyDeleteOrderPage = lazy(() => import("./components/pages/deleteOrder.jsx"));
 const LazyChangeOrderStatusPage = lazy(() => import("./components/pages/changeOrderStatus.jsx"));
@@ -49,6 +50,11 @@ export default function App() {
 					{/* View order */}
 					<Route path="/view-order">
 						<LazyViewOrderPage />
+					</Route>
+
+					{/* Edit order */}
+					<Route path="/edit-order">
+						<LazyEditOrderPage />
 					</Route>
 
 					{/* Enchantment dictionary */}

@@ -18,6 +18,7 @@ function Options(props) {
 	return (
 		<>
 			<Hyperlink href={`/view-order?id=${props.id}`}>View order</Hyperlink>
+			<Hyperlink href={`/edit-order?id=${props.id}`}>Edit order</Hyperlink>
 			<Hyperlink href={`/delete-order?id=${props.id}`}>Delete order</Hyperlink>
 		</>
 	);

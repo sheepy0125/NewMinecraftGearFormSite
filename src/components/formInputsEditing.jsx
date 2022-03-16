@@ -112,7 +112,14 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 						{/* Iterate through each enchant */}
 						{item.checkboxes.map((enchant) => (
 							<Label key={`${item.itemName} ${enchant}`}>
-								<EnchantCheckbox itemName={item.itemName} enchant={enchant} onChange={enchantChangedCheckbox} />
+								{console.log(enchant)}
+								{console.log(inputContent.current[item.itemName].enchantments.checkboxes[enchant])}
+								<EnchantCheckbox
+									itemName={item.itemName}
+									enchant={enchant}
+									onChange={enchantChangedCheckbox}
+									defaultChecked={inputContent.current[item.itemName].enchantments.checkboxes[enchant]}
+								/>
 								<EnchantItem>{enchant}</EnchantItem>
 							</Label>
 						))}
@@ -134,14 +141,20 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 									{/* Iterate through each enchant */}
 									{multipleSelectionList.map((enchant) => (
 										<Label key={`Multiple selection enchantment ${enchant} for ${item.itemName}`}>
+											{/* {console.log(enchant)} */}
+											{/* {console.log(inputContent.current[item.itemName].enchantments.multipleSelection[listIndex][enchant])} */}
 											<EnchantRadioButton
 												enchant={enchant}
 												itemName={item.itemName}
 												multipleSelectionList={multipleSelectionList}
 												onChange={enchantChangedRadio}
 												listIndex={listIndex}
+												defaultChecked={inputContent.current[item.itemName].enchantments.multipleSelection[listIndex][enchant]}
 											/>
-											<EnchantItem>{enchant}</EnchantItem>
+											<EnchantItem>
+												{enchant}{" "}
+												{inputContent.current[item.itemName].enchantments.multipleSelection[listIndex][enchant] ? "y" : "n"}
+											</EnchantItem>
 										</Label>
 									))}
 									<hr className="border-black" />
@@ -153,7 +166,12 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 											multipleSelectionList={multipleSelectionList}
 											onChange={enchantChangedRadio}
 											listIndex={listIndex}
-											defaultChecked={true}
+											defaultChecked={
+												// Only do default checked if none of the above are checked
+												Object.values(inputContent.current[item.itemName].enchantments.multipleSelection[listIndex]).every(
+													(enchant) => enchant === false
+												)
+											}
 										/>
 										<EnchantItem>None</EnchantItem>
 									</Label>
