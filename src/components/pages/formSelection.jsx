@@ -21,16 +21,17 @@ function TotalCost(props) {
 export default function FormSelection(props) {
 	const history = useHistory();
 
+	const [itemDictionary, setItemDictionary] = useState(null);
 	const [itemInputs, setItemInputs] = useState(null);
-	const [orderNumberDictionary, setOrderNumberDictionary] = useState({});
+	const [orderNumberDictionary, setOrderNumberDictionary] = useState(props.saveData.current.selectPage.orderNumberDictionary);
 	const [itemPrices, setItemPrices] = useState({});
-	const [totalPrice, setTotalPrice] = useState(0);
+	const [totalPrice, setTotalPrice] = useState(10);
 
 	function fetchInputs() {
 		get("api/get-select-dictionary") // Example output: [{"name": "Sword", "cost": 2, "max": 5}, {"name": "Pickaxe", "cost": 3, "max": 5}]
 			.then((resp) => {
 				if (!resp.data.worked) throw Error(`Failed to get item selection dictionary (${resp.data.message}, code ${resp.data.code})`);
-				setItemInputs(convertToInputs(resp.data.data));
+				setItemDictionary(resp.data.data);
 			})
 			.catch((resp) => {
 				error(resp);
@@ -51,7 +52,8 @@ export default function FormSelection(props) {
 		let total = 10;
 
 		for (const itemCost of Object.values(itemPrices)) {
-			total += itemCost;
+			console.log({itemCost});
+			total += itemCost || 0;
 		}
 
 		setTotalPrice(total);
@@ -74,7 +76,7 @@ export default function FormSelection(props) {
 			[event.target.name]: dictionaryValue,
 		}));
 
-		let itemCost = Number(event.target.getAttribute("cost")) || 0;
+		let itemCost = Number(itemDictionary.find((item) => item.name === event.target.name).cost) || 0;
 		getNewPrice({itemName: event.target.name, itemCount: Number(event.target.value), itemCost: itemCost});
 	}
 
@@ -97,36 +99,76 @@ export default function FormSelection(props) {
 					min={0}
 					max={item.max}
 					minLength={1}
-					defaultValue="0"
+					defaultValue={
+						// This is stupid. We cannot use the [] syntax because if the value is undefined, so we need to first check if it is defined.
+						(props.saveData.current.selectPage.orderNumberDictionary && props.saveData.current.selectPage.orderNumberDictionary[item.name]) ||
+						0
+					}
 					onWheel={(event) => event.target.blur()}
 					onChange={numberChanged}
 					cost={item.cost}
 					className="w-full text-center rounded-sm outline-none ring-0 ring-blue-600 focus:ring-2"
 					required
 				/>
+				{console.log(props.saveData.current.selectPage.orderNumberDictionary) &&
+					console.log(props.saveData.current.selectPage.orderNumberDictionary[item.name])}
 			</div>
 		));
 	}
 
-	function goToNextPage() {
-		props.nextPage({orderNumberDictionary: orderNumberDictionary, totalPrice: totalPrice});
+	function save() {
+		const data = {orderNumberDictionary: orderNumberDictionary, totalPrice: totalPrice};
+		props.saveData.current.selectPage = data;
 	}
 
 	useEffect(() => {
 		fetchInputs();
 	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
+	useEffect(() => {
+		if (!itemDictionary) return;
+
+		setItemInputs(convertToInputs(itemDictionary));
+
+		// If we are loading from a saved state, we need to update the price accordingly
+		if (!props.saveData.current.selectPage) return;
+
+		console.log({itemDictionary});
+
+		for (const itemName of Object.keys(props.saveData.current.selectPage.orderNumberDictionary)) {
+			const itemCount = props.saveData.current.selectPage.orderNumberDictionary[itemName];
+			const itemCost = itemDictionary.find((item) => item.name === itemName).cost;
+			getNewPrice({itemName: itemName, itemCount: itemCount, itemCost: itemCost});
+		}
+	}, [itemDictionary]);
+
+	console.log(props.saveData.current);
+
 	return (
 		<BaseWidget className="text-xl text-center">
 			<p className="font-semibold">Form</p>
 			<p className="font-thin">Select what you would like to order here.</p>
+			{props.saveData.current.enchantPage && (
+				<p className="max-w-lg mx-auto text-sm font-thin">
+					It seems you've already been here before.
+					<br />
+					<br />
+					When changing the amount of items you have, please note that lowering the count of an item will result in deleting the item from the
+					order (last-to-first).
+				</p>
+			)}
 			{itemInputs ? (
 				<BaseWidget className="bg-blue-400">
 					<TotalCost totalPrice={totalPrice} />
 					<FormWidget>{itemInputs}</FormWidget>
 					<TotalCost totalPrice={totalPrice} />
 					<br />
-					<span onClick={goToNextPage}>
+					<span
+						onClick={() => {
+							save();
+							props.nextPage();
+						}}
+					>
 						<Button>Next page</Button>
 					</span>
 				</BaseWidget>

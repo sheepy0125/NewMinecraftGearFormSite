@@ -45,9 +45,13 @@ export function EnchantCheckbox(props) {
 	const enchant = props.enchant;
 	const itemName = props.itemName;
 	const onChange = props.onChange;
-	const defaultChecked = props.defaultChecked || false;
+	const checked = props.checked || false;
+	const ref = props.ref || null;
 
-	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} item-for={itemName} checked={defaultChecked} />;
+	console.log({checked});
+	console.log({enchant});
+
+	return <Checkbox enchant={enchant} name={itemName} onChange={onChange} item-for={itemName} checked={checked} />;
 }
 
 // Dummy enchant checkbox, doesn't do anything, either checked or unchecked forever

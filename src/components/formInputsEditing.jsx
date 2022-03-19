@@ -3,6 +3,7 @@
 
 import {AllCheckerCheckbox, CheckboxGroup} from "@createnl/grouped-checkboxes";
 import {EnchantItem, Label, EnchantRadioButton, EnchantCheckbox} from "./formElements.jsx";
+import {createRef} from "react";
 
 /* In order to have access to inputList, setItemInputs, and inputContent, we have to wrap everything
  * in this function. It'd be better not to have to do this...
@@ -10,6 +11,9 @@ import {EnchantItem, Label, EnchantRadioButton, EnchantCheckbox} from "./formEle
  */
 export default function renderItemInputs({inputList, setItemInputs, inputContent}) {
 	function enchantChangedCheckbox(event) {
+		console.log("on change for checkbox", event.target.name);
+		console.log("pressed", event.target.checked);
+
 		const itemFor = event.target.getAttribute("item-for");
 		const enchantment = event.target.getAttribute("enchant");
 		const checked = event.target.checked;
@@ -20,6 +24,8 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 			...inputContent.current,
 			[itemFor]: {...inputContent.current[itemFor], enchantments: {...inputContent.current[itemFor].enchantments, checkboxes: newCheckboxes}},
 		};
+
+		renderItemInputs({inputList, setItemInputs, inputContent});
 	}
 
 	function enchantChangedRadio(event) {
@@ -91,6 +97,8 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 	setItemInputs(
 		inputList.map((item) => {
 			const currentItemContent = inputContent.current[item.itemName];
+			console.log("rendering item", item);
+			console.log(currentItemContent);
 			return (
 				<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={`${item.itemName}`}>
 					<p className="mx-auto font-bold">{item.itemName}</p>
@@ -111,7 +119,13 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 					</div>
 					{/* Checkboxes */}
 					<div className="checkboxes">
-						<CheckboxGroup>
+						<CheckboxGroup
+							onChange={(a) => {
+								// enchantChangedCheckbox(a);
+								console.log("checkbox group change");
+								console.log(a);
+							}}
+						>
 							{/* Iterate through each enchant */}
 							{item.checkboxes.map((enchant) => (
 								<Label key={`${item.itemName} ${enchant}`}>
@@ -119,7 +133,7 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 										itemName={item.itemName}
 										enchant={enchant}
 										onChange={enchantChangedCheckbox}
-										defaultChecked={currentItemContent.enchantments.checkboxes[enchant]}
+										checked={inputContent.current[item.itemName].enchantments.checkboxes[enchant]}
 									/>
 									<EnchantItem>{enchant}</EnchantItem>
 								</Label>
@@ -128,6 +142,7 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 							{/* All of the above */}
 							<Label>
 								<AllCheckerCheckbox item-for={item.itemName} checkbox-list={item.checkboxes} onChange={allEnchantCheckboxChanged} />
+								{console.log(currentItemContent.enchantments.checkboxes)}
 								<EnchantItem>All of the above</EnchantItem>
 							</Label>
 						</CheckboxGroup>
@@ -165,7 +180,7 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 												defaultChecked={
 													// Only do default checked if none of the above are checked
 													Object.values(currentItemContent.enchantments.multipleSelection[listIndex]).every(
-														(enchant) => enchant === false
+														(enchant) => !enchant
 													)
 												}
 											/>
