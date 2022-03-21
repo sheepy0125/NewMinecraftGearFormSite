@@ -3,13 +3,14 @@
 
 import {AllCheckerCheckbox, CheckboxGroup} from "@createnl/grouped-checkboxes";
 import {EnchantItem, Label, EnchantRadioButton, EnchantCheckbox} from "./formElements.jsx";
-import {createRef} from "react";
 
 /* In order to have access to inputList, setItemInputs, and inputContent, we have to wrap everything
  * in this function. It'd be better not to have to do this...
  * TODO: refactor to not have this
  */
-export default function renderItemInputs({inputList, setItemInputs, inputContent}) {
+export default function renderItemInputs({inputList, setItemInputs, inputContent, enchantCheckboxRef, enchantCheckboxRefs}) {
+	const enchantCheckboxRefsDictionary = {};
+
 	function enchantChangedCheckbox(event) {
 		console.log("on change for checkbox", event.target.name);
 		console.log("pressed", event.target.checked);
@@ -24,8 +25,6 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 			...inputContent.current,
 			[itemFor]: {...inputContent.current[itemFor], enchantments: {...inputContent.current[itemFor].enchantments, checkboxes: newCheckboxes}},
 		};
-
-		renderItemInputs({inputList, setItemInputs, inputContent});
 	}
 
 	function enchantChangedRadio(event) {
@@ -94,11 +93,13 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 	}
 
 	// See /src/itemInputsModel.txt
+
 	setItemInputs(
 		inputList.map((item) => {
 			const currentItemContent = inputContent.current[item.itemName];
 			console.log("rendering item", item);
 			console.log(currentItemContent);
+			enchantCheckboxRefsDictionary[item.itemName] = {};
 			return (
 				<div className="block w-full px-8 py-4 text-center bg-blue-300 rounded-lg" key={`${item.itemName}`}>
 					<p className="mx-auto font-bold">{item.itemName}</p>
@@ -127,17 +128,21 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 							}}
 						>
 							{/* Iterate through each enchant */}
-							{item.checkboxes.map((enchant) => (
-								<Label key={`${item.itemName} ${enchant}`}>
-									<EnchantCheckbox
-										itemName={item.itemName}
-										enchant={enchant}
-										onChange={enchantChangedCheckbox}
-										checked={inputContent.current[item.itemName].enchantments.checkboxes[enchant]}
-									/>
-									<EnchantItem>{enchant}</EnchantItem>
-								</Label>
-							))}
+							{item.checkboxes.map((enchant) => {
+								// enchantCheckboxRefsDictionary[item.itemName][enchant] = false;
+								return (
+									<Label key={`${item.itemName} ${enchant}`}>
+										<EnchantCheckbox
+											itemName={item.itemName}
+											enchant={enchant}
+											onChange={enchantChangedCheckbox}
+											checked={inputContent.current[item.itemName].enchantments.checkboxes[enchant]}
+											checkboxRef={enchantCheckboxRef}
+										/>
+										<EnchantItem>{enchant}</EnchantItem>
+									</Label>
+								);
+							})}
 							<hr className="border-black" />
 							{/* All of the above */}
 							<Label>
@@ -210,4 +215,5 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 			);
 		})
 	);
+	enchantCheckboxRef.current = enchantCheckboxRefsDictionary;
 }

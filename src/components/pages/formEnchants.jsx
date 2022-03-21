@@ -1,6 +1,6 @@
 // Form enchants page
 
-import {useState, useEffect, useRef, useReducer} from "react";
+import {useState, useEffect, useRef, useCallback} from "react";
 import {useHistory} from "react-router-dom";
 import {post} from "axios";
 
@@ -67,17 +67,24 @@ export default function FormEnchants(props) {
 	const [sortedList, setSortedList] = useState(null);
 	const [enchantDict, setEnchantDict] = useState(null);
 	const [itemInputs, setItemInputs] = useState(null);
+	const [enchantCheckboxRefsState, setEnchantCheckboxRefsState] = useState({});
+	const enchantCheckboxRefs = useRef({});
 	const inputContent = useRef({});
-	// Hack to force an update of the inputContent
-	// Because I'm using references to inputContent, the inputs don't update when there's a change
-	// in the inputContent.
-	// Well, this is problematic for loading from a save, because the "check all" checkboxes think
-	// they're not checked when they are, causing the checkboxes to be unchecked.
-	// This hack forces an update of the inputContent, which fixes the problem by updating the
-	// checkboxes.
-	// const [, forceUpdate] = useReducer((x) => x + 1, 0);
-
 	const needToUpdate = useRef(false);
+
+	const enchantCheckboxRef = useCallback((node) => {
+		if (!node) return;
+
+		const itemFor = node.getAttribute("item-for");
+		const enchantment = node.getAttribute("enchant");
+
+		enchantCheckboxRefs.current[itemFor] = enchantCheckboxRefs.current[itemFor] || {};
+		enchantCheckboxRefs.current[itemFor][enchantment] = node;
+
+		console.log(enchantCheckboxRefs.current);
+
+		setEnchantCheckboxRefsState(enchantCheckboxRefs.current);
+	}, []);
 
 	function fetchData() {
 		return post("api/get-enchants-for-gear", Object.keys(props.orderNumberDictionary))
@@ -153,9 +160,38 @@ export default function FormEnchants(props) {
 		renderItemInputs({
 			inputList: defaultInputList,
 			inputContent: inputContent,
+			enchantCheckboxRef: enchantCheckboxRef,
+			enchantCheckboxRefs: enchantCheckboxRefs,
 			setItemInputs: setItemInputs,
 		});
 	}, [sortedList, enchantDict]); /* eslint-disable-line react-hooks/exhaustive-deps */
+
+	// Check current checkboxes
+	useEffect(() => {
+		if (!Object.keys(enchantCheckboxRefsState).length) return;
+		console.log("id-purple inputcont", inputContent.current);
+		if (!inputContent.current) return;
+
+		console.log("id-purple ---");
+		console.log("id-purple checkbox refs", enchantCheckboxRefsState);
+		console.log(Object.entries(enchantCheckboxRefsState));
+
+		// Check the current checkboxes
+		for (const [itemName, itemCheckboxes] of Object.entries(enchantCheckboxRefsState)) {
+			console.log("id-purple itemName", itemName);
+			for (const checkbox of Object.keys(itemCheckboxes)) {
+				console.log("id-purple checkbox", checkbox);
+				console.log(`id-purple ${checkbox} for ${itemName} is ${inputContent.current[itemName].enchantments.checkboxes[checkbox]}`);
+				if (inputContent.current[itemName].enchantments.checkboxes[checkbox]) {
+					console.log(`id-purple Checking ${checkbox} for ${itemName}`);
+					enchantCheckboxRefs.current[itemName][checkbox].checked = true;
+				}
+			}
+		}
+
+		console.log("id-purple forcing update");
+		setEnchantCheckboxRefsState({});
+	}, [enchantCheckboxRefsState, inputContent]);
 
 	function save() {
 		const data = {orderContent: inputContent.current, orderNumberDictionary: props.orderNumberDictionary};
@@ -179,6 +215,8 @@ export default function FormEnchants(props) {
 		renderItemInputs({
 			inputList: inputList,
 			inputContent: inputContent,
+			enchantCheckboxRef: enchantCheckboxRef,
+			enchantCheckboxRefs: enchantCheckboxRefs,
 			setItemInputs: setItemInputs,
 		});
 	}
