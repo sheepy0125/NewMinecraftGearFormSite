@@ -8,7 +8,7 @@ import {EnchantItem, Label, EnchantRadioButton, EnchantCheckbox} from "./formEle
  * in this function. It'd be better not to have to do this...
  * TODO: refactor to not have this
  */
-export default function renderItemInputs({inputList, setItemInputs, inputContent, enchantCheckboxRef, enchantCheckboxRefs}) {
+export default function renderItemInputs({inputList, setItemInputs, inputContent, enchantCheckboxRef}) {
 	const enchantCheckboxRefsDictionary = {};
 
 	function enchantChangedCheckbox(event) {

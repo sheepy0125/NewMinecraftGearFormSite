@@ -70,6 +70,7 @@ export default function FormEnchants(props) {
 	const [enchantCheckboxRefsState, setEnchantCheckboxRefsState] = useState({});
 	const enchantCheckboxRefs = useRef({});
 	const inputContent = useRef({});
+	const inputList = useRef([]);
 	const needToUpdate = useRef(false);
 
 	const enchantCheckboxRef = useCallback((node) => {
@@ -156,28 +157,34 @@ export default function FormEnchants(props) {
 
 		// Do the HTML stuffs
 		inputContent.current = defaultInputContent;
-		// We need to pass the inputContent ref here so it can be set as well as read
+		inputList.current = defaultInputList;
+		render();
+	}, [sortedList, enchantDict]); /* eslint-disable-line react-hooks/exhaustive-deps */
+
+	function render() {
 		renderItemInputs({
-			inputList: defaultInputList,
+			inputList: inputList.current,
 			inputContent: inputContent,
 			enchantCheckboxRef: enchantCheckboxRef,
-			enchantCheckboxRefs: enchantCheckboxRefs,
 			setItemInputs: setItemInputs,
 		});
-	}, [sortedList, enchantDict]); /* eslint-disable-line react-hooks/exhaustive-deps */
+	}
 
 	// Check current checkboxes
 	useEffect(() => {
 		if (!Object.keys(enchantCheckboxRefsState).length) return;
+		// Make sure the number of items are the same. Since this is going off of state, it's possible that the number of items
+		// has changed since the last time this ran.
+		if (Object.keys(enchantCheckboxRefsState).length !== Object.keys(inputContent.current)) return;
 		console.log("id-purple inputcont", inputContent.current);
 		if (!inputContent.current) return;
 
 		console.log("id-purple ---");
-		console.log("id-purple checkbox refs", enchantCheckboxRefsState);
-		console.log(Object.entries(enchantCheckboxRefsState));
+		console.log("id-purple checkbox refs", enchantCheckboxRefs.current);
+		console.log(Object.entries(enchantCheckboxRefs.current));
 
 		// Check the current checkboxes
-		for (const [itemName, itemCheckboxes] of Object.entries(enchantCheckboxRefsState)) {
+		for (const [itemName, itemCheckboxes] of Object.entries(enchantCheckboxRefs.current)) {
 			console.log("id-purple itemName", itemName);
 			for (const checkbox of Object.keys(itemCheckboxes)) {
 				console.log("id-purple checkbox", checkbox);
@@ -195,6 +202,7 @@ export default function FormEnchants(props) {
 
 	function save() {
 		const data = {orderContent: inputContent.current, orderNumberDictionary: props.orderNumberDictionary};
+		console.log("id-orange data", data);
 		props.saveData.current.enchantPage = data;
 		console.log(data);
 	}
@@ -203,22 +211,10 @@ export default function FormEnchants(props) {
 		// Use the information available
 		inputContent.current = orderContent;
 		// An input list is needed, which looks like [{itemName, checkboxes: [], multipleSelection: []}]
-		const inputList = convertOrderContentToInputList(orderContent);
-
-		console.log({
-			orderContent,
-			inputList,
-			inputContent,
-		});
-
-		// Do the HTML stuff
-		renderItemInputs({
-			inputList: inputList,
-			inputContent: inputContent,
-			enchantCheckboxRef: enchantCheckboxRef,
-			enchantCheckboxRefs: enchantCheckboxRefs,
-			setItemInputs: setItemInputs,
-		});
+		inputList.current = convertOrderContentToInputList(orderContent);
+		console.log("id-green", {orderContent, inputList: inputList.current});
+		// Do the HTML stuffs
+		render();
 	}
 
 	function updateData() {
@@ -250,12 +246,12 @@ export default function FormEnchants(props) {
 			}
 			// Remove item if there is a lower amount in the new data than the old data
 			else if (
-				!props.orderNumberDictionary[item] ||
+				!props.orderNumberDictionary[item] || // undefined means 0
 				props.saveData.current.enchantPage.orderNumberDictionary[item] > props.orderNumberDictionary[item]
 			) {
 				console.log("removing items");
 				// Remove item
-				for (let currNumber = currentNumber + 1; currNumber <= lastNumber; currNumber++) {
+				for (let currNumber = (currentNumber || 0) + 1; currNumber <= lastNumber; currNumber++) {
 					const itemName = `${item} ${currNumber}`;
 					console.log({itemName});
 					console.log("pre delete");
@@ -264,15 +260,9 @@ export default function FormEnchants(props) {
 					console.log("post delete");
 					console.log(newData[itemName]);
 				}
-				// The above for loop won't work if the last number is 0 (actually undefined), so we have to do this manually
-				console.log("last number check");
-				if (!currentNumber) {
-					console.log("agreement!");
-					delete newData[`${item} 1`];
-					console.log("if you see this then it worked... maybe idk read this:");
-					console.log(newData);
-				} else console.log("didn't work", currentNumber);
 			}
+
+			console.log("identifier-red props.orderNumberDictionary[item] is", props.orderNumberDictionary[item], "for item", item);
 
 			console.log(
 				"props.orderNumberDictionary[item], props.saveData.current.enchantPage.orderNumberDictionary[item]",

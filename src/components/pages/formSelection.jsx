@@ -69,11 +69,23 @@ export default function FormSelection(props) {
 		}
 
 		const value = Number(event.target.value);
-		const dictionaryValue = value !== 0 ? value : undefined; // Set it to be undefined if the value is 0 (same as `delete`)
+
+		// if (value !== 0) {
+		// setOrderNumberDictionary((prevDict) => ({
+		// ...prevDict,
+		// [event.target.name]: value,
+		// }));
+		// } else {
+		// setOrderNumberDictionary((prevDict) => {
+		// const newDict = {...prevDict};
+		// delete newDict[event.target.name];
+		// return newDict;
+		// });
+		// }
 
 		setOrderNumberDictionary((prevDict) => ({
 			...prevDict,
-			[event.target.name]: dictionaryValue,
+			[event.target.name]: value === 0 ? undefined : value,
 		}));
 
 		let itemCost = Number(itemDictionary.find((item) => item.name === event.target.name).cost) || 0;

@@ -36,7 +36,7 @@ export default function Form(props) {
 		return (
 			<FormEnchants
 				orderNumberDictionary={saveData.current.selectPage.orderNumberDictionary}
-				orderContent={props.orderContent}
+				orderContent={(saveData.enchantPage && saveData.enchantPage.orderContent) || props.orderContent}
 				nextPage={goToGeneralInformationPage}
 				prevPage={goToGearSelectionPage}
 				saveData={saveData}
@@ -59,6 +59,7 @@ export default function Form(props) {
 	}
 
 	useEffect(() => {
+		console.log("id-orange ORDER CONTENT PROPS CHANGED");
 		// If there's order content but not an order number dictionary, obtain it
 		if (props.orderContent && !saveData.current.selectPage.orderNumberDictionary) {
 			saveData.current.selectPage.orderNumberDictionary = getOrderNumberDictionary(props.orderContent);
