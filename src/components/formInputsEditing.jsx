@@ -136,7 +136,7 @@ export default function renderItemInputs({inputList, setItemInputs, inputContent
 											itemName={item.itemName}
 											enchant={enchant}
 											onChange={enchantChangedCheckbox}
-											checked={inputContent.current[item.itemName].enchantments.checkboxes[enchant]}
+											checked={currentItemContent.enchantments.checkboxes[enchant]}
 											checkboxRef={enchantCheckboxRef}
 										/>
 										<EnchantItem>{enchant}</EnchantItem>

@@ -11,6 +11,26 @@ import Button from "../boilerplate/button.jsx";
 import renderItemInputs from "../formInputsEditing.jsx";
 import {error} from "./errors/apiError.jsx";
 
+function sort(inputList, sortedList) {
+	// Sort an input list by item name using the sortedList
+	// The sortedList is a list of item names without the numbers, while
+	// the inputList has dictionaries with a list of item names with the numbers
+
+	// May not be the most efficient way, but it's fine
+	const sortedInputList = [];
+	for (const itemName of sortedList) {
+		for (const itemDict of inputList) {
+			// Strip number (space and then 1-digit number)
+			const itemNameStripped = itemDict.itemName.slice(0, -2);
+			if (itemNameStripped === itemName) {
+				sortedInputList.push(itemDict);
+			}
+		}
+	}
+	console.log({sortedInputList});
+	return sortedInputList;
+}
+
 function convertOrderContentToInputList(orderContent) {
 	const inputList = [];
 	for (const [item, itemInfo] of Object.entries(orderContent)) {
@@ -103,29 +123,30 @@ export default function FormEnchants(props) {
 
 	useEffect(() => {
 		// If no information available, fetch the data
-		if (!props.orderContent) {
-			fetchData();
-			return;
-		}
-
+		// if (!props.orderContent) {
+		// fetchData();
+		// return;
+		// }
+		//
 		// Hey, has the information (number of items) been changed?
-		needToUpdate.current =
-			props.orderNumberDictionary !== props.saveData.current.enchantPage.orderNumberDictionary &&
-			props.saveData.current.enchantPage.orderNumberDictionary;
-		if (needToUpdate.current) {
-			// We have to fetch the data again, but we can use the old data as well.
-			// So, we have to mix the data together a bit
-			fetchData();
-		}
 
-		// If we have the data, we can use it
-		load(props.orderContent);
+		// if (needToUpdate.current) {
+		// We have to fetch the data again, but we can use the old data as well.
+		// So, we have to mix the data together a bit
+		// fetchData();
+		// }
+
+		fetchData();
 	}, []); /* eslint-disable-line react-hooks/exhaustive-deps */
 
 	// Data changed
 	useEffect(() => {
 		// Also don't do anything if the data is still loading
 		if (!(sortedList && enchantDict)) return;
+
+		needToUpdate.current =
+			props.orderNumberDictionary !== props.saveData.current.enchantPage.orderNumberDictionary &&
+			props.saveData.current.enchantPage.orderNumberDictionary;
 
 		// Wait! This might have been updated due to there being existing data, but needing to update the data
 		// (i.e. the user changed the number of items)
@@ -135,9 +156,10 @@ export default function FormEnchants(props) {
 			updateData();
 			return;
 		}
-
-		// No need to update
-		if (!props.orderContent) return;
+		// No need to update, let's just use the data we have
+		const orderContent = props.saveData.current.enchantPage.orderContent || props.orderContent;
+		console.log("no need to update ", {orderContent});
+		if (orderContent) return load(orderContent);
 
 		const defaultInputList = [];
 		const defaultInputContent = {general: {estimatedCost: props.estimatedCost}};
@@ -172,10 +194,11 @@ export default function FormEnchants(props) {
 
 	// Check current checkboxes
 	useEffect(() => {
+		console.log("hello");
 		if (!Object.keys(enchantCheckboxRefsState).length) return;
 		// Make sure the number of items are the same. Since this is going off of state, it's possible that the number of items
 		// has changed since the last time this ran.
-		if (Object.keys(enchantCheckboxRefsState).length !== Object.keys(inputContent.current)) return;
+		// if (Object.keys(enchantCheckboxRefsState).length !== Object.keys(inputContent.current)) return;
 		console.log("id-purple inputcont", inputContent.current);
 		if (!inputContent.current) return;
 
@@ -209,9 +232,10 @@ export default function FormEnchants(props) {
 
 	function load(orderContent) {
 		// Use the information available
+		console.log("loading", {orderContent});
 		inputContent.current = orderContent;
 		// An input list is needed, which looks like [{itemName, checkboxes: [], multipleSelection: []}]
-		inputList.current = convertOrderContentToInputList(orderContent);
+		inputList.current = sort(convertOrderContentToInputList(orderContent), sortedList);
 		console.log("id-green", {orderContent, inputList: inputList.current});
 		// Do the HTML stuffs
 		render();
