@@ -91,6 +91,7 @@ class OrdersDatabase:
     Exports:
      - delete_order
      - submit_order
+     - update_order
      - get_all_orders
      - change_order_status
 
@@ -260,6 +261,21 @@ class OrdersDatabase:
         database.session.commit()
 
         return order_submission
+
+    @staticmethod
+    def update_order(order_id: int, general: dict, order_json: dict) -> Orders:
+        """Assumes the PIN was verified"""
+
+        # Get the order
+        order: Orders = Orders.query.filter_by(order_id=order_id).first()
+
+        # Update the order
+        order.content = order_json
+        order.general = general
+        order.date_modified = get_current_time()
+        database.session.commit()
+
+        return order
 
     @staticmethod
     def get_all_orders() -> list:
@@ -485,6 +501,38 @@ def submit_order_route() -> dict:
         "data": {
             "order_id": order_submission.order_id,
             "order_pin": order_submission.pin,
+            "order_queue_number": order_submission.queue_number,
+        },
+        "code": 200,
+    }
+
+
+@api.route("/api/update-form", methods=["POST"])
+def update_order_route() -> dict:
+    order_json: dict = request.json
+    order_id: int = order_json["order_id"]
+    pin: str = order_json["pin"]
+    general: dict = order_json["general"]
+
+    del order_json["order_id"], order_json["pin"], order_json["general"]
+
+    # Check credentials
+    if not verify_pin(order_id, pin):
+        return {
+            "worked": False,
+            "message": "The PIN isn't correct!",
+            "code": 403,
+        }
+
+    # Update order
+    order_submission: Orders = OrdersDatabase.update_order(
+        order_id, general, order_json
+    )
+    return {
+        "worked": True,
+        "data": {
+            "order_id": order_submission.order_id,
+            "order_pin": pin,
             "order_queue_number": order_submission.queue_number,
         },
         "code": 200,

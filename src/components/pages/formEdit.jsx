@@ -7,9 +7,9 @@ import Title from "../boilerplate/title.jsx";
 import Navbar from "../boilerplate/navbar.jsx";
 import FormSelection from "./formSelection.jsx";
 import FormEnchants from "./formEnchants.jsx";
-import GeneralInformation from "./generalInformation.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
 import SubmitOrderEdit from "../submitOrderEdit.jsx";
+import AuthenticationWidget from "../authentication.jsx";
 
 function getOrderNumberDictionary(orderContent) {
 	// Get the order number dictionary from the order content
@@ -27,7 +27,7 @@ function getOrderNumberDictionary(orderContent) {
 
 export default function FormEditing(props) {
 	const [currentPage, setCurrentPage] = useState(null);
-	const saveData = useRef({selectPage: {}, enchantPage: {}, generalInfoPage: {}});
+	const saveData = useRef({selectPage: {}, enchantPage: {}});
 
 	// Form pages
 	function gearSelectionPage() {
@@ -38,19 +38,9 @@ export default function FormEditing(props) {
 			<FormEnchants
 				orderNumberDictionary={saveData.current.selectPage.orderNumberDictionary}
 				orderContent={(saveData.enchantPage && saveData.enchantPage.orderContent) || props.orderContent}
-				nextPage={goToGeneralInformationPage}
+				nextPage={goToEnterPINPage}
 				prevPage={goToGearSelectionPage}
 				saveData={saveData}
-			/>
-		);
-	}
-	function generalInformationPage() {
-		return (
-			<GeneralInformation
-				content={saveData.current.enchantPage.orderContent}
-				prevPage={goToEnchantSelectionPage}
-				saveData={saveData}
-				SubmitOrder={SubmitOrderEdit} // Component
 			/>
 		);
 	}
@@ -62,8 +52,9 @@ export default function FormEditing(props) {
 	function goToEnchantSelectionPage() {
 		setCurrentPage(enchantSelectionPage());
 	}
-	function goToGeneralInformationPage() {
-		setCurrentPage(generalInformationPage());
+	function goToEnterPINPage() {
+		// Authentication widget page
+		setCurrentPage();
 	}
 
 	useEffect(() => {
