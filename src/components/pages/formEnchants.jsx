@@ -32,8 +32,13 @@ function sort(inputList, sortedList) {
 }
 
 function convertOrderContentToInputList(orderContent) {
+	console.log({orderContent}, "converting to input list");
+
 	const inputList = [];
 	for (const [item, itemInfo] of Object.entries(orderContent)) {
+		// Don't do it for "general" (in the order content but not an item)
+		if (item === "general") continue;
+
 		console.log({item, itemInfo});
 		const itemListDictionary = {};
 

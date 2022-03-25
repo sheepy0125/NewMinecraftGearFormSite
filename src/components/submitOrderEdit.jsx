@@ -1,5 +1,6 @@
 // Submit order
 
+import {useRef} from "react";
 import {useHistory} from "react-router-dom";
 import {post} from "axios";
 
@@ -7,12 +8,13 @@ import Button from "./boilerplate/button.jsx";
 import {error} from "./pages/errors/apiError.jsx";
 
 // Submit
-function submit({content, history}) {
+function submit({content, history, pin}) {
 	console.log("%cSubmitting order!", "color: white; background-color: purple");
 	console.log("The JSON data that's being submitted is:");
 	console.log(JSON.stringify(content, null, 4));
+	console.log("The PIN is: " + pin);
 
-	post("api/submit-form", content)
+	post(`api/update-form?pin=${pin}`, content)
 		.then((resp) => {
 			if (!resp.data.worked) throw Error(`Failed to submit order!!! (${resp.data.message}, code ${resp.data.code})`);
 
@@ -29,7 +31,8 @@ function submit({content, history}) {
 			history.push(
 				`/submit-result` +
 					`?orderID=${orderID}&orderPIN=${orderPIN}&orderQueueNumber=${orderQueueNumber}` +
-					`&orderUsername=${orderUsername}&estimatedCost=${estimatedCost}`
+					`&orderUsername=${orderUsername}&estimatedCost=${estimatedCost}` +
+					`&edit=true`
 			);
 		})
 		.catch((resp) => {
@@ -38,19 +41,28 @@ function submit({content, history}) {
 		});
 }
 
-export default function SubmitOrder(props) {
+export default function SubmitOrderEdit(props) {
 	const history = useHistory();
+
+	const pin = useRef("");
 
 	const content = props.content;
 
 	return (
-		<div
-			onClick={() => {
-				submit({content: content, history: history});
-				props.onSubmit();
-			}}
-		>
-			<Button>Submit</Button>
-		</div>
+		<>
+			<label>
+				PIN: <br />
+				<input type="text" ref={pin} />
+			</label>
+			<br />
+			<div
+				onClick={() => {
+					submit({content: content, history: history, pin: pin.current});
+					props.onSubmit();
+				}}
+			>
+				<Button>Submit</Button>
+			</div>
+		</>
 	);
 }

@@ -9,6 +9,7 @@ import FormSelection from "./formSelection.jsx";
 import FormEnchants from "./formEnchants.jsx";
 import GeneralInformation from "./generalInformation.jsx";
 import LoadingWidget from "../boilerplate/widgets/loadingWidget.jsx";
+import SubmitOrderEdit from "../submitOrderEdit.jsx";
 
 function getOrderNumberDictionary(orderContent) {
 	// Get the order number dictionary from the order content
@@ -24,7 +25,7 @@ function getOrderNumberDictionary(orderContent) {
 	return orderNumberDictionary;
 }
 
-export default function Form(props) {
+export default function FormEditing(props) {
 	const [currentPage, setCurrentPage] = useState(null);
 	const saveData = useRef({selectPage: {}, enchantPage: {}, generalInfoPage: {}});
 
@@ -43,8 +44,15 @@ export default function Form(props) {
 			/>
 		);
 	}
-	function generalInformationPage(content) {
-		return <GeneralInformation content={content} prevPage={goToEnchantSelectionPage} saveData={saveData} />;
+	function generalInformationPage() {
+		return (
+			<GeneralInformation
+				content={saveData.current.enchantPage.orderContent}
+				prevPage={goToEnchantSelectionPage}
+				saveData={saveData}
+				SubmitOrder={SubmitOrderEdit} // Component
+			/>
+		);
 	}
 
 	// Page transitions

@@ -102,9 +102,7 @@ export default function GeneralInformation(props) {
 						</label>
 						<br />
 						{!usernameTooShort ? (
-							<div onClick={() => setIsSubmitting(true)}>
-								<SubmitOrder content={getContent(props.content)} />
-							</div>
+							<props.SubmitOrder content={getContent(props.content)} onSubmit={() => setIsSubmitting(true)} />
 						) : (
 							<p>Your username isn't valid.</p>
 						)}

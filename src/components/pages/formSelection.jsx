@@ -147,7 +147,7 @@ export default function FormSelection(props) {
 
 		console.log({itemDictionary});
 
-		for (const itemName of Object.keys(props.saveData.current.selectPage.orderNumberDictionary)) {
+		for (const itemName of Object.keys(props.saveData.current.selectPage.orderNumberDictionary || {})) {
 			const itemCount = props.saveData.current.selectPage.orderNumberDictionary[itemName];
 			const itemCost = itemDictionary.find((item) => item.name === itemName).cost;
 			getNewPrice({itemName: itemName, itemCount: itemCount, itemCost: itemCost});
